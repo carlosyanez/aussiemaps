@@ -1,0 +1,20 @@
+Package: aussiemaps
+Title: Maps of Australia
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Carlos",
+           family = "Yanez Santibanez",
+           role = c("aut", "cre"),
+           email = "carlos@carlosyanez.cl")
+Description: Granular map of Australian Localities/Suburbs, LGAs and Postal Areas.
+License: `use_ccby_license()`
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+          dplyr,
+          sf,
+          tibble,
+          purrr,
+          stringr
