@@ -1,13 +1,3 @@
-
-
-###auxiliary function
-loadRData <- function(fileName){
-  #loads an RData file, and returns it
-  load(fileName)
-  get(ls()[ls() != "fileName"])
-}
-
-
 #' Load granular data
 #' @return no output
 #' @import dplyr
@@ -20,20 +10,17 @@ loadRData <- function(fileName){
 #' @export load_aussie_map
 load_aussie_map <- function(filter_table,aggregation=c("none")){
 
-  state_names<- tribble(~State_short,~State,
-                        "VIC","Victoria",
-                        "NSW","New South Wales",
-                        "ACT","Australian Capital Territory",
-                        "QLD","Queensland",
-                        "NT","Northern Territory",
-                        "WA","Western Australia",
-                        "SA","South Australia",
-                        "TAS","Tasmania")
+  ###auxiliary function
+  loadRData <- function(fileName){
+    #loads an RData file, and returns it
+    load(fileName)
+    get(ls()[ls() != "fileName"])
+  }
 
     States  <- filter_table %>% select(State) %>%
                left_join(state_names,by="State") %>%
                mutate(State_new=if_else(!is.na(State_short),State_short,State)) %>%
-               pull(State_new)
+               pull(State_new) %>% unique(.)
 
       data <- map_df(States,function(x){
       datai<- loadRData(str_c("inst/extdata/",tolower(x),"_lga_loc_poa.rda"))
@@ -44,8 +31,8 @@ load_aussie_map <- function(filter_table,aggregation=c("none")){
       if(length(cols)>0){
 
         cols_filter <- cols_filter %>% mutate(check=TRUE)
-        datai <- suppressMessages(datai %>% left_join(cols_filter, by=cols) %>%
-                filter(check) %>% select(-check))
+        datai <- suppressMessages(datai %>% inner_join(cols_filter, by=cols) %>%
+                                            select(-check))
       }
 
       datai
