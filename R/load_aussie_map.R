@@ -7,8 +7,9 @@
 #' @import tibble
 #' @param filter_table table to filter (you can start with location_table)
 #' @param aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
+#' @param  clean_tolerance clean up tolerance
 #' @export load_map
-load_map <- function(filter_table,aggregation=c("none")){
+load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
 
   ###auxiliary function
   loadRData <- function(fileName){
@@ -41,7 +42,9 @@ load_map <- function(filter_table,aggregation=c("none")){
 
       data <- suppressMessages(suppressWarnings(data %>%
         group_by_at(aggregation) %>%
-        summarise(.groups = "drop")))
+        summarise(.groups = "drop") %>%
+        clean_polygons(clean_tolerance)))
+
 
     }
 
@@ -56,5 +59,33 @@ return(data)
 list_agreggations <- function(){
 
     colnames(locations.table)
+
+}
+
+#' Clean up aggregated polygons
+#' @return sf object
+#' @import dplyr
+#' @import sf
+#' @param  sfobject sf object
+#' @param  tol_value clean up tolerance
+#' @export clean_polygons
+clean_polygons <- function(sfobject,tol_value=0.05){
+
+  col_names <- colnames(as.data.frame(sfobject) %>% select(-geometry))
+
+  result <- suppressMessages(suppressWarnings(sfobject  %>%
+    st_cast("MULTILINESTRING") %>%
+    st_cast("LINESTRING") %>%
+    st_collection_extract("LINESTRING") %>%
+    st_polygonize() %>%
+    st_collection_extract("POLYGON") %>%
+    mutate(area=st_area(.)) %>%
+    group_by_at(col_names) %>%
+    mutate(tolerance=max(area)*tol_value) %>%
+    filter(area>tolerance) %>%
+    summarise(.groups = "drop") %>%
+    st_collection_extract("POLYGON")))
+
+   return(result)
 
 }

@@ -4,12 +4,14 @@
 \alias{load_map}
 \title{Load granular data}
 \usage{
-load_map(filter_table, aggregation = c("none"))
+load_map(filter_table, aggregation = c("none"), clean_tolerance = 0.05)
 }
 \arguments{
 \item{filter_table}{table to filter (you can start with location_table)}
 
 \item{aggregation}{name of column to aggregate (POA_CODE16, LOCALITY,LGA)}
+
+\item{clean_tolerance}{clean up tolerance}
 }
 \value{
 no output
