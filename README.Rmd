@@ -7,16 +7,41 @@ output:
 ---
 
 ```{r}
-library(aussiemaps)
-library(customthemes)
-library(tidyverse)
-library(sf)
-library(leaflet)
+#load packages
+
+if(!require(pacman)) install.packages("pacman", repos = "http://cran.us.r-project.org")
+if(!require(devtools)) install.packages("devtools", repos = "http://cran.us.r-project.org")
+if(!require(customthemes)) devtools::install_github("carlosyanez/customthemes")
+if(!require(aussiemaps)) devtools::install_github("carlosyanez/aussiemaps")
+
+pacman::p_load("tidyverse","sf","aussiemaps","customthemes","osmdata")
+
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+## Installation
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+First install required packages
+
+install.packages("tidyverse","sf","lwgeom","devtools")
+
+devtools::install_github("carlosyanez/aussiemaps")
+
+
+```{r}
+
+melb_inner1 <- tibble(LGA=c("Mebourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
+                     load_map(aggregation = "LGA")
+
+melb_inner2 <- tibble(LGA=c("Mebourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
+                     load_map(aggregation = "LOCALITY")
+
+ggplot() + geom_sf(data=melb_inner2,aes(fill=LOCALITY,colour=LOCALITY)) +
+           geom_sf(data=melb_inner2,colour="red",fill="white",alpha=0)
+
+```
+
+
+
 
