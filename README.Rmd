@@ -38,7 +38,7 @@ melb_inner2 <- tibble(LGA=c("Mebourne","Port Phillip","Stonnington"),State=rep("
                      load_map(aggregation = "LOCALITY")
 
 ggplot() + geom_sf(data=melb_inner2,aes(fill=LOCALITY,colour=LOCALITY)) +
-           geom_sf(data=melb_inner2,colour="red",fill="white",alpha=0)
+           geom_sf(data=melb_inner2,colour="red",fill=alpha("white",0))
 
 ```
 
