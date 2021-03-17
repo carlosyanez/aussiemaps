@@ -31,14 +31,14 @@ devtools::install_github("carlosyanez/aussiemaps")
 
 ```{r}
 
-melb_inner1 <- tibble(LGA=c("Mebourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
+melb_inner1 <- tibble(LGA=c("Melbourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
                      load_map(aggregation = "LGA")
 
 melb_inner2 <- tibble(LGA=c("Mebourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
                      load_map(aggregation = "LOCALITY")
 
 ggplot() + geom_sf(data=melb_inner2,aes(fill=LOCALITY,colour=LOCALITY)) +
-           geom_sf(data=melb_inner2,colour="red",fill=alpha("white",0))
+           geom_sf(data=melb_inner1,colour="white",size=1.2,fill=alpha("white",0))
 
 ```
 
