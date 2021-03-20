@@ -17,4 +17,5 @@ Imports:
           sf,
           tibble,
           purrr,
-          stringr
+          stringr,
+          lwgeom

@@ -14,8 +14,8 @@ list_regions <- function(){
 #' @import tibble
 #' @param  region_name string with name of the region (use list_regions() to get all possible names)
 #' @return tibble to
-#' @export get_region_list
-get_region_list <- function(region_name){
+#' @export get_region
+get_region  <- function(region_name){
 
               load("inst/extdata/regions.rda")
 

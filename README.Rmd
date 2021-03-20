@@ -9,12 +9,9 @@ output:
 ```{r}
 #load packages
 
-if(!require(pacman)) install.packages("pacman", repos = "http://cran.us.r-project.org")
-if(!require(devtools)) install.packages("devtools", repos = "http://cran.us.r-project.org")
-if(!require(customthemes)) devtools::install_github("carlosyanez/customthemes")
-if(!require(aussiemaps)) devtools::install_github("carlosyanez/aussiemaps")
-
-pacman::p_load("tidyverse","sf","aussiemaps","customthemes","osmdata")
+if(!require(librarian)) install.packages("librarian")
+librarian::shelf("tidyverse","sf","carlosyanez/aussiemaps","carlosyanez/customthemes","
+                 osmdata","paletteer","openscilabs/ochRe","devtools")
 
 
 ```
@@ -32,16 +29,95 @@ devtools::install_github("carlosyanez/aussiemaps")
 ```{r}
 
 melb_inner1 <- tibble(LGA=c("Melbourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
-                     load_map(aggregation = "LGA")
+                     load_map(aggregation = "LGA") 
 
-melb_inner2 <- tibble(LGA=c("Mebourne","Port Phillip","Stonnington"),State=rep("VIC",3)) %>% 
-                     load_map(aggregation = "LOCALITY")
+melb_inner1.centroid <- st_centroid(melb_inner1)
 
-ggplot() + geom_sf(data=melb_inner2,aes(fill=LOCALITY,colour=LOCALITY)) +
-           geom_sf(data=melb_inner1,colour="white",size=1.2,fill=alpha("white",0))
+melb_inner2 <- tibble(LOCALITY=c("South Yarra"),State=c("VIC")) %>% 
+                     load_map()
+
+melb_inner3 <- tibble(POA_CODE16=c("3004"),State=c("VIC")) %>% 
+                     load_map()
+
+ggplot() + 
+  geom_sf(data=melb_inner1,colour="white",size=1.2,fill="grey") +
+  geom_sf(data=melb_inner2,aes(fill=LOCALITY),alpha=0.8,colour="grey",size=0.8) +
+  geom_sf(data=melb_inner3,aes(fill=POA_CODE16),alpha=0.8,colour="grey",size=0.8) +
+  geom_sf_text(data = melb_inner1.centroid, aes(label = LGA), colour = "blue") +
+  scale_fill_ochre("lorikeet") +
+  custom_map_theme() 
+ 
+  
 
 ```
 
 
+
+```{r}
+Sunraysia <- get_region("Sunraysia") %>% load_map(aggregation=c("LGA","State","Region"))
+
+Sunraysia_contour <- Sunraysia %>% 
+                     group_by(Region) %>% summarise(.groups = "drop") %>%
+                     clean_polygons()
+
+
+sunraysia_bbox <- st_bbox(Sunraysia)
+
+rivers <- opq(sunraysia_bbox) %>%
+        add_osm_feature(key = "waterway",
+                  value = c("river","canal")) %>%
+        osmdata_sf()
+
+creeks <- rivers <- opq(sunraysia_bbox) %>%
+        add_osm_feature(key = "waterway",
+                  value = c("stream")) %>%
+        osmdata_sf()
+
+rivers <- rbind(rivers$osm_lines %>% select(osm_id,name),
+                rivers$osm_multilines%>% select(osm_id,name)) %>%
+          st_transform(st_crs(Sunraysia_contour)) %>%
+          st_intersection(Sunraysia_contour)
+
+
+creeks <- rbind(creeks$osm_lines %>% select(osm_id,name),
+                creeks$osm_multilines%>% select(osm_id,name)) %>%
+          st_transform(st_crs(Sunraysia_contour)) %>%
+          st_intersection(Sunraysia_contour)
+
+
+
+ggplot() + 
+  geom_sf(data=Sunraysia, aes(fill=State), colour="white", size=0.5) +
+  geom_sf(data=rivers,colour="blue",size=1.1)+
+  geom_sf(data=creeks,colour="deepskyblue1",size=0.2) +
+  custom_map_theme()+
+#theme(legend.position = "none") +
+    scale_fill_ochre() 
+
+
+
+```
+
+```{r}
+
+melb_housing <- read_csv("https://github.com/dipalira/Melbourne-Housing-Data-Kaggle/raw/master/Data/Melbourne_housing_FULL.csv")
+
+melb_size <- melb_housing %>% filter(Type=="h") %>% group_by(Suburb) %>% summarise(medianprice=median(Price,na.rm=TRUE),.groups="drop")
+
+
+Melbourne <- get_region("Greater Metropolitan Melbourne") %>% 
+             load_map(aggregation=c("LOCALITY","Metro.Region")) %>%
+             left_join(melb_size,by=c("LOCALITY"="Suburb")) %>%
+             filter(Metro.Region %in% c("Inner Melbourne","Metropolitan Melbourne"))
+
+  Melbourne %>% ggplot() + 
+  geom_sf(aes(fill=medianprice), colour="white", size=0.5) +
+   custom_map_theme()+
+    theme(legend.position = "right",
+          legend.direction = "vertical")
+
+
+
+```
 
 

@@ -5,6 +5,7 @@
 #' @import stringr
 #' @import sf
 #' @import tibble
+#' @import lwgeom
 #' @param filter_table table to filter (you can start with location_table)
 #' @param aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  clean_tolerance clean up tolerance
@@ -66,6 +67,7 @@ list_agreggations <- function(){
 #' @return sf object
 #' @import dplyr
 #' @import sf
+#' @import lwgeom
 #' @param  sfobject sf object
 #' @param  tol_value clean up tolerance
 #' @export clean_polygons
