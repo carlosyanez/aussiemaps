@@ -68,10 +68,6 @@ rivers <- opq(sunraysia_bbox) %>%
                   value = c("river","canal")) %>%
         osmdata_sf()
 
-creeks <- rivers <- opq(sunraysia_bbox) %>%
-        add_osm_feature(key = "waterway",
-                  value = c("stream")) %>%
-        osmdata_sf()
 
 rivers <- rbind(rivers$osm_lines %>% select(osm_id,name),
                 rivers$osm_multilines%>% select(osm_id,name)) %>%
