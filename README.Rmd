@@ -1,10 +1,10 @@
 ---
 title: "aussiemaps"
 output:
-  github_document:
-    html_preview: no
   html_document:
     df_print: paged
+  github_document:
+    html_preview: no
   html_notebook: default
 ---
 
@@ -177,6 +177,6 @@ At the moment, this package only provides maps for [internal](https://en.wikiped
 
 ## Credits
 
- - LGA and localities maps have been sourced from [data.gov.au](htttp:///data.gov.au), and used under CC0-BY licence.
+ - LGA and localities maps have been sourced from [data.gov.au](htttp:///data.gov.au)  and used under CC0-BY licence.
  - Postal areas have constructed using definitions and shape files from the [Australian Bureau of Statistics (ABS)](https://www.abs.gov.au/)
 

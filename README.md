@@ -80,6 +80,6 @@ states and territories.
 ## Credits
 
 -   LGA and localities maps have been sourced from
-    [data.gov.au](htttp:///data.gov.au), and used under CC0-BY licence.
+    [data.gov.au](htttp:///data.gov.au) and used under CC0-BY licence.
 -   Postal areas have constructed using definitions and shape files from
     the [Australian Bureau of Statistics (ABS)](https://www.abs.gov.au/)
