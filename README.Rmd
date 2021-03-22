@@ -1,10 +1,10 @@
 ---
 title: "aussiemaps"
 output:
-  html_document:
-    df_print: paged
   github_document:
     html_preview: no
+  html_document:
+    df_print: paged
   html_notebook: default
 ---
 
@@ -46,7 +46,7 @@ Aggregations are optional, if not added, will retrieve the granular polygons dir
 The below plot shows and example on how to retrieve different sf objects, with different aggregations (postal area 3004 covers parts of two different suburs. South Yarra is shared across two LGAs).  
 
 
-```{r arbitrarymap, eval=FALSE, include=FALSE}
+```{r arbitrarymap, eval=FALSE, include=TRUE}
 
 melb_inner1_filter<- tibble(LGA=c("Melbourne","Port Phillip","Stonnington"),State=rep("VIC",3)) 
 
@@ -70,8 +70,12 @@ p <- ggplot() +
   custom_map_theme() +
   labs(title="Arbitrary selection of South Yarra and Postal Area 3004", caption="Sources:data.gov.au, ABS")
  
-ggsave("map1.png",p)
 
+
+```
+
+```{r eval=FALSE, include=FALSE}
+ggsave("map1.png",p)
 ```
 
 
@@ -82,7 +86,7 @@ The package also contains a number of pre-defined "regions". These are either of
 
 
 
-```{r riversintheriverina, eval=FALSE, include=FALSE}
+```{r riversintheriverina, eval=FALSE, include=TRUE}
 
 #get regions
 riverina <- get_region("The Riverina") %>% load_map(aggregation=c("LGA","State","Region"))
@@ -115,17 +119,22 @@ p<- ggplot() +
   scale_fill_ochre()  + 
   labs(title="Rivers and Canals in The Riverina", caption="Sources:data.gov.au (map), openstreetmap (rivers)")
 
-ggsave("map2.png",p)
+
 
 
 ```
+
+```{r eval=FALSE, include=FALSE}
+ggsave("map2.png",p)
+```
+
 
 ![](map2.png)
 
 Since the loaded objects are sf objects, they can be easily merge with data frames or tibbles to add additional data for visualisation.
 
 
-```{r melbournehousing, eval=FALSE, include=FALSE}
+```{r melbournehousing, eval=FALSE, include=TRUE}
 
 # load dataset from github
 melb_housing <- read_csv("https://github.com/dipalira/Melbourne-Housing-Data-Kaggle/raw/master/Data/Melbourne_housing_FULL.csv")
@@ -142,7 +151,7 @@ Melbourne <- get_region("Greater Metropolitan Melbourne") %>%
              filter(Metro.Region %in% c("Inner Melbourne","Metropolitan Melbourne"))
 
 #plot
-p<-  Melbourne %>% ggplot() + 
+p<- Melbourne %>% ggplot() + 
   geom_sf(aes(fill=medianprice), colour="white", size=0.5) +
    custom_map_theme()+
     theme(legend.position = "right",
@@ -150,10 +159,12 @@ p<-  Melbourne %>% ggplot() +
     scale_fill_gradient2(name="Median Price",labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
     labs(title="Median House Price in Melbourne's Housing Kaggle Dataset", caption="Sources:data.gov.au (map), Github (data)") 
 
-ggsave("map3.png",p)
-
-
 ```
+
+```{r eval=FALSE, include=FALSE}
+ggsave("map3.png",p)
+```
+
 
 ![](map3.png)
 
