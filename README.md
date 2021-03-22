@@ -59,7 +59,8 @@ p <- ggplot() +
   geom_sf_text(data = melb_inner1.centroid, aes(label = LGA), colour = "blue") +
   scale_fill_ochre("lorikeet") +
   custom_map_theme() +
-  labs(title="Arbitrary selection of South Yarra and Postal Area 3004", caption="Sources:data.gov.au, ABS")
+  labs(title="Arbitrary selection of South Yarra and Postal Area 3004", 
+       caption="Sources:data.gov.au, ABS")
 ```
 
 ![](map1.png)
@@ -101,7 +102,8 @@ p<- ggplot() +
   geom_sf(data=rivers,colour="blue",size=1.1)+
   custom_map_theme()+
   scale_fill_ochre()  + 
-  labs(title="Rivers and Canals in The Riverina", caption="Sources:data.gov.au (map), openstreetmap (rivers)")
+  labs(title="Rivers and Canals in The Riverina", 
+       caption="Sources:data.gov.au (map), openstreetmap (rivers)")
 ```
 
 ![](map2.png)
@@ -111,7 +113,8 @@ data frames or tibbles to add additional data for visualisation.
 
 ``` r
 # load dataset from github
-melb_housing <- read_csv("https://github.com/dipalira/Melbourne-Housing-Data-Kaggle/raw/master/Data/Melbourne_housing_FULL.csv")
+url <- "https://github.com/dipalira/Melbourne-Housing-Data-Kaggle/raw/master/Data/Melbourne_housing_FULL.csv"
+melb_housing <- read_csv(url)
 
 # get median price by suburb
 melb_price <- melb_housing %>% filter(Type=="h") %>%
@@ -130,8 +133,10 @@ p<- Melbourne %>% ggplot() +
    custom_map_theme()+
     theme(legend.position = "right",
           legend.direction = "vertical") + 
-    scale_fill_gradient2(name="Median Price",labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
-    labs(title="Median House Price in Melbourne's Housing Kaggle Dataset", caption="Sources:data.gov.au (map), Github (data)") 
+    scale_fill_gradient2(name="Median Price",
+                         labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
+    labs(title="Median House Price in Melbourne's Housing Kaggle Dataset", 
+         caption="Sources:data.gov.au (map), Github (data)") 
 ```
 
 ![](map3.png)
