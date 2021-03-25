@@ -19,7 +19,7 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
     get(ls()[ls() != "fileName"])
   }
 
-     state.names <- loadRData(system.file("extdata", "state.rda", package = "aussiemaps"))
+     #state.names <- loadRData(system.file("extdata", "state.rda", package = "aussiemaps"))
 
      States  <- filter_table %>% select(State) %>%
                 left_join(state.names,by="State") %>%
