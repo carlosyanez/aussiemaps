@@ -17,11 +17,3 @@
 #' @source \url{https://data.gov.au/}
 "locations.table"
 
-#' List of states and their acronym
-#'
-#' @format A data frame with 9 variables:
-#' \describe{
-#'   \item{State_short}{2/3 letter acronym}
-#'   \item{State}{Name}
-#'   }
-"state.names"
