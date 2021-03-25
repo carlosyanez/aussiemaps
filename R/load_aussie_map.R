@@ -20,7 +20,7 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
   }
 
      States  <- filter_table %>% select(State) %>%
-                left_join(state_names,by="State") %>%
+                left_join(state.names,by="State") %>%
                 mutate(State_new=if_else(!is.na(State_short),State_short,State)) %>%
                 pull(State_new) %>% unique(.)
 

@@ -24,4 +24,4 @@
 #'   \item{State_short}{2/3 letter acronym}
 #'   \item{State}{Name}
 #'   }
-"state_names"
+"state.names"
