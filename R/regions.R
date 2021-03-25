@@ -4,7 +4,7 @@
 #' @import tibble
 #' @export list_regions
 list_regions <- function(){
-          load("inst/extdata/regions.rda")
+          load(system.file("extdata", "regions.rda", package = "aussiemaps"))
           regions %>% arrange(Region) %>% pull(.) %>% unique(.)
 
 }
@@ -17,7 +17,7 @@ list_regions <- function(){
 #' @export get_region
 get_region  <- function(region_name){
 
-              load("inst/extdata/regions.rda")
+              load(system.file("extdata", "regions.rda", package = "aussiemaps"))
 
               regions %>% filter(Region %in% region_name) %>% select(LGA_PID,State,Region) %>% unique(.)
 
