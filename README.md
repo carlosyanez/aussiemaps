@@ -1,5 +1,5 @@
-aussiemaps
-================
+
+# aussiemaps <img src="hex/hexSticker.png" width = "175" height = "200" align="right" />
 
 **aussiemaps** provides Australian LGA, suburbs and Postal Area maps
 directly in R, without any need to download and process shapefiles.
