@@ -16,7 +16,7 @@ librarian::shelf("tidyverse",
 aussie_map <- ozmap_data("states")
 
 p <- ggplot() +
-    geom_sf(data=aussie_map,aes(geometry=geometry,fill=NAME)) +
+    geom_sf(data=aussie_map,aes(geometry=geometry,fill=NAME),colour=NA,size=0) +
     custom_map_theme(legend_pos = "none") +
     scale_fill_manual(values=c(rep("#D22631",3),rep("#000000",3),rep("#FFC72C",3)))
 
