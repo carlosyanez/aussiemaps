@@ -24,6 +24,6 @@ height <- 1.6
 
 s <- sticker(p, package="aussiemaps", p_size=6, s_x=1, s_y=.75, s_width=1.3*height, s_height=height,
              h_color="#FFCD00", h_fill="#00843D",
-             filename=here("docs","img","hexSticker.png"))
+             filename=here("img","hexSticker.png"))
 
 

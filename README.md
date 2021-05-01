@@ -1,7 +1,7 @@
 aussiemaps
 ================
 
-<img src="https://carlosyanez.github.io/aussiemaps/docs/img/hexSticker.png" width = "175" height = "200" align="right" />
+<img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/hexSticker.png" width = "175" height = "200" align="right" />
 
 **aussiemaps** provides Australian LGA, suburbs and Postal Area maps
 directly in R, without any need to download and process shapefiles.
@@ -65,7 +65,7 @@ p <- ggplot() +
        caption="Sources:data.gov.au, ABS")
 ```
 
-![](https://carlosyanez.github.io/aussiemaps/docs/img/map1.png)
+![](https://github.com/carlosyanez/aussiemaps/raw/master/img/map1.png)
 
 The package also contains a number of pre-defined “regions”. These are
 either official (e.g. Grampians Region) or *unofficial* (e.g. Limestone
@@ -108,7 +108,7 @@ p<- ggplot() +
        caption="Sources:data.gov.au (map), openstreetmap (rivers)")
 ```
 
-![](https://carlosyanez.github.io/aussiemaps/docs/img/map2.png)
+![](https://github.com/carlosyanez/aussiemaps/raw/master/img/map2.png)
 
 Since the loaded objects are sf objects, they can be easily merge with
 data frames or tibbles to add additional data for visualisation.
@@ -141,7 +141,7 @@ p<- Melbourne %>% ggplot() +
          caption="Sources:data.gov.au (map), Github (data)") 
 ```
 
-![](https://carlosyanez.github.io/aussiemaps/docs/img/map3.png)
+![](https://github.com/carlosyanez/aussiemaps/raw/master/img/map3.png)
 
 ## Not for you?
 
