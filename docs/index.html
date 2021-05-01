@@ -59,10 +59,10 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="aussiemaps-" class="section level1">
+<div id="aussiemaps" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#aussiemaps-" class="anchor"></a>aussiemaps <img src="hex/hexSticker.png" width="175" height="200" align="right">
-</h1></div>
+<a href="#aussiemaps" class="anchor"></a>aussiemaps</h1></div>
+<p><img src="https://carlosyanez.github.io/aussiemaps/docs/img/hexSticker.png" width="175" height="200" align="right"></p>
 <p><strong>aussiemaps</strong> provides Australian LGA, suburbs and Postal Area maps directly in R, without any need to download and process shapefiles.</p>
 <p>The data for the package has been created using the scripts provided <a href="https://github.com/carlosyanez/Australian_Polygons">here</a>. The sf objects in this contain (Suburb,LGA, Postal Area) intersection polygons, which allow to select, filter and re-construct any of those geographic units.</p>
 <div id="installation-and-pre-requisites" class="section level2">
@@ -103,7 +103,7 @@
   <span class="fu">custom_map_theme</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Arbitrary selection of South Yarra and Postal Area 3004"</span>, 
        caption<span class="op">=</span><span class="st">"Sources:data.gov.au, ABS"</span><span class="op">)</span></code></pre></div>
-<p><img src="map1.png"></p>
+<p><img src="https://carlosyanez.github.io/aussiemaps/docs/img/map1.png"></p>
 <p>The package also contains a number of pre-defined “regions”. These are either official (e.g. Grampians Region) or <em>unofficial</em> (e.g. Limestone coast) divisions. These regions can also cross state lines (e.g. Gold Coast - Tweed Heads). To find out the existing regions, run <em>list_regions()</em>. With the region name, <em>get_region()</em> will produce the corresponding filter tibble.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#get regions</span>
@@ -137,7 +137,7 @@
   <span class="fu">scale_fill_ochre</span><span class="op">(</span><span class="op">)</span>  <span class="op">+</span> 
   <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Rivers and Canals in The Riverina"</span>, 
        caption<span class="op">=</span><span class="st">"Sources:data.gov.au (map), openstreetmap (rivers)"</span><span class="op">)</span></code></pre></div>
-<p><img src="map2.png"></p>
+<p><img src="https://carlosyanez.github.io/aussiemaps/docs/img/map2.png"></p>
 <p>Since the loaded objects are sf objects, they can be easily merge with data frames or tibbles to add additional data for visualisation.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load dataset from github</span>
@@ -165,7 +165,7 @@
                          labels<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span>, big.mark <span class="op">=</span> <span class="st">","</span>, scientific <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Median House Price in Melbourne's Housing Kaggle Dataset"</span>, 
          caption<span class="op">=</span><span class="st">"Sources:data.gov.au (map), Github (data)"</span><span class="op">)</span> </code></pre></div>
-<p><img src="map3.png"></p>
+<p><img src="https://carlosyanez.github.io/aussiemaps/docs/img/map3.png"></p>
 </div>
 <div id="not-for-you" class="section level2">
 <h2 class="hasAnchor">
