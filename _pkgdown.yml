@@ -1,0 +1,18 @@
+template:
+  params:
+    bootswatch: cyborg
+    ganalytics: G-G75W4FBYH8
+navbar:
+  structure:
+    left:  [home, reference]
+    right: [github]
+repo:
+  url:
+    home: https://github.com/carlosyanez/aussiemaps/
+    source: https://github.com/carlosyanez/aussiemaps/blob/master/
+    issue: https://github.com/carlosyanez/aussiemaps/issues/
+    user: https://github.com/carlosyanez/
+authors:
+  Carlos Yanez Santibanez:
+    href: http://www.carlosyanez.cl
+url: https://carlosyanez.github.io/carlosyanez

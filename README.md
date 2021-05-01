@@ -8,9 +8,8 @@ directly in R, without any need to download and process shapefiles.
 
 The data for the package has been created using the scripts provided
 [here](https://github.com/carlosyanez/Australian_Polygons). The sf
-objects in this contain (Suburb,LGA, Postal Area) intersection polygons,
-which allow to select, filter and re-construct any of those geographic
-units.
+objects contain (Suburb,LGA, Postal Area) intersection polygons, which
+allow to select, filter and re-construct any of those geographic units.
 
 ## Installation and pre-requisites
 

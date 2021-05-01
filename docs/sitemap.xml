@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/index.html</loc>
+  </url>
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/clean_polygons.html</loc>
+  </url>
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/get_region.html</loc>
+  </url>
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/list_agreggations.html</loc>
+  </url>
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/list_regions.html</loc>
+  </url>
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/load_map.html</loc>
+  </url>
+  <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/locations.table.html</loc>
+  </url>
+</urlset>

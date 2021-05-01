@@ -21,7 +21,7 @@ librarian::shelf("tidyverse","sf","carlosyanez/aussiemaps","carlosyanez/customth
 
 **aussiemaps** provides Australian LGA, suburbs and Postal Area maps directly in R, without any need to download and process shapefiles. 
 
-The data for the package has been created using the scripts provided [here](https://github.com/carlosyanez/Australian_Polygons). The sf objects in this contain (Suburb,LGA, Postal Area) intersection polygons, which allow to select, filter and re-construct any of those geographic units.
+The data for the package has been created using the scripts provided [here](https://github.com/carlosyanez/Australian_Polygons). The sf objects contain (Suburb,LGA, Postal Area) intersection polygons, which allow to select, filter and re-construct any of those geographic units.
 
 ## Installation and pre-requisites
 
