@@ -9,7 +9,6 @@ librarian::shelf("tidyverse",
                  "carlosyanez/customthemes",
                  "ozmaps",                   # aussiemaps is very heavy, using ozmaps for logo! (thanks ozmaps!)
                  "sf",
-                 "png",
                  "magick",                   #for twitter card
                  "dmi3kno/bunny"             #helper for magick
 
@@ -40,7 +39,7 @@ img_hex_gh <- image_read(here("img","hexSticker.png")) %>%
 gh_logo <- image_read(here("hex","gh.png")) %>%
   image_scale("50x50")
 
-bg_colour <-"#a86030"
+bg_colour <-"#00843D"
 
 gh <- image_canvas_ghcard(bg_colour) %>%
   image_compose(img_hex_gh, gravity = "East", offset = "+100+0") %>%
