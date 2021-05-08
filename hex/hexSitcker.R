@@ -36,7 +36,8 @@ s <- sticker(p, package="aussiemaps", p_size=6, s_x=1, s_y=.75, s_width=1.3*heig
 img_hex_gh <- image_read(here("img","hexSticker.png")) %>%
   image_scale("400x400")
 
-gh_logo <- bunny::github %>%
+# https://www.pngfind.com/download/hobbwx_github-clipart-github-logo-github-hd-png-download/
+gh_logo <- image_read(here("hex","gh.png")) %>%
   image_scale("50x50")
 
 bg_colour <-"#a86030"
