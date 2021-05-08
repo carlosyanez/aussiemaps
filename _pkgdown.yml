@@ -2,6 +2,14 @@ template:
   params:
     bootswatch: cyborg
     ganalytics: G-G75W4FBYH8
+  opengraph:
+    image:
+      src: img/bbox_ghcard.png
+      alt: "aussiemaps: Another Australian maps package."
+    twitter:
+      creator: "@carlosyanez"
+      card: summary_large_image
+
 navbar:
   structure:
     left:  [home, reference]
@@ -16,3 +24,7 @@ authors:
   Carlos Yanez Santibanez:
     href: http://www.carlosyanez.cl
 url: https://carlosyanez.github.io/carlosyanez
+home:
+  title: aussiemaps
+  description: Another Australian maps package.
+
