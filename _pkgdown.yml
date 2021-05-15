@@ -1,6 +1,6 @@
 template:
   params:
-    bootswatch: cyborg
+    bootswatch: sandstone
     ganalytics: G-G75W4FBYH8
   opengraph:
     image:
@@ -18,7 +18,7 @@ repo:
   url:
     home: https://github.com/carlosyanez/aussiemaps/
     source: https://github.com/carlosyanez/aussiemaps/blob/master/
-    issue: https://github.com/carlosyanez/aussiemaps/issues/
+    issues: https://github.com/carlosyanez/aussiemaps/issues/
     user: https://github.com/carlosyanez/
 authors:
   Carlos Yanez Santibanez:
