@@ -24,10 +24,13 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
      States  <- filter_table %>% select(State) %>%
                 left_join(state.names,by="State") %>%
                 mutate(State_new=if_else(!is.na(State_short),State_short,State)) %>%
-                pull(State_new) %>% unique(.)
+                distinct(State_new)
 
-      data <- map_df(States,function(x){
-      datai<- loadRData(system.file("extdata", str_c(tolower(x),"_lga_loc_poa.rda"), package = "aussiemaps"))
+      data <- tibble()
+
+      for(i in 1:nrow(States)){
+
+      datai<- loadRData(system.file("extdata", str_c(tolower(States[i,]$State_new),"_lga_loc_poa.rda"), package = "aussiemaps"))
 
       data_cols <- colnames(as.data.frame(datai) %>% select(-State,-geometry))
       cols_filter <- colnames(filter_table %>% select(any_of(data_cols)))
@@ -35,11 +38,14 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
 
       if(length(cols_filter)>0){
         datai <- suppressMessages(suppressWarnings(datai %>% inner_join(filter_table %>% select(-State), by=cols_filter)))
+
       }
-
-      datai
-
-    })
+      if(nrow(data)==0){
+        data <-datai
+      }else{
+        data <- bind_rows(data,datai)
+      }
+    }
 
     if(!(aggregation[1]=="none")){
 

@@ -45,7 +45,7 @@ Filter tibbles can be created any combination of attributes available on **list_
 
 Aggregations are optional, if not added, will retrieve the granular polygons directly.
 
-The below plot shows and example on how to retrieve different sf objects, with different aggregations (postal area 3004 covers parts of two different suburs. South Yarra is shared across two LGAs).  
+The below plot shows and example on how to retrieve different sf objects, with different aggregations (postal area 3004 covers parts of two different suburbs. South Yarra is shared across two LGAs).  
 
 
 ```{r arbitrarymap, eval=FALSE, include=TRUE}
@@ -63,7 +63,7 @@ melb_inner2 <- tibble(LOCALITY=c("South Yarra"),State=c("VIC")) %>%
 melb_inner3 <- tibble(POA_CODE16=c("3004"),State=c("VIC")) %>% 
                      load_map()
 
-p <- ggplot() + 
+p1 <- ggplot() + 
   geom_sf(data=melb_inner1,colour="white",size=1.2,fill="grey") +
   geom_sf(data=melb_inner2,aes(fill=LOCALITY),alpha=0.8,colour="white",size=0.8) +
   geom_sf(data=melb_inner3,aes(fill=POA_CODE16),alpha=0.8,colour="white",size=0.8) +
@@ -78,7 +78,7 @@ p <- ggplot() +
 ```
 
 ```{r eval=FALSE, include=FALSE}
-ggsave(here("img","map1.png"),p)
+ggsave(here("img","map1.png"),p1)
 ```
 
 
@@ -115,7 +115,7 @@ rivers <- rbind(rivers$osm_lines %>% select(osm_id,name),
 
 #plot
 
-p<- ggplot() + 
+p2<- ggplot() + 
   geom_sf(data=riverina, aes(fill=LGA), colour="white", size=0.5) +
   geom_sf(data=rivers,colour="blue",size=1.1)+
   custom_map_theme()+
@@ -129,7 +129,7 @@ p<- ggplot() +
 ```
 
 ```{r eval=FALSE, include=FALSE}
-ggsave(here("img","map2.png"),p)
+ggsave(here("img","map2.png"),p2)
 ```
 
 
@@ -156,7 +156,7 @@ Melbourne <- get_region("Greater Metropolitan Melbourne") %>%
              filter(Metro.Region %in% c("Inner Melbourne","Metropolitan Melbourne"))
 
 #plot
-p<- Melbourne %>% ggplot() + 
+p3<- Melbourne %>% ggplot() + 
   geom_sf(aes(fill=medianprice), colour="white", size=0.5) +
    custom_map_theme()+
     theme(legend.position = "right",
@@ -169,7 +169,7 @@ p<- Melbourne %>% ggplot() +
 ```
 
 ```{r eval=FALSE, include=FALSE}
-ggsave(here("img","map3.png"),p)
+ggsave(here("img","map3.png"),p3)
 ```
 
 
