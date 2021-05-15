@@ -29,8 +29,8 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
       data <- tibble()
 
       for(i in 1:nrow(States)){
-
-      datai<- loadRData(system.file("extdata", str_c(tolower(States[i,]$State_new),"_lga_loc_poa.rda"), package = "aussiemaps"))
+      state <- States[i,1]
+      datai<- loadRData(system.file("extdata", str_c(tolower(state),"_lga_loc_poa.rda"), package = "aussiemaps"))
 
       data_cols <- colnames(as.data.frame(datai) %>% select(-State,-geometry))
       cols_filter <- colnames(filter_table %>% select(any_of(data_cols)))
