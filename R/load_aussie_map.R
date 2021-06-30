@@ -6,18 +6,12 @@
 #' @import sf
 #' @import tibble
 #' @import lwgeom
+#' @import aussiemaps.data
 #' @param filter_table table to filter (you can start with location_table)
 #' @param aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  clean_tolerance clean up tolerance
 #' @export load_map
 load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
-
-  ###auxiliary function
-  loadRData <- function(fileName){
-    #loads an RData file, and returns it
-    load(fileName)
-    get(ls()[ls() != "fileName"])
-  }
 
      #state.names <- loadRData(system.file("extdata", "state.rda", package = "aussiemaps"))
 
@@ -28,9 +22,9 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
 
       data <- tibble()
 
-      for(i in 1:nrow(States)){
+    for(i in 1:nrow(States)){
       state <- States[i,1]
-      datai<- loadRData(system.file("extdata", str_c(tolower(state),"_lga_loc_poa.rda"), package = "aussiemaps"))
+      datai<- aussiemaps.data::loadsfdata(state)
 
       data_cols <- colnames(as.data.frame(datai) %>% select(-State,-geometry))
       cols_filter <- colnames(filter_table %>% select(any_of(data_cols)))
