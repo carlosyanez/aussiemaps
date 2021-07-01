@@ -1,3 +1,19 @@
+#' @import devtools
+
+.onLoad <- function(libname, pkgname){
+  if (! "aussiemaps.data" %in% utils::installed.packages()) {
+    message("installing aussiemaps.data package")
+    devtools::install_github("carlosyanez/aussiemaps.data")
+
+  }
+  else {
+    require(aussiemaps.data)
+    aussiemaps.data.ver <- packageVersion("aussiemaps.data")
+    message("Using aussiemaps.data version ",aussiemaps.data.ver)
+  }
+}
+
+
 #' Load granular data
 #' @return no output
 #' @import dplyr
@@ -16,7 +32,7 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
      #state.names <- loadRData(system.file("extdata", "state.rda", package = "aussiemaps"))
 
      States  <- filter_table %>% select(State) %>%
-                left_join(state.names,by="State") %>%
+                left_join(aussiemaps.data::state.names,by="State") %>%
                 mutate(State_new=if_else(!is.na(State_short),State_short,State)) %>%
                 distinct(State_new)
 
@@ -42,12 +58,11 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
     }
 
     if(!(aggregation[1]=="none")){
-
+      sf::sf_use_s2(FALSE)
       data <- suppressMessages(suppressWarnings(data %>%
-        group_by_at(aggregation) %>%
+        group_by(across(starts_with(aggregation))) %>%
         summarise(.groups = "drop") %>%
         clean_polygons(clean_tolerance)))
-
 
     }
 
@@ -55,41 +70,3 @@ return(data)
 
 }
 
-#' Get list of all aggregation options
-#' @return no output
-#' @import dplyr
-#' @export list_agreggations
-list_agreggations <- function(){
-
-    colnames(locations.table)
-
-}
-
-#' Clean up aggregated polygons
-#' @return sf object
-#' @import dplyr
-#' @import sf
-#' @import lwgeom
-#' @param  sfobject sf object
-#' @param  tol_value clean up tolerance
-#' @export clean_polygons
-clean_polygons <- function(sfobject,tol_value=0.05){
-
-  col_names <- colnames(as.data.frame(sfobject) %>% select(-geometry))
-
-  result <- suppressMessages(suppressWarnings(sfobject  %>%
-    st_cast("MULTILINESTRING") %>%
-    st_cast("LINESTRING") %>%
-    st_collection_extract("LINESTRING") %>%
-    st_polygonize() %>%
-    st_collection_extract("POLYGON") %>%
-    mutate(area=st_area(.)) %>%
-    group_by_at(col_names) %>%
-    mutate(tolerance=max(area)*tol_value) %>%
-    filter(area>tolerance) %>%
-    summarise(.groups = "drop") %>%
-    st_collection_extract("POLYGON")))
-
-   return(result)
-
-}

@@ -5,17 +5,20 @@ Authors@R:
     person(given = "Carlos",
            family = "Yanez Santibanez",
            role = c("aut", "cre"),
-           email = "carlos@carlosyanez.cl")
+           email = "carlos.yanez.s@gmail.com")
 Description: Granular map of Australian Localities/Suburbs, LGAs and Postal Areas.
 License: CC0-BY
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+StagedInstall: FALSE
 Imports: 
           dplyr,
           sf,
           tibble,
           purrr,
           stringr,
-          lwgeom
+          lwgeom,
+          devtools,
+          utils
