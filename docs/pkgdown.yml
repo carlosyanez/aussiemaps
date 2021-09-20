@@ -1,8 +1,9 @@
 pandoc: 2.11.4
 pkgdown: 1.6.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2021-05-15T17:38Z
+articles:
+  aussiemaps: aussiemaps.html
+last_built: 2021-09-20T07:52Z
 urls:
   reference: https://carlosyanez.github.io/carlosyanez/reference
   article: https://carlosyanez.github.io/carlosyanez/articles

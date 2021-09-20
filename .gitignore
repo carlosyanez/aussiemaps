@@ -11,3 +11,6 @@ hex/gh.png
 .Rhistory
 .DS_Store
 .DS_Store
+inst/doc
+/doc/
+/Meta/

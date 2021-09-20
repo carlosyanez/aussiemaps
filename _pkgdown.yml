@@ -17,7 +17,6 @@ navbar:
 repo:
   url:
     home: https://github.com/carlosyanez/aussiemaps/
-    source: https://github.com/carlosyanez/aussiemaps/blob/master/
     issues: https://github.com/carlosyanez/aussiemaps/issues/
     user: https://github.com/carlosyanez/
 authors:
@@ -27,4 +26,8 @@ url: https://carlosyanez.github.io/carlosyanez
 home:
   title: aussiemaps
   description: Another Australian maps package.
-
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to use aussiemaps}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}

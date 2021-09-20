@@ -1,6 +1,6 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.0.1.1000
+Version: 0.0.1.2000
 Authors@R: 
     person(given = "Carlos",
            family = "Yanez Santibanez",
@@ -22,3 +22,7 @@ Imports:
           lwgeom,
           devtools,
           utils
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
