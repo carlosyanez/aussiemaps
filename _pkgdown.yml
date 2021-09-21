@@ -12,7 +12,7 @@ template:
 
 navbar:
   structure:
-    left:  [home, reference]
+    left:  [home, reference,articles]
     right: [github]
 repo:
   url:

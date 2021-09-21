@@ -89,10 +89,23 @@
 <div id="installation-and-pre-requisites" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation-and-pre-requisites" class="anchor"></a>Installation and pre-requisites</h2>
-<p>First install required packages</p>
-<p><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("tidyverse","sf","lwgeom","devtools")</a></code></p>
-<p>then, install this package from github</p>
-<p><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github("carlosyanez/aussiemaps")</a></code></p>
+<p>First install required packages,then, install this package from github</p>
+<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("tidyverse","sf","lwgeom","devtools")
+devtools::install_github("carlosyanez/aussiemaps")</a></code></pre>
+<p>Alternatively, install from r-universe</p>
+<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("tidyverse","sf","lwgeom","devtools")
+
+# Enable this universe
+options(repos = c(
+    carlosyanez = 'https://carlosyanez.r-universe.dev',
+    CRAN = 'https://cloud.r-project.org'))
+
+# Install some packages
+install.packages('aussiemaps')
+</a></code></pre>
+<p>This package does not contain the <a href="https://github.com/carlosyanez/aussiemaps.data">data files</a>, which will be downloaded the first time you call the library. Alternatively, you can download them directly:</p>
+<pre><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github("carlosyanez/aussiemaps.data")
+</a></code></pre>
 </div>
 <div id="not-for-you" class="section level2">
 <h2 class="hasAnchor">

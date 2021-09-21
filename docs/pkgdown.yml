@@ -3,7 +3,7 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   aussiemaps: aussiemaps.html
-last_built: 2021-09-20T07:52Z
+last_built: 2021-09-21T08:01Z
 urls:
   reference: https://carlosyanez.github.io/carlosyanez/reference
   article: https://carlosyanez.github.io/carlosyanez/articles

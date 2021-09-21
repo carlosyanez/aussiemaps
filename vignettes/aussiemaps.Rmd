@@ -15,10 +15,14 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE, include = FALSE)
 #load packages
 
 if(!require(librarian)) install.packages("librarian")
-librarian::shelf("tidyverse","sf","carlosyanez/aussiemaps","carlosyanez/customthemes","
+librarian::shelf("tidyverse",
+                 "sf",
+                 "carlosyanez/aussiemaps",
+                 "carlosyanez/customthemes","
                  osmdata","paletteer","openscilabs/ochRe","devtools","here")
 ```
 

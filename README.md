@@ -13,13 +13,34 @@ allow to select, filter and re-construct any of those geographic units.
 
 ## Installation and pre-requisites
 
-First install required packages
+First install required packages,then, install this package from github
 
-`install.packages("tidyverse","sf","lwgeom","devtools")`
+```
+install.packages("tidyverse","sf","lwgeom","devtools")
+devtools::install_github("carlosyanez/aussiemaps")
+```
+Alternatively, install from r-universe
 
-then, install this package from github
+```
+install.packages("tidyverse","sf","lwgeom","devtools")
 
-`devtools::install_github("carlosyanez/aussiemaps")`
+# Enable this universe
+options(repos = c(
+    carlosyanez = 'https://carlosyanez.r-universe.dev',
+    CRAN = 'https://cloud.r-project.org'))
+
+# Install some packages
+install.packages('aussiemaps')
+
+```
+
+This package does not contain the [data files](https://github.com/carlosyanez/aussiemaps.data), which will be downloaded the first time you call the library. Alternatively, you can download them directly:
+
+```
+devtools::install_github("carlosyanez/aussiemaps.data")
+
+```
+
 
 ## Not for you?
 
