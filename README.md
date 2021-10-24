@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![check-release](https://github.com/carlosyanez/aussiemaps/workflows/check-release/badge.svg)](https://github.com/carlosyanez/aussiemaps/actions)
+<!-- badges: end -->
+
 aussiemaps
 ================
 
