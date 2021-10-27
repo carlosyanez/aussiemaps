@@ -22,7 +22,7 @@ Imports:
           stringr,
           lwgeom,
           devtools,
-          utils.
+          utils,
           aussiemaps.data
 Remotes:
           carlosyanez/aussiemaps.data
