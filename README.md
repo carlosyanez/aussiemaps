@@ -1,3 +1,8 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/carlosyanez/aussiemaps/workflows/R-CMD-check/badge.svg)](https://github.com/carlosyanez/aussiemaps/actions)
+[![lint](https://github.com/carlosyanez/aussiemaps/workflows/lint/badge.svg)](https://github.com/carlosyanez/aussiemaps/actions)
+<!-- badges: end -->
+
 aussiemaps
 ================
 
