@@ -24,7 +24,7 @@ librarian::shelf("tidyverse",
                  "sf",
                  "carlosyanez/aussiemaps",
                  "carlosyanez/customthemes","
-                 osmdata","paletteer","openscilabs/ochRe","devtools","here")
+                 osmdata","paletteer","ropenscilabs/ochRe","devtools","here")
 ```
 
 ## How to use
