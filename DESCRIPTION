@@ -16,12 +16,15 @@ StagedInstall: FALSE
 Imports: 
           dplyr,
           sf,
+          sp,
           tibble,
           purrr,
           stringr,
           lwgeom,
           devtools,
           utils
+Remotes:
+          carlosyanez/aussiemaps.data
 Suggests: 
     rmarkdown,
     knitr
