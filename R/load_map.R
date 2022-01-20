@@ -1,25 +1,10 @@
-#' @import devtools
-
-.onLoad <- function(libname, pkgname){
-  if (! "aussiemaps.data" %in% utils::installed.packages()) {
-    message("installing aussiemaps.data package")
-    devtools::install_github("carlosyanez/aussiemaps.data")
-
-  }
-  else {
-    require(aussiemaps.data)
-    aussiemaps.data.ver <- packageVersion("aussiemaps.data")
-    message("Using aussiemaps.data version ",aussiemaps.data.ver)
-  }
-}
-
-
-#' Load granular data
+#' Load sf polygons from selected locations
 #' @return no output
 #' @import dplyr
 #' @import purrr
 #' @import stringr
 #' @import sf
+#' @import methods
 #' @import tibble
 #' @import lwgeom
 #' @import rmapshaper
@@ -27,11 +12,14 @@
 #' @param filter_table table to filter (you can start with location_table)
 #' @param aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  clean_tolerance clean up tolerance
-#' @param  simplify       whether to simplify (True, default) or not (False) polygon
-#' @export load_map
+#' @param  simplify   whether to simplify polygons - TRUE (default) or FALSE
 load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05,simplify=TRUE){
 
-     #state.names <- loadRData(system.file("extdata", "state.rda", package = "aussiemaps"))
+    #locally bind variables for RMD-check compatibility
+    State       <- NULL
+    State_short <- NULL
+    State_new   <- NULL
+    geometry    <- NULL
 
     States  <- filter_table %>% select(State) %>%
                 left_join(aussiemaps.data::state.names,by="State") %>%
@@ -74,7 +62,7 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05,si
 
     #simplify
     if(simplify){
-      data <- rmapshaper::ms_simplify(input = as(data, 'Spatial')) %>%
+      data <- rmapshaper::ms_simplify(input = methods::as(data, 'Spatial')) %>%
               sf::st_as_sf()
     }
 

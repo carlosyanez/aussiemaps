@@ -7,6 +7,12 @@
 #' @param  tol_value clean up tolerance
 #' @export clean_polygons
 clean_polygons <- function(sfobject,tol_value=0.05){
+  #locally bind variables for RMD-check compatibility
+  geometry  <- NULL
+  .         <- NULL
+  area      <- NULL
+  col_names <- NULL
+  tolerance <- NULL
 
   col_names <- colnames(as.data.frame(sfobject) %>% select(-geometry))
 

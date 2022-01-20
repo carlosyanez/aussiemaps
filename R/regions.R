@@ -5,6 +5,11 @@
 #' @import aussiemaps.data
 #' @export list_regions
 list_regions <- function(){
+
+          # locally bind variables for RMD-check compatibility
+          .      <- NULL
+          Region <- NULL
+
           regions <- aussiemaps.data::loadregions()
 
           regions %>% arrange(Region) %>% pull(.) %>% unique(.)
@@ -20,9 +25,15 @@ list_regions <- function(){
 #' @export get_region
 get_region  <- function(region_name){
 
-              regions <- aussiemaps.data::loadregions()
+  # locally bind variables for RMD-check compatibility
+  .       <- NULL
+  Region  <- NULL
+  LGA_PID <- NULL
+  State   <- NULL
 
-              regions %>% filter(Region %in% region_name) %>% select(LGA_PID,State,Region) %>% unique(.)
+  regions <- aussiemaps.data::loadregions()
+
+  regions %>% filter(Region %in% region_name) %>% select(LGA_PID,State,Region) %>% unique(.)
 
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_map.R
 \name{load_map}
 \alias{load_map}
-\title{Load granular data}
+\title{Load sf polygons from selected locations}
 \usage{
 load_map(
   filter_table,
@@ -18,11 +18,11 @@ load_map(
 
 \item{clean_tolerance}{clean up tolerance}
 
-\item{simplify}{whether to simplify (True, default) or not (False) polygon}
+\item{simplify}{whether to simplify polygons - TRUE (default) or FALSE}
 }
 \value{
 no output
 }
 \description{
-Load granular data
+Load sf polygons from selected locations
 }

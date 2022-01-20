@@ -19,12 +19,15 @@ knitr::opts_chunk$set(eval = FALSE, include = FALSE)
 options(repos="https://cran.rstudio.com" )
 #load packages
 
-if(!require(librarian)) install.packages("librarian")
-librarian::shelf("tidyverse",
-                 "sf",
-                 "carlosyanez/aussiemaps",
-                 "carlosyanez/customthemes","
-                 osmdata","paletteer","ropenscilabs/ochRe","devtools","here")
+library("tidyverse")
+library("sf")
+library("aussiemaps")
+library("customthemes")
+library("osmdata")
+library("paletteer")
+library("ochRe")
+library("devtools")
+library("here")
 ```
 
 ## How to use

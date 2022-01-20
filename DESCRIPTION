@@ -23,7 +23,9 @@ Imports:
           lwgeom,
           devtools,
           utils,
-          rmapshaper
+          rmapshaper,
+          methods,
+          aussiemaps.data
 Remotes:
           carlosyanez/aussiemaps.data
 Suggests: 
