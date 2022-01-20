@@ -46,7 +46,7 @@ melb_inner1 <-  load_map(melb_inner1_filter,aggregation = "LGA")
 
 melb_inner1.centroid <- st_centroid(melb_inner1)
 
-#works wiht pipes too
+#works with pipes too
 melb_inner2 <- tibble(LOCALITY=c("South Yarra"),State=c("VIC")) %>% 
                      load_map()
 

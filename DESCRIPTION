@@ -1,6 +1,6 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.0.1.2000
+Version: 0.0.2.0000
 Authors@R: 
     person(given = "Carlos",
            family = "Yanez Santibanez",
@@ -11,7 +11,7 @@ License: CC0-BY
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 StagedInstall: FALSE
 Imports: 
           dplyr,
@@ -22,7 +22,8 @@ Imports:
           stringr,
           lwgeom,
           devtools,
-          utils
+          utils,
+          rmapshaper
 Remotes:
           carlosyanez/aussiemaps.data
 Suggests: 

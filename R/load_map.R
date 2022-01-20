@@ -22,22 +22,25 @@
 #' @import sf
 #' @import tibble
 #' @import lwgeom
+#' @import rmapshaper
 #' @import aussiemaps.data
 #' @param filter_table table to filter (you can start with location_table)
 #' @param aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  clean_tolerance clean up tolerance
+#' @param  simplify       whether to simplify (True, default) or not (False) polygon
 #' @export load_map
-load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
+load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05,simplify=TRUE){
 
      #state.names <- loadRData(system.file("extdata", "state.rda", package = "aussiemaps"))
 
-     States  <- filter_table %>% select(State) %>%
+    States  <- filter_table %>% select(State) %>%
                 left_join(aussiemaps.data::state.names,by="State") %>%
                 mutate(State_new=if_else(!is.na(State_short),State_short,State)) %>%
                 distinct(State_new)
 
-      data <- tibble()
+    data <- tibble()
 
+    #get shapes from each state/territory into data
     for(i in 1:nrow(States)){
       state <- States[i,1]
       datai<- aussiemaps.data::loadsfdata(state)
@@ -57,6 +60,9 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
       }
     }
 
+    #coerce into c()
+
+    aggregation <- c(aggregation)
     if(!(aggregation[1]=="none")){
       sf::sf_use_s2(FALSE)
       data <- suppressMessages(suppressWarnings(data %>%
@@ -65,6 +71,13 @@ load_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05){
         clean_polygons(clean_tolerance)))
 
     }
+
+    #simplify
+    if(simplify){
+      data <- rmapshaper::ms_simplify(input = as(data, 'Spatial')) %>%
+              sf::st_as_sf()
+    }
+
 
 return(data)
 
