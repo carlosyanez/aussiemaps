@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_map.R
 \name{get_map}
 \alias{get_map}
-\title{Load sf polygons from selected locations}
+\title{Get sf object containing selected map polygons}
 \usage{
 get_map(
   filter_table,
@@ -24,5 +24,5 @@ get_map(
 sf object with selected polygons
 }
 \description{
-Load sf polygons from selected locations
+Get sf object containing selected map polygons
 }

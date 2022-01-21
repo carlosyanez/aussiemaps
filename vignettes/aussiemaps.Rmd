@@ -32,7 +32,7 @@ library("here")
 
 ## How to use
 
-The main function in this package is **load_map()**, which retrieves a selected portion of the map based on a filter "tibble" and an aggregation attribute.
+The main function in this package is **get_map()**, which retrieves a selected portion of the map based on a filter "tibble" and an aggregation attribute.
 
 Filter tibbles can be created any combination of attributes available on **list_aggregations**, as long as *State* is present. Another way to create a filter tibble is to subset **locations.table**, which is included in package.
 
@@ -85,7 +85,7 @@ The package also contains a number of pre-defined "regions". These are either of
 ```{r riversintheriverina, eval=FALSE, include=TRUE}
 
 #get regions
-riverina <- get_region("The Riverina") %>% load_map(aggregation=c("LGA","State","Region"))
+riverina <- get_region("The Riverina") %>% get_map(aggregation=c("LGA","State","Region"))
 
 #draw contour for filtering
 riverina_contour <- riverina %>% 
@@ -145,7 +145,7 @@ melb_price <- melb_housing %>% filter(Type=="h") %>%
 
 #join get sf object and add median prices
 Melbourne <- get_region("Greater Metropolitan Melbourne") %>% 
-             load_map(aggregation=c("LOCALITY","Metro.Region")) %>%
+             get_map(aggregation=c("LOCALITY","Metro.Region")) %>%
              left_join(melb_price,by=c("LOCALITY"="Suburb")) %>%
              filter(Metro.Region %in% c("Inner Melbourne","Metropolitan Melbourne"))
 

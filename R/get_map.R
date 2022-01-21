@@ -1,4 +1,4 @@
-#' Load sf polygons from selected locations
+#' Get sf object containing selected map polygons
 #' @return sf object with selected polygons
 #' @import dplyr
 #' @import purrr
@@ -13,6 +13,7 @@
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  clean_tolerance clean up tolerance
 #' @param  simplify   (logical) whether to simplify polygons - True by default
+#' @export get_map
 get_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05,simplify=TRUE){
 
   #locally bind variables for RMD-check compatibility
