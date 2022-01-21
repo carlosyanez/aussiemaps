@@ -1,6 +1,6 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.0.2.0000
+Version: 0.1.0.0000
 Authors@R: 
     person(given = "Carlos",
            family = "Yanez Santibanez",

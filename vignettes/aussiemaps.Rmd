@@ -45,16 +45,16 @@ The below plot shows and example on how to retrieve different sf objects, with d
 
 melb_inner1_filter<- tibble(LGA=c("Melbourne","Port Phillip","Stonnington"),State=rep("VIC",3)) 
 
-melb_inner1 <-  load_map(melb_inner1_filter,aggregation = "LGA") 
+melb_inner1 <-  get_map(melb_inner1_filter,aggregation = "LGA") 
 
 melb_inner1.centroid <- st_centroid(melb_inner1)
 
 #works with pipes too
 melb_inner2 <- tibble(LOCALITY=c("South Yarra"),State=c("VIC")) %>% 
-                     load_map()
+               get_map()
 
 melb_inner3 <- tibble(POA_CODE16=c("3004"),State=c("VIC")) %>% 
-                     load_map()
+               get_map()
 
 p1 <- ggplot() + 
   geom_sf(data=melb_inner1,colour="white",size=1.2,fill="grey") +
