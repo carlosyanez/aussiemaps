@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE,eval=FALSE}
 knitr::opts_chunk$set(eval = FALSE, include = FALSE)
 options(repos="https://cran.rstudio.com" )
 #load packages
@@ -64,7 +64,6 @@ p1 <- ggplot() +
   custom_map_theme() +
   labs(title="Arbitrary selection of South Yarra and Postal Area 3004", 
        caption="Sources:data.gov.au, ABS")
- 
 
 p1
 ```
@@ -116,8 +115,7 @@ p2<- ggplot() +
        caption="Sources:data.gov.au (map), openstreetmap (rivers)")
 
 
-
-
+p2
 ```
 
 ```{r eval=FALSE, include=FALSE}
@@ -159,6 +157,7 @@ p3<- Melbourne %>% ggplot() +
     labs(title="Median House Price in Melbourne's Housing Kaggle Dataset", 
          caption="Sources:data.gov.au (map), Github (data)") 
 
+p3
 ```
 
 ```{r eval=FALSE, include=FALSE}
