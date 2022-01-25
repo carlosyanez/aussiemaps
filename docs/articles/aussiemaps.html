@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">aussiemaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1.2000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.0000</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@
 
       
 
-      </header><script src="aussiemaps_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><script src="aussiemaps_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>How to use aussiemaps</h1>
@@ -94,7 +94,7 @@
 <div id="how-to-use" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-to-use" class="anchor"></a>How to use</h2>
-<p>The main function in this package is <strong>load_map()</strong>, which retrieves a selected portion of the map based on a filter “tibble” and an aggregation attribute.</p>
+<p>The main function in this package is <strong>get_map()</strong>, which retrieves a selected portion of the map based on a filter “tibble” and an aggregation attribute.</p>
 <p>Filter tibbles can be created any combination of attributes available on <strong>list_aggregations</strong>, as long as <em>State</em> is present. Another way to create a filter tibble is to subset <strong>locations.table</strong>, which is included in package.</p>
 <p>Aggregations are optional, if not added, will retrieve the granular polygons directly.</p>
 <p>The below plot shows and example on how to retrieve different sf objects, with different aggregations (postal area 3004 covers parts of two different suburbs. South Yarra is shared across two LGAs).</p>
@@ -102,16 +102,16 @@
 <code class="sourceCode R">
 <span class="va">melb_inner1_filter</span><span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>LGA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Melbourne"</span>,<span class="st">"Port Phillip"</span>,<span class="st">"Stonnington"</span><span class="op">)</span>,State<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"VIC"</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span> 
 
-<span class="va">melb_inner1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/load_map.html">load_map</a></span><span class="op">(</span><span class="va">melb_inner1_filter</span>,aggregation <span class="op">=</span> <span class="st">"LGA"</span><span class="op">)</span> 
+<span class="va">melb_inner1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span><span class="va">melb_inner1_filter</span>,aggregation <span class="op">=</span> <span class="st">"LGA"</span><span class="op">)</span> 
 
 <span class="va">melb_inner1.centroid</span> <span class="op">&lt;-</span> <span class="fu">st_centroid</span><span class="op">(</span><span class="va">melb_inner1</span><span class="op">)</span>
 
-<span class="co">#works wiht pipes too</span>
+<span class="co">#works with pipes too</span>
 <span class="va">melb_inner2</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>LOCALITY<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"South Yarra"</span><span class="op">)</span>,State<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"VIC"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-                     <span class="fu"><a href="../reference/load_map.html">load_map</a></span><span class="op">(</span><span class="op">)</span>
+               <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">melb_inner3</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>POA_CODE16<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"3004"</span><span class="op">)</span>,State<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"VIC"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-                     <span class="fu"><a href="../reference/load_map.html">load_map</a></span><span class="op">(</span><span class="op">)</span>
+               <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">melb_inner1</span>,colour<span class="op">=</span><span class="st">"white"</span>,size<span class="op">=</span><span class="fl">1.2</span>,fill<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span>
@@ -122,7 +122,9 @@
   <span class="fu">custom_map_theme</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Arbitrary selection of South Yarra and Postal Area 3004"</span>, 
        caption<span class="op">=</span><span class="st">"Sources:data.gov.au, ABS"</span><span class="op">)</span>
- </code></pre></div>
+ 
+
+<span class="va">p1</span></code></pre></div>
 <center>
 <img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/map1.png" heigth="80%" style="width:80.0%">
 </center>
@@ -130,7 +132,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co">#get regions</span>
-<span class="va">riverina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_region.html">get_region</a></span><span class="op">(</span><span class="st">"The Riverina"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/load_map.html">load_map</a></span><span class="op">(</span>aggregation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LGA"</span>,<span class="st">"State"</span>,<span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">riverina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_region.html">get_region</a></span><span class="op">(</span><span class="st">"The Riverina"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>aggregation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LGA"</span>,<span class="st">"State"</span>,<span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co">#draw contour for filtering</span>
 <span class="va">riverina_contour</span> <span class="op">&lt;-</span> <span class="va">riverina</span> <span class="op">%&gt;%</span> 
@@ -177,7 +179,7 @@
 
 <span class="co">#join get sf object and add median prices</span>
 <span class="va">Melbourne</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_region.html">get_region</a></span><span class="op">(</span><span class="st">"Greater Metropolitan Melbourne"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-             <span class="fu"><a href="../reference/load_map.html">load_map</a></span><span class="op">(</span>aggregation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LOCALITY"</span>,<span class="st">"Metro.Region"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+             <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>aggregation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LOCALITY"</span>,<span class="st">"Metro.Region"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
              <span class="fu">left_join</span><span class="op">(</span><span class="va">melb_price</span>,by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LOCALITY"</span><span class="op">=</span><span class="st">"Suburb"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
              <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Metro.Region</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Inner Melbourne"</span>,<span class="st">"Metropolitan Melbourne"</span><span class="op">)</span><span class="op">)</span>
 

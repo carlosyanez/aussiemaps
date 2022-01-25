@@ -63,7 +63,7 @@ get_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05,sim
 
   #simplify
   if(simplify){
-    data <- rmapshaper::ms_simplify(input = methods::as(data, 'Spatial')) %>%
+    data <- rmapshaper::ms_simplify(data) %>%
       sf::st_as_sf()
   }
 

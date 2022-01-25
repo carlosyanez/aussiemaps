@@ -62,7 +62,7 @@ some use cases. There are other great Australian maps packages, such as:
 ## Issues? bugs? Ideas?
 
 If you find something that is not quite right, please post an issue. If
-you have any ideas, or want to collaborate please let me know!
+you have any ideas, or if you want to contribute, [please let me know](https://twitter.com/messages/25712933-3805104374?recipient_id=25712933&text=Hello%20world)!
 
 ## To Do
 

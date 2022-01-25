@@ -22,11 +22,10 @@ options(repos="https://cran.rstudio.com" )
 library("tidyverse")
 library("sf")
 library("aussiemaps")
-library("customthemes")
+library("customthemes") # https://carlosyanez.github.io/customthemes/
 library("osmdata")
 library("paletteer")
 library("ochRe")
-library("devtools")
 library("here")
 ```
 
@@ -67,7 +66,7 @@ p1 <- ggplot() +
        caption="Sources:data.gov.au, ABS")
  
 
-
+p1
 ```
 
 ```{r eval=FALSE, include=FALSE}

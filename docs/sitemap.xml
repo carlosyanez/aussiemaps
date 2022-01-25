@@ -7,6 +7,9 @@
     <loc>https://carlosyanez.github.io/carlosyanez/reference/clean_polygons.html</loc>
   </url>
   <url>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/get_map.html</loc>
+  </url>
+  <url>
     <loc>https://carlosyanez.github.io/carlosyanez/reference/get_region.html</loc>
   </url>
   <url>
@@ -16,10 +19,7 @@
     <loc>https://carlosyanez.github.io/carlosyanez/reference/list_regions.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/load_map.html</loc>
-  </url>
-  <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/locations.table.html</loc>
+    <loc>https://carlosyanez.github.io/carlosyanez/reference/update_maps.html</loc>
   </url>
   <url>
     <loc>https://carlosyanez.github.io/carlosyanez/articles/aussiemaps.html</loc>
