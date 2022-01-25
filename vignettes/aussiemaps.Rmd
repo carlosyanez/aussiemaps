@@ -19,17 +19,19 @@ knitr::opts_chunk$set(eval = FALSE, include = FALSE)
 options(repos="https://cran.rstudio.com" )
 #load packages
 
-if(!require(librarian)) install.packages("librarian")
-librarian::shelf("tidyverse",
-                 "sf",
-                 "carlosyanez/aussiemaps",
-                 "carlosyanez/customthemes","
-                 osmdata","paletteer","ropenscilabs/ochRe","devtools","here")
+library("tidyverse")
+library("sf")
+library("aussiemaps")
+library("customthemes") # https://carlosyanez.github.io/customthemes/
+library("osmdata")
+library("paletteer")
+library("ochRe")
+library("here")
 ```
 
 ## How to use
 
-The main function in this package is **load_map()**, which retrieves a selected portion of the map based on a filter "tibble" and an aggregation attribute.
+The main function in this package is **get_map()**, which retrieves a selected portion of the map based on a filter "tibble" and an aggregation attribute.
 
 Filter tibbles can be created any combination of attributes available on **list_aggregations**, as long as *State* is present. Another way to create a filter tibble is to subset **locations.table**, which is included in package.
 
@@ -42,16 +44,16 @@ The below plot shows and example on how to retrieve different sf objects, with d
 
 melb_inner1_filter<- tibble(LGA=c("Melbourne","Port Phillip","Stonnington"),State=rep("VIC",3)) 
 
-melb_inner1 <-  load_map(melb_inner1_filter,aggregation = "LGA") 
+melb_inner1 <-  get_map(melb_inner1_filter,aggregation = "LGA") 
 
 melb_inner1.centroid <- st_centroid(melb_inner1)
 
-#works wiht pipes too
+#works with pipes too
 melb_inner2 <- tibble(LOCALITY=c("South Yarra"),State=c("VIC")) %>% 
-                     load_map()
+               get_map()
 
 melb_inner3 <- tibble(POA_CODE16=c("3004"),State=c("VIC")) %>% 
-                     load_map()
+               get_map()
 
 p1 <- ggplot() + 
   geom_sf(data=melb_inner1,colour="white",size=1.2,fill="grey") +
@@ -64,7 +66,7 @@ p1 <- ggplot() +
        caption="Sources:data.gov.au, ABS")
  
 
-
+p1
 ```
 
 ```{r eval=FALSE, include=FALSE}
@@ -82,7 +84,7 @@ The package also contains a number of pre-defined "regions". These are either of
 ```{r riversintheriverina, eval=FALSE, include=TRUE}
 
 #get regions
-riverina <- get_region("The Riverina") %>% load_map(aggregation=c("LGA","State","Region"))
+riverina <- get_region("The Riverina") %>% get_map(aggregation=c("LGA","State","Region"))
 
 #draw contour for filtering
 riverina_contour <- riverina %>% 
@@ -142,7 +144,7 @@ melb_price <- melb_housing %>% filter(Type=="h") %>%
 
 #join get sf object and add median prices
 Melbourne <- get_region("Greater Metropolitan Melbourne") %>% 
-             load_map(aggregation=c("LOCALITY","Metro.Region")) %>%
+             get_map(aggregation=c("LOCALITY","Metro.Region")) %>%
              left_join(melb_price,by=c("LOCALITY"="Suburb")) %>%
              filter(Metro.Region %in% c("Inner Melbourne","Metropolitan Melbourne"))
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>List all pre-defined regions — list_regions • aussiemaps</title>
+<title>Get sf object containing selected map polygons — get_map • aussiemaps</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="List all pre-defined regions — list_regions" />
-<meta property="og:description" content="List all pre-defined regions" />
+<meta property="og:title" content="Get sf object containing selected map polygons — get_map" />
+<meta property="og:description" content="Get sf object containing selected map polygons" />
 <meta property="og:image" content="https://carlosyanez.github.io/carlosyanez/img/bbox_ghcard.png" />
 <meta property="og:image:alt" content="aussiemaps: Another Australian maps package." />
 <meta name="twitter:card" content="summary_large_image" />
@@ -126,21 +126,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>List all pre-defined regions</h1>
+    <h1>Get sf object containing selected map polygons</h1>
     
-    <div class="hidden name"><code>list_regions.Rd</code></div>
+    <div class="hidden name"><code>get_map.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>List all pre-defined regions</p>
+    <p>Get sf object containing selected map polygons</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_regions</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_map</span><span class='op'>(</span>
+  <span class='va'>filter_table</span>,
+  aggregation <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span><span class='op'>)</span>,
+  clean_tolerance <span class='op'>=</span> <span class='fl'>0.05</span>,
+  simplify <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>filter_table</th>
+      <td><p>table to filter (you can start with location_table)</p></td>
+    </tr>
+    <tr>
+      <th>aggregation</th>
+      <td><p>name of column to aggregate (POA_CODE16, LOCALITY,LGA)</p></td>
+    </tr>
+    <tr>
+      <th>clean_tolerance</th>
+      <td><p>clean up tolerance</p></td>
+    </tr>
+    <tr>
+      <th>simplify</th>
+      <td><p>(logical) whether to simplify polygons - True by default</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list of all regions</p>
+    <p>sf object with selected polygons</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
