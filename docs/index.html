@@ -30,6 +30,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,28 +44,19 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">aussiemaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.0000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0.0001</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="reference/index.html">Reference</a>
-</li>
-<li>
-  <a href="articles/aussiemaps.html">Get started</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/carlosyanez/aussiemaps/">
+  <a href="https://github.com/carlosyanez/aussiemaps/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -82,60 +75,67 @@
   <div class="contents col-md-9">
 
 
-<div id="aussiemaps" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#aussiemaps" class="anchor"></a>aussiemaps</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="aussiemaps">aussiemaps<a class="anchor" aria-label="anchor" href="#aussiemaps"></a>
+</h1></div>
 <p><img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/hexSticker.png" width="175" height="200" align="right"></p>
-<p><strong>aussiemaps</strong> provides Australian LGA, suburbs and Postal Area maps directly in R, without any need to download and process shapefiles.</p>
-<p>The data for the package has been created using the scripts provided <a href="https://github.com/carlosyanez/Australian_Polygons">here</a>. The sf objects contain (Suburb,LGA, Postal Area) intersection polygons, which allow to select, filter and re-construct any of those geographic units.</p>
-<div id="installation-and-pre-requisites" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation-and-pre-requisites" class="anchor"></a>Installation and pre-requisites</h2>
-<p>First install required packages,then, install this package from github</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("tidyverse","sf","lwgeom","devtools")
-devtools::install_github("carlosyanez/aussiemaps")</a></code></pre>
-<p>Alternatively, install from r-universe</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("tidyverse","sf","lwgeom","devtools")
-
-# Enable this universe
-options(repos = c(
-    carlosyanez = 'https://carlosyanez.r-universe.dev',
-    CRAN = 'https://cloud.r-project.org'))
-
-# Install some packages
-install.packages('aussiemaps')
-</a></code></pre>
-<p>This package does not contain the <a href="https://github.com/carlosyanez/aussiemaps.data">data files</a>, which will be downloaded the first time you call the library. Alternatively, you can download them directly:</p>
-<pre><code><a href="https://devtools.r-lib.org/reference/remote-reexports.html">devtools::install_github("carlosyanez/aussiemaps.data")
-</a></code></pre>
+<div class="section level2">
+<h2 id="acknowledgement-of-country">Acknowledgement of Country<a class="anchor" aria-label="anchor" href="#acknowledgement-of-country"></a>
+</h2>
+<p>The author of this package acknowledges the Traditional Owners of the Lands represented by in this site and R package, recognises their continuing connection to Country and pays his respects to their Elders past, present and emerging.</p>
 </div>
-<div id="not-for-you" class="section level2">
-<h2 class="hasAnchor">
-<a href="#not-for-you" class="anchor"></a>Not for you?</h2>
+<div class="section level2">
+<h2 id="aussiemaps-1">aussiemaps<a class="anchor" aria-label="anchor" href="#aussiemaps-1"></a>
+</h2>
+<p><strong>aussiemaps</strong> provides Australian LGA, suburbs and Postal Area maps directly in R, without any need to download and process shapefiles.</p>
+<p>The data for the package has been created using the scripts provided <a href="https://github.com/carlosyanez/Australian_Polygons" class="external-link">here</a>. The sf objects contain (Suburb,LGA, Postal Area) intersection polygons, which allow to select, filter and re-construct any of those geographic units.</p>
+</div>
+<div class="section level2">
+<h2 id="installation-and-pre-requisites">Installation and pre-requisites<a class="anchor" aria-label="anchor" href="#installation-and-pre-requisites"></a>
+</h2>
+<p>First install required packages,then, install this package from github</p>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>,<span class="st">"sf"</span>,<span class="st">"lwgeom"</span>,<span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"carlosyanez/aussiemaps"</span><span class="op">)</span></span></code></pre>
+<p>Alternatively, install from r-universe</p>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>,<span class="st">"sf"</span>,<span class="st">"lwgeom"</span>,<span class="st">"devtools"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Enable this universe</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    carlosyanez <span class="op">=</span> <span class="st">'https://carlosyanez.r-universe.dev'</span>,</span>
+<span>    CRAN <span class="op">=</span> <span class="st">'https://cloud.r-project.org'</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Install some packages</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'aussiemaps'</span><span class="op">)</span></span></code></pre>
+<p>This package does not contain the <a href="https://github.com/carlosyanez/aussiemaps.data" class="external-link">data files</a>, which will be downloaded the first time you call the library. Alternatively, you can download them directly:</p>
+<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"carlosyanez/aussiemaps.data"</span><span class="op">)</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="not-for-you">Not for you?<a class="anchor" aria-label="anchor" href="#not-for-you"></a>
+</h2>
 <p>The development of this package is still in progress.It also intends to provide granular suburb/postal area maps, so it may not be suitable for some use cases. There are other great Australian maps packages, such as:</p>
 <ul>
 <li>
-<a href="https://mdsumner.github.io/ozmaps/">ozmaps</a>, which has good nation-wide, states and LGA maps, as well as electoral divisions. This package is on CRAN.</li>
+<a href="https://mdsumner.github.io/ozmaps/" class="external-link">ozmaps</a>, which has good nation-wide, states and LGA maps, as well as electoral divisions. This package is on CRAN.</li>
 <li>
-<a href="https://github.com/wfmackey/absmaps">absmaps</a>, which provides maps for all ABS statistical divisions.</li>
+<a href="https://github.com/wfmackey/absmaps" class="external-link">absmaps</a>, which provides maps for all ABS statistical divisions.</li>
 </ul>
 </div>
-<div id="issues-bugs-ideas" class="section level2">
-<h2 class="hasAnchor">
-<a href="#issues-bugs-ideas" class="anchor"></a>Issues? bugs? Ideas?</h2>
-<p>If you find something that is not quite right, please post an issue. If you have any ideas, or if you want to contribute, <a href="https://twitter.com/messages/25712933-3805104374?recipient_id=25712933&amp;text=Hello%20world">please let me know</a>!</p>
+<div class="section level2">
+<h2 id="issues-bugs-ideas">Issues? bugs? Ideas?<a class="anchor" aria-label="anchor" href="#issues-bugs-ideas"></a>
+</h2>
+<p>If you find something that is not quite right, please post an issue. If you have any ideas, or if you want to contribute, <a href="https://twitter.com/messages/25712933-3805104374?recipient_id=25712933&amp;text=Hello%20world" class="external-link">please let me know</a>!</p>
 </div>
-<div id="to-do" class="section level2">
-<h2 class="hasAnchor">
-<a href="#to-do" class="anchor"></a>To Do</h2>
-<p>At the moment, this package only provides maps for <a href="https://en.wikipedia.org/wiki/States_and_territories_of_Australia">internal</a> states and territories.</p>
+<div class="section level2">
+<h2 id="to-do">To Do<a class="anchor" aria-label="anchor" href="#to-do"></a>
+</h2>
+<p>At the moment, this package only provides maps for <a href="https://en.wikipedia.org/wiki/States_and_territories_of_Australia" class="external-link">internal</a> states and territories.</p>
 </div>
-<div id="credits" class="section level2">
-<h2 class="hasAnchor">
-<a href="#credits" class="anchor"></a>Credits</h2>
+<div class="section level2">
+<h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
+</h2>
 <ul>
 <li>LGA and localities maps have been sourced from <a href="htttp:///data.gov.au">data.gov.au</a> and used under CC0-BY licence.</li>
-<li>Postal areas have constructed using definitions and shape files from the <a href="https://www.abs.gov.au/">Australian Bureau of Statistics (ABS)</a>
+<li>Postal areas have constructed using definitions and shape files from the <a href="https://www.abs.gov.au/" class="external-link">Australian Bureau of Statistics (ABS)</a>
 </li>
 </ul>
 </div>
@@ -145,43 +145,55 @@ install.packages('aussiemaps')
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/carlosyanez/aussiemaps/">https://​github.com/​carlosyanez/​aussiemaps/​</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>
-<a href="http://www.carlosyanez.cl">Carlos Yanez Santibanez</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="https://github.com/carlosyanez/aussiemaps/" class="external-link">Browse source code</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/carlosyanez/aussiemaps/actions"><img src="https://github.com/carlosyanez/aussiemaps/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://github.com/carlosyanez/aussiemaps/actions"><img src="https://github.com/carlosyanez/aussiemaps/workflows/lint/badge.svg" alt="lint"></a></li>
+<li><a href="https://creativecommons.org/licenses/by-sa/4.0" class="external-link">CC BY-SA 4.0</a></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing aussiemaps</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>
+<a href="http://www.carlosyanez.cl" class="external-link">Carlos Yanez Santibanez</a> <br><small class="roles"> Author, maintainer </small>  </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/carlosyanez/aussiemaps/actions" class="external-link"><img src="https://github.com/carlosyanez/aussiemaps/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/carlosyanez/aussiemaps/actions" class="external-link"><img src="https://github.com/carlosyanez/aussiemaps/workflows/lint/badge.svg" alt="lint"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://www.carlosyanez.cl">Carlos Yanez Santibanez</a>.</p>
+  <p></p>
+<p>Developed by <a href="http://www.carlosyanez.cl" class="external-link">Carlos Yanez Santibanez</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -189,6 +201,8 @@ install.packages('aussiemaps')
 
   
 
+
+  
 
   </body>
 </html>

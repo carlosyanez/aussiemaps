@@ -6,7 +6,14 @@
 aussiemaps
 ================
 
+
 <img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/hexSticker.png" width = "175" height = "200" align="right" />
+
+## Acknowledgement of Country
+
+The author of this package acknowledges the Traditional Owners of the Lands represented by in this site and R package, recognises their continuing connection to Country and pays his respects to their Elders past, present and emerging.
+
+## aussiemaps
 
 **aussiemaps** provides Australian LGA, suburbs and Postal Area maps
 directly in R, without any need to download and process shapefiles.
