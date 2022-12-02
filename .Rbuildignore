@@ -5,8 +5,9 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^hex$
+^hex*
 ^doc$
 ^Meta$
 ^\.github$
 ^img$
+^data-raw*

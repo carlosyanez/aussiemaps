@@ -20,3 +20,6 @@ hex/.DS_Store
 .Rhistory
 .DS_Store
 vignettes/aussiemaps_echarts4r.Rmd
+/data-raw/*.parquet
+/data-raw/source/*
+.Rhistory
