@@ -22,4 +22,13 @@ hex/.DS_Store
 vignettes/aussiemaps_echarts4r.Rmd
 /data-raw/*.parquet
 /data-raw/source/*
+/data-raw/source/processed/*
+/data-raw/*.gpkg
 .Rhistory
+*.zip
+data-raw/cide sample.R
+aussiemaps-lenga.Rproj
+.Rhistory
+-DESKTOP-G32U52P.Rhistory
+.Rhistory
+data-raw/tests.R

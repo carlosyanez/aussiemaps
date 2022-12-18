@@ -1,12 +1,17 @@
 template:
+  bootstrap: 5
+  bootswatch: cosmo
   params:
-    bootswatch: sandstone
     ganalytics: G-G75W4FBYH8
+  bslib:
+    fg: "#00843D"
+    bg: "white"
+    primary: "#FFCD00"
   opengraph:
     image:
       src: img/bbox_ghcard.png
-      alt: "aussiemaps: Another Australian maps package."
-    twitter:
+      alt: "{aussiemaps}: Yet Another Australian maps package"
+      twitter:
       creator: "@carlosyanez"
       card: summary_large_image
 
@@ -21,8 +26,8 @@ repo:
     user: https://github.com/carlosyanez/
 authors:
   Carlos Yanez Santibanez:
-    href: http://www.carlosyanez.cl
-url: https://carlosyanez.github.io/carlosyanez
+    href: http://www.carlosyanez.id.au
+
 home:
   title: aussiemaps
   description: Another Australian maps package.
