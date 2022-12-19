@@ -1,73 +1,81 @@
 #' Get sf object containing selected map polygons
 #' @return sf object with selected polygons
-#' @import dplyr
-#' @import purrr
-#' @import stringr
-#' @import sf
-#' @import methods
-#' @import tibble
-#' @import lwgeom
-#' @import rmapshaper
-#' @import aussiemaps.data
-#' @param filter_table table to filter (you can start with location_table)
+#' @importFrom arrow read_parquet
+#' @importFrom dplyr mutate across select any_of filter if_any pull
+#' @importFrom stringr str_remove_all str_detect str_c
+#' @importFrom rmapshaper ms_simplify
+#' @importFrom sf st_as_sf st_as_sf
+#' @param  filter_table table to filter (you can start with location_table)
+#' @param  filters list with filters
+#' @param  year year
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  clean_tolerance clean up tolerance
 #' @param  simplify   (logical) whether to simplify polygons - True by default
-#' @export get_map
-get_map <- function(filter_table,aggregation=c("none"), clean_tolerance=0.05,simplify=TRUE){
+#' @export
+get_map <- function(filter_table=NULL,
+                    filters=NULL,
+                    year,
+                    aggregation=NULL,
+                    simplify=FALSE){
 
-  #locally bind variables for RMD-check compatibility
-  State       <- NULL
-  State_short <- NULL
-  State_new   <- NULL
-  geometry    <- NULL
+  if(is.null(filter_table)&is.null(filters)) stop("Either filter table or filters need to be provided")
 
-  States  <- filter_table %>% select(State) %>%
-    left_join(aussiemaps.data::state.names,by="State") %>%
-    mutate(State_new=if_else(!is.na(State_short),State_short,State)) %>%
-    distinct(State_new)
-
-  data <- tibble()
-
-  #get shapes from each state/territory into data
-  for(i in 1:nrow(States)){
-    state <- States[i,1]
-    datai<- aussiemaps.data::loadsfdata(state)
-
-    data_cols <- colnames(as.data.frame(datai) %>% select(-State,-geometry))
-    cols_filter <- colnames(filter_table %>% select(any_of(data_cols)))
-
-
-    if(length(cols_filter)>0){
-      datai <- suppressMessages(suppressWarnings(datai %>% inner_join(filter_table %>% select(-State), by=cols_filter)))
-
-    }
-    if(nrow(data)==0){
-      data <-datai
-    }else{
-      data <- bind_rows(data,datai)
-    }
+  #get filter table if not provided
+  if(is.null(filter_table)){
+    filter_table <- list_structure(year,filters)
   }
 
-  #coerce into c()
+  cache_dir  <- find_maps_cache()
 
-  aggregation <- c(aggregation)
+  file_regex <- str_c(year,"_[A-Z]{1}")
+
+  repo       <- read_parquet(path(cache_dir,"repo.parquet")) |>
+                mutate(across(c("file_name"), ~ str_remove_all(.x,"\\.zip"))) |>
+                select(any_of("file_name"))                                   |>
+                filter(if_any(c("file_name"), ~ str_detect(.x,file_regex)))   |>
+                pull()
+
+
+  state_col <- colnames(filter_table)[str_detect(colnames(filter_table),"STATE|STE")]
+  state_col <- state_col[str_detect(state_col,"NAME")]
+
+  required_states <- filter_table |>
+                     select(all_of(c(state_col))) |>
+                     distinct() |>
+                     mutate(across(c(state_col), ~ str_replace_all(.x," ","\\."))) |>
+                     mutate(across(c(state_col), ~ str_c(year,"_",.x))) |>
+                     filter(if_any(c(state_col), ~ .x %in% repo))           |>
+                     pull()
+
+  data_sf <- NULL
+
+  for(repo_i in required_states){
+    data_i <- load_aussiemaps_gpkg(repo_i,filter_table)
+    data_sf <- bind_rows(data_sf,data_i)
+
+  }
+
+  rm(data_i)
+
+
+  #aggregate
+
+  aggregation <- as.vector(aggregation)
   if(!(aggregation[1]=="none")){
-    sf::sf_use_s2(FALSE)
+    sf_use_s2(FALSE)
     data <- suppressMessages(suppressWarnings(data %>%
-                                                group_by(across(starts_with(aggregation))) %>%
-                                                summarise(.groups = "drop") %>%
-                                                clean_polygons(clean_tolerance)))
+                                                group_by(across(starts_with(aggregation))) |>
+                                                summarise(.groups = "drop")
 
   }
 
   #simplify
   if(simplify){
-    data <- rmapshaper::ms_simplify(data) %>%
-      sf::st_as_sf()
+    data_sf <- ms_simplify(data_sf) |>
+               st_as_sf()
   }
 
 
-  return(data)
+  return(data_sf)
 
 }

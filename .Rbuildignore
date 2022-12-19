@@ -11,3 +11,4 @@
 ^\.github$
 ^img$
 ^data-raw*
+data-raw/*
