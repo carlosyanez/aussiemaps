@@ -1,8 +1,10 @@
 #' Get list of all aggregation options
 #' @return no output
-#' @importFrom  dplyr mutate across select filter rename any_of if_any distinct bind_rows collect
+#' @importFrom  dplyr mutate across select filter rename any_of if_any distinct bind_rows collect arrange summarise all_of
 #' @importFrom  stringr str_detect str_remove str_c
 #' @importFrom  fs path
+#' @importFrom  sf sf_use_s2
+#' @importFrom tidyr pivot_wider
 #' @importFrom  arrow read_parquet
 #' @importFrom  tibble tibble
 #' @export
@@ -57,6 +59,8 @@ list_attributes <- function(){
 
 
 #' Get list of all aggregation options
+#' @param year year when the boundaries were releaseed (2006,2011,2016,2022)
+#' @param filters list containing data filters (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))
 #' @return tibble with structure
 #' @importFrom stringr str_c str_detect
 #' @importFrom dplyr filter if_any collect mutate across

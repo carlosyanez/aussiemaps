@@ -5,18 +5,21 @@
 \title{Get sf object containing selected map polygons}
 \usage{
 get_map(
-  filter_table,
-  aggregation = c("none"),
-  clean_tolerance = 0.05,
-  simplify = TRUE
+  filter_table = NULL,
+  filters = NULL,
+  year,
+  aggregation = NULL,
+  simplify = FALSE
 )
 }
 \arguments{
 \item{filter_table}{table to filter (you can start with location_table)}
 
-\item{aggregation}{name of column to aggregate (POA_CODE16, LOCALITY,LGA)}
+\item{filters}{list with filters}
 
-\item{clean_tolerance}{clean up tolerance}
+\item{year}{year}
+
+\item{aggregation}{name of column to aggregate (POA_CODE16, LOCALITY,LGA)}
 
 \item{simplify}{(logical) whether to simplify polygons - True by default}
 }

@@ -9,7 +9,7 @@
     manage_maps_cache_dir(cache_path)
 
   # download latest version of available files in repo
-  packageStartupMessage("Checking available files online")
+  #packageStartupMessage("Checking available files online")
   get_repo_files()
 
 }

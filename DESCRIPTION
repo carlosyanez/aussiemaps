@@ -1,6 +1,6 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.1.0.0001
+Version: 0.2.0.0001
 Authors@R: 
     person(given = "Carlos",
            family = "Yanez Santibanez",
@@ -14,23 +14,18 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 StagedInstall: FALSE
 Imports: 
-          arrow,
-          dplyr,
-          fs,
-          piggyback,
-          rgdal,
-          zip,
-          sf,
-          tibble,
-          purrr,
-          stringr,
-          lwgeom,
-          devtools,
-          utils,
-          rmapshaper,
-          methods
-Remotes:
-          carlosyanez/aussiemaps.data
+      arrow,
+      dplyr,
+      fs,
+      piggyback,
+      rgdal,
+      rmapshaper,
+      sf,
+      stringr,
+      tibble,
+      tidyr,
+      utils,
+      zip
 Suggests: 
     rmarkdown,
     knitr

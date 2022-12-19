@@ -12,3 +12,4 @@
 ^img$
 ^data-raw*
 data-raw/*
+precompile/*

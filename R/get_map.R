@@ -1,15 +1,14 @@
 #' Get sf object containing selected map polygons
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
-#' @importFrom dplyr mutate across select any_of filter if_any pull
+#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with
 #' @importFrom stringr str_remove_all str_detect str_c
 #' @importFrom rmapshaper ms_simplify
-#' @importFrom sf st_as_sf st_as_sf
+#' @importFrom sf st_as_sf
 #' @param  filter_table table to filter (you can start with location_table)
 #' @param  filters list with filters
 #' @param  year year
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
-#' @param  clean_tolerance clean up tolerance
 #' @param  simplify   (logical) whether to simplify polygons - True by default
 #' @export
 get_map <- function(filter_table=NULL,
@@ -73,7 +72,7 @@ get_map <- function(filter_table=NULL,
     }
 
     sf_use_s2(FALSE)
-    data_sf <- suppressMessages(suppressWarnings(data_sf %>%
+    data_sf <- suppressMessages(suppressWarnings(data_sf |>
                                                 group_by(across(starts_with(aggregation))) |>
                                                 summarise(.groups = "drop")
     ))
