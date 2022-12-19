@@ -28,8 +28,7 @@ Imports:
           devtools,
           utils,
           rmapshaper,
-          methods,
-          aussiemaps.data
+          methods
 Remotes:
           carlosyanez/aussiemaps.data
 Suggests: 

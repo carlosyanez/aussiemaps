@@ -36,9 +36,12 @@ list_attributes <- function(){
                collect()
 
     data_i$attr <- data_i$attributes
+    data_i$Year <- data_i$attributes
 
     data_i <- data_i |>
-              mutate(across(c("attributes"), ~ str_remove(.x, "_[0-9]{4}")))
+              mutate(across(c("attributes"), ~ str_remove(.x, "_[0-9]{4}"))) |>
+              mutate(across(c("Year"), ~       str_extract(.x, "[0-9]{4}")))
+
 
     data   <- bind_rows(data,data_i)
 
@@ -77,14 +80,6 @@ list_structure <- function(year,filters=NULL){
   }
 
   data <- data |> collect()
-
-  first_id <- data[1,]$id
-  is_composite <- str_detect(first_id,"-")
-
-  if(is_composite){
-    data <- data |>
-            separate("id",c("state","id"))
-  }
 
   return(data)
 

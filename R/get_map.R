@@ -58,23 +58,37 @@ get_map <- function(filter_table=NULL,
   rm(data_i)
 
 
+
+
   #aggregate
 
-  aggregation <- as.vector(aggregation)
-  if(!(aggregation[1]=="none")){
+  if(!is.null(aggregation)){
+    aggregation <- as.vector(aggregation)
+
+    external_territories <- any(str_detect(required_states,"Other"))
+
+    if(external_territories){
+      data_sf_external  <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other")))
+      data_sf           <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other"),TRUE))
+    }
+
     sf_use_s2(FALSE)
-    data <- suppressMessages(suppressWarnings(data %>%
+    data_sf <- suppressMessages(suppressWarnings(data_sf %>%
                                                 group_by(across(starts_with(aggregation))) |>
                                                 summarise(.groups = "drop")
+    ))
 
-  }
+    if(external_territories){
+      data_sf <- bind_rows(data_sf,data_sf_external)
+
+    }
 
   #simplify
   if(simplify){
     data_sf <- ms_simplify(data_sf) |>
                st_as_sf()
   }
-
+  }
 
   return(data_sf)
 
