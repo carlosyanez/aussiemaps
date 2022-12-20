@@ -19,6 +19,7 @@ Imports:
       fs,
       piggyback,
       rgdal,
+      rlang,
       rmapshaper,
       sf,
       stringr,

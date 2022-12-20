@@ -30,8 +30,8 @@ for(year in years){
   geo_structure <- NULL
 
   for(map in repo_year){
-    #map_i <- load_aussiemaps_gpkg(map)
-    map_i <- st_read(path(cache_dir,str_c(map,".gpkg")))
+    map_i <- load_aussiemaps_gpkg(map)
+    #map_i <- st_read(path(cache_dir,str_c(map,".gpkg")))
 
     state_col <- colnames(map_i)[str_detect(colnames(map_i),"STATE|STE")]
     state_col <- state_col[str_detect(state_col,"CODE")]
@@ -92,6 +92,11 @@ for(year in years){
 
   }
 
+
+}
+
+for(year in years){
+  geo_structure <- load_aussiemaps_parquet(str_c(year,"_structure"))
 
 }
 

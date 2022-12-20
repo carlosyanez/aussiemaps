@@ -9,7 +9,7 @@ get_map(
   filters = NULL,
   year,
   aggregation = NULL,
-  simplify = FALSE
+  simplification_factor = 1
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ get_map(
 
 \item{aggregation}{name of column to aggregate (POA_CODE16, LOCALITY,LGA)}
 
-\item{simplify}{(logical) whether to simplify polygons - True by default}
+\item{simplification_factor}{0-1 simplication threshold to pass to rmapshaper::ms_simplify()}
 }
 \value{
 sf object with selected polygons
