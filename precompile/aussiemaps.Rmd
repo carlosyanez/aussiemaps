@@ -23,26 +23,98 @@ library(tidyverse)
 library(auscensus)
 library(auspol)
 library(aussiemaps)
+library(leaflet)
 
 ```
 
 
 
 ```{r}
-list_census_tables()
-list_census_attributes("13",table_name_regex="Persons")
+#list_census_tables()
+#list_census_attributes("13",table_name_regex="Persons")
 "Persons_uses_other_language_spanish_total"
 
-data<- list_structure(year=2021,filters=list(GCCSA_NAME_2021="Greater Melbourne"))
-a|> dplyr::filter(GCCSA_NAME_2021=="Greater Melbourne")
+list_census_geo_types()
+census_table <-"13"
+data_to_retrieve <- list("Spanish Speakers"="Persons_uses_other_language_spanish_total")
 
 
-melbourne_by_postcode <-get_map(filters=list(GCCSA_NAME_2021="Greater Melbourne"),
-                                aggregation = "LGA_NAME_2022",
-                                year=2021) 
+selected_filter <- list(GCCSA_NAME_2021="Greater Melbourne")
+selected_year <- "2021"
+aggregations <- "LGA_NAME_2022"
+aggregations_2 <- "LGA"
 
-sydney_by_postcode %>%ggplot()+ geom_sf(fill="blue")
+data_structure<- list_structure(year=selected_year,filters=selected_filter)
 
-  
+census_summary <-get_census_summary(table_number=census_table,
+                  selected_years = selected_year,
+                   geo_structure=aggregations_2,
+                   attributes = data_to_retrieve,
+                   geo_unit_codes=str_c("LGA",unique(data_structure$LGA_CODE_2022)))
+
+
+map <-get_map(filters=selected_filter,
+              aggregation = aggregations,
+              year=selected_year) 
+
+#pal <- colorNumeric("viridis", NULL)
+pal <- colorNumeric("Greens", census_summary$Value)
+
+
+map %>% 
+  select(LGA_CODE_2022,label) %>%
+  mutate(across(any_of("LGA_CODE_2022"), ~ str_c("LGA",.x))) %>%
+  left_join(census_summary %>% select(Census_Code,Value),
+                  by=c("LGA_CODE_2022"="Census_Code")) %>%
+leaflet() %>%
+  addTiles() %>%
+  addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.6,
+    fillColor = ~pal(Value),
+    label = ~paste0(label, ": ", formatC(Value, big.mark = ","))) %>%
+  addLegend(pal = pal, values = ~Value, opacity = 1.0)
+
+```
+
+
+```{r}
+
+census_table <-"13"
+data_to_retrieve <- list("Spanish Speakers"="Persons_uses_other_language_spanish_total")
+
+
+selected_filter <- list(LGA_NAME_2022="Yarra Ranges")
+selected_year <- "2021"
+aggregations <- "SA1_CODE_2021"
+aggregations_2 <- "SA1"
+
+data_structure<- list_structure(year=selected_year,filters=selected_filter)
+
+census_summary <-get_census_summary(table_number=census_table,
+                  selected_years = selected_year,
+                   geo_structure=aggregations_2,
+                   attributes = data_to_retrieve,
+                   geo_unit_codes=unique(data_structure$SA1_CODE_2021))
+
+
+map <-get_map(filters=selected_filter,
+              #aggregation = aggregations,
+              year=selected_year) 
+
+pal <- colorNumeric("viridis", NULL)
+#pal <- colorNumeric("Greens", census_summary$Value)
+
+
+map %>% 
+  select(SA1_CODE_2021) %>%
+  mutate(label=SA1_CODE_2021) %>%
+  left_join(census_summary %>% select(Census_Code,Value),
+                  by=c("SA1_CODE_2021"="Census_Code")) %>%
+leaflet() %>%
+  addTiles() %>%
+  addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.6,
+    fillColor = ~pal(Value),
+    label = ~paste0(label, ": ", formatC(Value, big.mark = ","))) %>%
+  addLegend(pal = pal, values = ~Value, opacity = 1.0)
+
 ```
 

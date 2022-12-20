@@ -8,17 +8,20 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang .data
 #' @importFrom utils head
+#' @importFrom smoothr fill_holes
 #' @param  filter_table table to filter (you can start with location_table)
 #' @param  filters list with filters
 #' @param  year year
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  simplification_factor  0-1 simplication threshold to pass to rmapshaper::ms_simplify()
+#' @param  smoothing_threshold smoothing threshold (default to 1, as in km^2)
 #' @export
 get_map <- function(filter_table=NULL,
                     filters=NULL,
                     year,
                     aggregation=NULL,
-                    simplification_factor=1){
+                    simplification_factor=1,
+                    smoothing_threshold=1){
 
   if(is.null(filter_table)&is.null(filters)) stop("Either filter table or filters need to be provided")
 
@@ -153,7 +156,8 @@ get_map <- function(filter_table=NULL,
                st_as_sf()   |>
                st_make_valid() |>
                st_union(by_feature = TRUE) |>
-               st_as_sf()))
+               st_as_sf())) |>
+               fill_holes(set_units(smoothing_threshold,km^2))
   }
 
   return(data_sf)

@@ -22,9 +22,11 @@ Imports:
       rlang,
       rmapshaper,
       sf,
+      smoothr,
       stringr,
       tibble,
       tidyr,
+      units,
       utils,
       zip
 Suggests: 

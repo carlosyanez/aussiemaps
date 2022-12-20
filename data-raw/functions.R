@@ -99,7 +99,7 @@ intersections  <- function(base_renmant,bigger,base_id,bigger_id,base_empty_labe
 
 
     c <- a %>%
-      filter(if_any(c(base_id), ~ .x %in% b)) %>%
+      filter(if_any(c(base_id), ~ .x %in% as.vector(b))) %>%
       select(any_of(bigger_id)) %>%
       pull()
 

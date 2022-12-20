@@ -16,8 +16,8 @@ source(here("data-raw","aux_save.R"))
 source(here("data-raw","functions.R"))
 
 cache_dir  <- find_maps_cache()
-years <- c(2011,2016,2021)
-#years <- c(2011,2016)
+#years <- c(2011,2016,2021)
+years <- c(2011,2016)
 poas_list <- 3000:3999
 
 geo_files <- c("2021"="ASGS_Ed3_Non_ABS_Structures_GDA2020_updated_2022.gpkg",
@@ -96,8 +96,8 @@ for(year_i in years){
   intersects <- intersections(base_renmant,
                               bigger=poas,
                               base_id="id",
-                              bigger_id=poa_col_name,
-                              base_empty_label="SA2_NAME_2021",
+                              bigger_id=poa_col_code,
+                              base_empty_label=str_c("SA2_NAME_",year_i),
                               bigger_empty_label=poa_col_name)
 
   non_matched <- vic_map_without_poas %>%
