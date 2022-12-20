@@ -10,6 +10,5 @@
 
   # download latest version of available files in repo
   #packageStartupMessage("Checking available files online")
-  get_repo_files()
 
 }

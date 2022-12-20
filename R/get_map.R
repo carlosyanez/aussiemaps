@@ -8,6 +8,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang .data
 #' @importFrom utils head
+#' @importFrom units set_units
 #' @importFrom smoothr fill_holes
 #' @param  filter_table table to filter (you can start with location_table)
 #' @param  filters list with filters
@@ -34,7 +35,7 @@ get_map <- function(filter_table=NULL,
 
   file_regex <- str_c(year,"_[A-Z]{1}")
 
-  repo_base      <- read_parquet(path(cache_dir,"repo.parquet")) |>
+  repo_base      <- get_repo_files() |>
                 mutate(across(c("file_name"), ~ str_remove_all(.x,"\\.zip"))) |>
                 select(any_of("file_name"))
 
@@ -157,7 +158,7 @@ get_map <- function(filter_table=NULL,
                st_make_valid() |>
                st_union(by_feature = TRUE) |>
                st_as_sf())) |>
-               fill_holes(set_units(smoothing_threshold,km^2))
+               fill_holes(set_units(smoothing_threshold,"km^2"))
   }
 
   return(data_sf)

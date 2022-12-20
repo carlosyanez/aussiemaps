@@ -9,7 +9,8 @@ get_map(
   filters = NULL,
   year,
   aggregation = NULL,
-  simplification_factor = 1
+  simplification_factor = 1,
+  smoothing_threshold = 1
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ get_map(
 \item{aggregation}{name of column to aggregate (POA_CODE16, LOCALITY,LGA)}
 
 \item{simplification_factor}{0-1 simplication threshold to pass to rmapshaper::ms_simplify()}
+
+\item{smoothing_threshold}{smoothing threshold (default to 1, as in km^2)}
 }
 \value{
 sf object with selected polygons

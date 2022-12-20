@@ -95,14 +95,32 @@ load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
 #' Update list of files in repo
 #' @importFrom piggyback pb_list
 #' @importFrom arrow write_parquet
-#' @importFrom fs path
+#' @importFrom fs path file_exists file_info
+#' @importFrom lubridate now interval days
 #' @noRd
 get_repo_files <- function(){
 
-  cache_dir <- find_maps_cache()
-  repo      <- pb_list("carlosyanez/aussiemaps")
+  cache_dir <-  find_maps_cache()
+  local_repo <- path(cache_dir,"repo.parquet")
 
-  write_parquet(repo,path(cache_dir,"repo.parquet"))
+  if(file_exists(local_repo)){
+    creation <- file_info(local_repo)$birth_time
+    now <- now()
+
+    age <- interval(creation,now)/days(1)
+    if(age>1){
+      repo      <- pb_list("carlosyanez/aussiemaps")
+      write_parquet(repo,path(cache_dir,"repo.parquet"))
+    }else{
+      repo <- read_parquet(path(cache_dir,"repo.parquet"))
+    }
+  }else{
+    repo      <- pb_list("carlosyanez/aussiemaps")
+    write_parquet(repo,path(cache_dir,"repo.parquet"))
+  }
+
+  return(repo)
+
 }
 
 

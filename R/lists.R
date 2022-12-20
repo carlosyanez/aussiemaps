@@ -13,7 +13,7 @@ list_attributes <- function(){
   cache_dir <- find_maps_cache()
 
 
-  repo      <- read_parquet(path(cache_dir,"repo.parquet")) |>
+  repo      <- get_repo_files() |>
                mutate(across(c("file_name"), ~ str_remove_all(.x,"\\.zip"))) |>
                select(any_of(c("file_name")))                                |>
                filter(if_any(c("file_name"), ~ str_detect(.x,"attributes")))
