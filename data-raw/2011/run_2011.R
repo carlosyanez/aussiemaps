@@ -56,7 +56,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 state       <- "Victoria"
 state_short <- "Vic"
 ceds_2018 <- list_divisions(filters=list(StateAb="VIC",`2019`=TRUE)) %>% pull(DivisionNm)
-poas_state <- 3000:3009
+poas_state <- 3000:3999
 
 source(here("data-raw","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])

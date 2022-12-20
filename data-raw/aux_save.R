@@ -13,6 +13,9 @@ save_zip_parquet <- function(df,name,dest_dir){
 
 save_zip_gpkg <- function(file,source_dir,dest_dir){
 
+  if(!dir_exists(source_dir)) stop("source dir does not exist")
+  if(!dir_exists(dest_dir)) stop("dest dir does not exist")
+
  file_zip  <- str_remove(file,source_dir) %>%
       str_remove(.,"/") %>%
       str_remove(.,".gpkg") %>%

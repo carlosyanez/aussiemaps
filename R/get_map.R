@@ -55,7 +55,7 @@ get_map <- function(filter_table=NULL,
   data_sf <- NULL
 
   for(repo_i in required_states){
-    data_i <- load_aussiemaps_gpkg(repo_i,filter_table)
+    data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
     data_sf <- bind_rows(data_sf,data_i)
 
   }
@@ -69,10 +69,11 @@ get_map <- function(filter_table=NULL,
     #aggregation <- str_replace(aggregation,"NAME","CODE")
 
     aggregation_prefix <- str_extract(aggregation,"^[^_]*")
+    aggregation_suffix <- str_extract(aggregation,"[0-9]{4}")
 
     aggregation  <- repo_base |>
       filter(if_any(c("file_name"), ~ str_detect(.x,aggregation_prefix))) |>
-      filter(if_any(c("file_name"), ~ str_detect(.x,as.character(year)))) |>
+      filter(if_any(c("file_name"), ~ str_detect(.x,as.character(aggregation_suffix)))) |>
       filter(if_any(c("file_name"), ~ str_detect(.x,"CODE"))) |>
       head(1) |>
       pull()
@@ -147,15 +148,13 @@ get_map <- function(filter_table=NULL,
 
     }
 
-  }
-
-
   #simplify
     data_sf <- suppressMessages(suppressWarnings(ms_simplify(data_sf,keep=simplification_factor) |>
-               st_as_sf() |>
+               st_as_sf()   |>
                st_make_valid() |>
-               st_union(by_feature = TRUE)))
-
+               st_union(by_feature = TRUE) |>
+               st_as_sf()))
+  }
 
   return(data_sf)
 

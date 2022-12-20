@@ -78,7 +78,7 @@ list_structure <- function(year,filters=NULL){
       values_i <- filters[[i]]
 
       data <- data |>
-              filter(if_any(c(attr_i), ~ .x %in% values_i))
+              filter(if_any(all_of(c(attr_i)), ~ .x %in% values_i))
 
     }
   }
