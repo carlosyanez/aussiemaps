@@ -94,7 +94,7 @@ list_structure <- function(year,filters=NULL){
 #' @param attribute_name  attribute name
 #' @param ids  ids
 #' @return tibble with structure
-#' @importFrom dplyr filter if_any
+#' @importFrom dplyr filter if_any collect
 #' @export
 list_proportions <- function(attribute_name, ids=NULL){
 
@@ -106,6 +106,7 @@ list_proportions <- function(attribute_name, ids=NULL){
     filter(if_any(c("id"), ~ .x %in% filter_table$id))
 
   }
+  areas_prop <- areas_prop |> collect()
 
   return(areas_prop)
 }
