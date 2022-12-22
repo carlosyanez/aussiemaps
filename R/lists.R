@@ -89,3 +89,23 @@ list_structure <- function(year,filters=NULL){
 
 
 }
+
+#' Get list elements to attribute mapping, with area proportion
+#' @param attribute_name  attribute name
+#' @param ids  ids
+#' @return tibble with structure
+#' @importFrom dplyr filter if_any
+#' @export
+list_proportions <- function(attribute_name, ids=NULL){
+
+  areas_prop <- load_aussiemaps_parquet(attribute_name)
+
+  if(!is.null(ids)){
+
+    areas_prop <- areas_prop |>
+    filter(if_any(c("id"), ~ .x %in% filter_table$id))
+
+  }
+
+  return(areas_prop)
+}
