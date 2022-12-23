@@ -98,5 +98,31 @@ for(year in years){
 for(year in years){
   geo_structure <- load_aussiemaps_parquet(str_c(year,"_structure"))
 
+  geo_cols <- geo_structure$schema$names
+  geo_cols <- geo_cols[str_detect(geo_cols,"CODE")]
+
+  for(geo_col in geo_cols){
+    struct_i <- geo_structure %>%
+      select(any_of(c(geo_col,"id","area"))) %>%
+      collect() %>%
+      filter(!is.na(area)) %>%
+      rename("col"=geo_col) %>%
+      group_by(col) %>%
+      mutate(sum_area = sum(area)) %>%
+      ungroup() %>%
+      mutate(prop=if_else(sum_area>units::set_units(0,m^2),
+                          as.numeric(area/sum_area),
+                          0)) %>%
+      rename(geo_col="col")
+
+    save_zip_parquet(struct_i,geo_col,here("data-raw","processed"))
+    print(str_c(which(geo_cols==geo_col)," out of", length(geo_cols),": ",geo_col)
+          )
+
+
+  }
+
+
+
 }
 
