@@ -28,7 +28,9 @@ get_map <- function(filter_table=NULL,
 
   #get filter table if not provided
   if(is.null(filter_table)){
-    filter_table <- list_structure(year,filters)
+    filter_table <- list_structure(year,filters) |>
+      select(-matches("AREA_ALBERS_SQKM")) |>
+      select(-matches("\\."))
   }
 
   cache_dir  <- find_maps_cache()
@@ -60,7 +62,7 @@ get_map <- function(filter_table=NULL,
 
   for(repo_i in required_states){
     data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table))) |>
-              select(-any_of(c("AREA_ALBERS_SQKM"))) |>
+              select(-matches("AREA_ALBERS_SQKM")) |>
               select(-matches("\\."))
 
     data_sf <- bind_rows(data_sf,data_i)
