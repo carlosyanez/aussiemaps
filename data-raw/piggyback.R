@@ -9,9 +9,8 @@ repo           <- "carlosyanez/aussiemaps"
 version       <- "data"
 
 
-files_list <- tibble(file=dir_ls(files_dir),
-                     Year=str_remove(file,str_c(files_dir,"/")) %>% str_extract(.,"^[0-9]+"))
-
+files_list <- tibble(file=dir_ls(files_dir)) ,
+                     Year=str_remove(file,str_c(files_dir,"/"))
 
 #create new release
 pb_new_release(repo,version)

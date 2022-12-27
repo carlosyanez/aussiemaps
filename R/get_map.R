@@ -1,7 +1,7 @@
 #' Get sf object containing selected map polygons
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
-#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything
+#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches
 #' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry
@@ -22,7 +22,7 @@ get_map <- function(filter_table=NULL,
                     year,
                     aggregation=NULL,
                     simplification_factor=1,
-                    smoothing_threshold=1){
+                    smoothing_threshold=4){
 
   if(is.null(filter_table)&is.null(filters)) stop("Either filter table or filters need to be provided")
 
@@ -59,7 +59,10 @@ get_map <- function(filter_table=NULL,
   data_sf <- NULL
 
   for(repo_i in required_states){
-    data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
+    data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table))) |>
+              select(-any_of(c("AREA_ALBERS_SQKM"))) |>
+              select(-matches("\\."))
+
     data_sf <- bind_rows(data_sf,data_i)
 
   }
@@ -69,8 +72,6 @@ get_map <- function(filter_table=NULL,
   #aggregate
 
   if(!is.null(aggregation)){
-
-    #aggregation <- str_replace(aggregation,"NAME","CODE")
 
     aggregation_prefix <- str_extract(aggregation,"^[^_]*")
     aggregation_suffix <- str_extract(aggregation,"[0-9]{4}")
@@ -115,13 +116,13 @@ get_map <- function(filter_table=NULL,
                   group_by(across(c("geo_col")))   |>
                   summarise(across(any_of("prop"), ~ sum(.x)),.groups="drop")
 
-
     sf_use_s2(FALSE)
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
                                                 group_by(across(c(aggregation,cols_to_keep))) |>
                                                 summarise(.groups="drop") |>
                                                 st_make_valid() |>
-                                                st_union(by_feature = TRUE)
+                                                st_union(by_feature = TRUE) |>
+                                                fill_holes(set_units(smoothing_threshold,"km^2"))
     ))
 
    if(external_territories){
@@ -153,12 +154,11 @@ get_map <- function(filter_table=NULL,
     }
 
   #simplify
-    data_sf <- suppressMessages(suppressWarnings(ms_simplify(data_sf,keep=simplification_factor) |>
-               st_as_sf()   |>
-               st_make_valid() |>
-               st_union(by_feature = TRUE) |>
-               st_as_sf())) |>
-               fill_holes(set_units(smoothing_threshold,"km^2"))
+    tryCatch(data_sf <- suppressMessages(suppressWarnings(
+               data_sf |>
+               ms_simplify(keep=simplification_factor))),
+                error = function(e) e)
+
   }
 
   return(data_sf)

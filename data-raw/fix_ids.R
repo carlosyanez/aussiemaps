@@ -23,16 +23,24 @@ repo       <- read_parquet(path(cache_dir,"repo.parquet")) |>
   select(any_of("file_name"))                                   |>
   filter(if_any(c("file_name"), ~ str_detect(.x,file_regex)))   |>
   pull()
+changes <- rep(FALSE,length(years))
 
-for(year in years){
+for(i in 1:length(years)){
+  year <- years[i]
   repo_year <- repo[str_detect(repo,as.character(year))]
 
   geo_structure <- NULL
+  changes_i <- FALSE
 
   for(map in repo_year){
+    if(file_exists("C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg")){
+    fs::file_delete("C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg")}
     map_i <- load_aussiemaps_gpkg(map)
     #map_i <- st_read(path(cache_dir,str_c(map,".gpkg")))
 
+    map_i_id_1 <- map_i |> st_drop_geometry() |> head(1) |> pull(id)
+    if(str_detect(map_i_id_1,"-",TRUE)){
+    changes_i <- TRUE
     state_col <- colnames(map_i)[str_detect(colnames(map_i),"STATE|STE")]
     state_col <- state_col[str_detect(state_col,"CODE")]
     state_col_pos <-which(colnames(map_i)==state_col)
@@ -49,15 +57,21 @@ for(year in years){
     save_zip_gpkg(here("data-raw",file_gpkg),
                   here("data-raw"),
                   here("data-raw","processed"))
-
+    }
     map_i$area <- st_area(map_i)
     map_i <- map_i %>% st_drop_geometry()
     geo_structure <- bind_rows(geo_structure,map_i)
 
+    if(changes_i){
+      changes[i] <- TRUE
+    }
+
   }
 
+  if(changes[i]){
   geo_structure <-  geo_structure |>
-    relocate(id,.before=1)
+    relocate(id,.before=1) |>
+    select(-matches("\\."))
 
   save_zip_parquet(geo_structure,str_c(year,"_structure"),here("data-raw","processed"))
 
@@ -67,7 +81,7 @@ for(year in years){
 
 
   attributes <- geo_structure[1,] %>%
-    select(-area,-Year) %>%
+    select(-area,-Year,-any_of(c("AREA_ALBERS_SQKM"))) %>%
     pivot_longer(-id,names_to="attributes",values_to = "value") %>%
     select(attributes)
 
@@ -92,10 +106,14 @@ for(year in years){
 
   }
 
+  }
 
 }
 
-for(year in years){
+for(i in 1:length(years)){
+
+  if(changes[i]){
+  year <- years[i]
   geo_structure <- load_aussiemaps_parquet(str_c(year,"_structure"))
 
   geo_cols <- geo_structure$schema$names
@@ -123,6 +141,6 @@ for(year in years){
   }
 
 
-
+}
 }
 
