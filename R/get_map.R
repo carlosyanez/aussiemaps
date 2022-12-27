@@ -93,7 +93,8 @@ get_map <- function(filter_table=NULL,
 
     #decide what to keep
 
-    cols_to_keep <-filter_table |>
+    cols_to_keep <-filter_table
+      mutate(across(everything()), as.character) |>
       select(-any_of(c("id","area","Year"))) |>
       pivot_longer(-any_of(aggregation),values_to = "value",names_to = "geo_unit") |>
       distinct() |>
