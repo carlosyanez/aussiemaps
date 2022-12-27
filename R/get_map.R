@@ -2,7 +2,7 @@
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
 #' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n
-#' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace
+#' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry
 #' @importFrom tidyr pivot_longer
