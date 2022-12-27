@@ -1,7 +1,7 @@
 #' Convert data, aggregating smallar geographic structures into larger ones.
 #' @return tibble
 #' @importFrom  dplyr select any_of collect rename left_join group_by across summarise anti_join bind_rows
-#' @importFrom  rlang .data
+#' @importFrom  rlang .data :=
 #' @param original_data data frame with data
 #' @param values_col name of the column with numeric data
 #' @param original_geo name of the column representing the smallest geo unit (using the names from geo structure)
