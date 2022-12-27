@@ -10,7 +10,7 @@ get_map(
   year,
   aggregation = NULL,
   simplification_factor = 1,
-  smoothing_threshold = 1
+  smoothing_threshold = 4
 )
 }
 \arguments{

@@ -1,27 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/index.html</loc>
+    <loc>/404.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/clean_polygons.html</loc>
+    <loc>/articles/aussiemaps.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/get_map.html</loc>
+    <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/get_region.html</loc>
+    <loc>/authors.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/list_agreggations.html</loc>
+    <loc>/index.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/list_regions.html</loc>
+    <loc>/reference/clean_polygons.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/reference/update_maps.html</loc>
+    <loc>/reference/data_maps_delete.html</loc>
   </url>
   <url>
-    <loc>https://carlosyanez.github.io/carlosyanez/articles/aussiemaps.html</loc>
+    <loc>/reference/data_maps_info.html</loc>
+  </url>
+  <url>
+    <loc>/reference/find_maps_cache.html</loc>
+  </url>
+  <url>
+    <loc>/reference/geo_aggregate.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_map.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_region.html</loc>
+  </url>
+  <url>
+    <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_agreggations.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_attributes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_proportions.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_regions.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_structure.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_map.html</loc>
+  </url>
+  <url>
+    <loc>/reference/locations.table.html</loc>
+  </url>
+  <url>
+    <loc>/reference/update_maps.html</loc>
   </url>
 </urlset>
