@@ -1,7 +1,7 @@
 #' Get sf object containing selected map polygons
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
-#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n
+#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything
 #' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry
@@ -94,7 +94,7 @@ get_map <- function(filter_table=NULL,
     #decide what to keep
 
     cols_to_keep <-filter_table
-      mutate(across(everything()), as.character) |>
+      mutate(across(everything(), as.character)) |>
       select(-any_of(c("id","area","Year"))) |>
       pivot_longer(-any_of(aggregation),values_to = "value",names_to = "geo_unit") |>
       distinct() |>
