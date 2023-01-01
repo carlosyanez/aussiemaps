@@ -67,7 +67,9 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 #' @importFrom fs path file_copy
 #' @importFrom rgdal ogrListLayers
 #' @importFrom sf st_write st_read
-#' @importFrom stringr str_c
+#' @importFrom stringr str_c str_remove_all str_squish
+#' @importFrom dplyr mutate across
+#' @importFrom tidyselect where
 #' @param aussiemaps_file name of the file to download.
 #' @param filter_ids data frame with ids to filter (id column)
 #' @return sf data frame
@@ -88,7 +90,10 @@ load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
     query_text <- str_c("SELECT * FROM '",data_layer,"'")
   }
 
-  data <- st_read(temp_gpkg,query=query_text)
+  data <- st_read(temp_gpkg,query=query_text) |>
+    mutate(across(where(is.character), ~ str_squish(.x))) |>
+    mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
+
   return(data)
 }
 

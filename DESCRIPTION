@@ -1,6 +1,6 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.2.0.0009
+Version: 0.2.0.0010
 Authors@R: 
     person(given = "Carlos",
            family = "Yanez Santibanez",
@@ -27,6 +27,7 @@ Imports:
       stringr,
       tibble,
       tidyr,
+      tidyselect,
       units,
       utils,
       zip

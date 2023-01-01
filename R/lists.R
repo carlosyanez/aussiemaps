@@ -1,7 +1,8 @@
 #' Get list of all aggregation options
 #' @return no output
 #' @importFrom  dplyr mutate across select filter rename any_of if_any distinct bind_rows collect arrange summarise all_of
-#' @importFrom  stringr str_detect str_remove str_c
+#' @importFrom  stringr str_detect str_remove str_c str_remove_all
+#' @importFrom tidyselect where
 #' @importFrom  fs path
 #' @importFrom  sf sf_use_s2
 #' @importFrom tidyr pivot_wider
@@ -51,7 +52,10 @@ list_attributes <- function(){
 
   data <- data |>
           pivot_wider(names_from="Year",values_from = "attr") |>
-          arrange("attributes")
+          arrange("attributes")|>
+          mutate(across(where(is.character), ~str_squish(.x))) |>
+          mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
+
 
   return(data)
 
@@ -62,8 +66,9 @@ list_attributes <- function(){
 #' @param year year when the boundaries were releaseed (2006,2011,2016,2022)
 #' @param filters list containing data filters (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))
 #' @return tibble with structure
-#' @importFrom stringr str_c str_detect str_squish
+#' @importFrom stringr str_c str_detect str_squish str_remove_all
 #' @importFrom dplyr filter if_any collect mutate across
+#' @importFrom tidyselect where
 #' @export
 list_structure <- function(year,filters=NULL){
 
@@ -83,7 +88,10 @@ list_structure <- function(year,filters=NULL){
     }
   }
 
-  data <- data |> collect()
+  data <- data |>
+          collect() |>
+          mutate(across(where(is.character), ~ str_squish(.x))) |>
+          mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
 
   return(data)
 
@@ -94,7 +102,9 @@ list_structure <- function(year,filters=NULL){
 #' @param attribute_name  attribute name
 #' @param ids  ids
 #' @return tibble with structure
-#' @importFrom dplyr filter if_any collect
+#' @importFrom dplyr filter if_any collect mutate across
+#' @importFrom stringr str_squish str_remove_all
+#' @importFrom tidyselect where
 #' @export
 list_proportions <- function(attribute_name, ids=NULL){
 
@@ -106,7 +116,10 @@ list_proportions <- function(attribute_name, ids=NULL){
     filter(if_any(c("id"), ~ .x %in% filter_table$id))
 
   }
-  areas_prop <- areas_prop |> collect()
+  areas_prop <- areas_prop |>
+                collect()  |>
+                mutate(across(where(is.character), ~str_squish(.x))) |>
+                mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
 
   return(areas_prop)
 }
