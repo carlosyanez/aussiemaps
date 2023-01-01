@@ -62,7 +62,7 @@ list_attributes <- function(){
 #' @param year year when the boundaries were releaseed (2006,2011,2016,2022)
 #' @param filters list containing data filters (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))
 #' @return tibble with structure
-#' @importFrom stringr str_c str_detect
+#' @importFrom stringr str_c str_detect str_squish
 #' @importFrom dplyr filter if_any collect mutate across
 #' @export
 list_structure <- function(year,filters=NULL){
@@ -74,8 +74,8 @@ list_structure <- function(year,filters=NULL){
   if(!is.null(filters)){
     for(i in 1:length(filters)){
 
-      attr_i   <- names(filters)[i]
-      values_i <- filters[[i]]
+      attr_i   <- str_squish(names(filters)[i])
+      values_i <- str_squish(filters[[i]])
 
       data <- data |>
               filter(if_any(all_of(c(attr_i)), ~ .x %in% values_i))

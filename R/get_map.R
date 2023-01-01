@@ -1,7 +1,7 @@
 #' Get sf object containing selected map polygons
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
-#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches
+#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col
 #' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry
@@ -75,17 +75,21 @@ get_map <- function(filter_table=NULL,
 
   if(!is.null(aggregation)){
 
-    aggregation_prefix <- str_extract(aggregation,"^[^_]*")
-    aggregation_suffix <- str_extract(aggregation,"[0-9]{4}")
+    aggregation <- as.vector(aggregation)
 
-    aggregation  <- repo_base |>
+    for(i in 1:length(aggregation)){
+
+    aggregation_prefix <- str_extract(aggregation[i],"^[^_]*")
+    aggregation_suffix <- str_extract(aggregation[i],"[0-9]{4}")
+
+    aggregation[i]  <- repo_base |>
       filter(if_any(c("file_name"), ~ str_detect(.x,aggregation_prefix))) |>
       filter(if_any(c("file_name"), ~ str_detect(.x,as.character(aggregation_suffix)))) |>
       filter(if_any(c("file_name"), ~ str_detect(.x,"CODE"))) |>
       head(1) |>
       pull()
 
-    aggregation <- as.vector(aggregation)
+    }
 
     external_territories <- any(str_detect(required_states,"Other"))
 
@@ -110,6 +114,13 @@ get_map <- function(filter_table=NULL,
       distinct() |>
       pull()
 
+    cols_to_keep <- c(cols_to_keep,"Year")
+
+    #columns to merge
+
+    cols_to_merge <- colnames(filter_table)
+    cols_to_merge <- cols_to_merge[!(cols_to_merge %in% c(cols_to_keep,aggregation,"id","area"))]
+
     #new aggregated sum
 
     areas_prop <- load_aussiemaps_parquet(aggregation) |>
@@ -127,9 +138,52 @@ get_map <- function(filter_table=NULL,
                                                 fill_holes(set_units(smoothing_threshold,"km^2"))
     ))
 
-   if(external_territories){
-      data_sf <- bind_rows(data_sf,data_sf_external)
+
+    for(col_to_merge  in cols_to_merge){
+
+    merged_col  <- filter_table |>
+                   select(any_of(c(aggregation,cols_to_keep,col_to_merge))) |>
+                   distinct()                                               |>
+                   group_by(across(c(aggregation,cols_to_keep)))            |>
+                    summarise(across(any_of(col_to_merge), ~ str_flatten_comma(.x)),.groups="drop")
+
+    data_sf <- suppressMessages(suppressWarnings(data_sf |>
+              left_join(merged_col,by=c(aggregation,cols_to_keep)) |>
+              relocate("geom",.after=last_col())
+    ))
     }
+
+
+   if(external_territories){
+
+     data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
+                                                    group_by(across(c(aggregation,cols_to_keep))) |>
+                                                    summarise(.groups="drop") |>
+                                                    st_make_valid() |>
+                                                    st_union(by_feature = TRUE) |>
+                                                    fill_holes(set_units(smoothing_threshold,"km^2"))
+     ))
+
+     for(col_to_merge  in cols_to_merge){
+
+       merged_col  <- filter_table |>
+         select(any_of(c(aggregation,cols_to_keep,col_to_merge))) |>
+         distinct()                                               |>
+         group_by(across(c(aggregation,cols_to_keep)))            |>
+         summarise(across(any_of(col_to_merge), ~ str_flatten_comma(.x)),.groups="drop")
+
+       data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
+         left_join(merged_col,by=c(aggregation,cols_to_keep)) |>
+         relocate(.data$geom,.after=last_col())
+       ))
+     }
+
+
+      data_sf <- bind_rows(data_sf,data_sf_external)
+   }
+
+
+
 
     join_key <- as.vector("geo_col")
     names(join_key) <- aggregation
