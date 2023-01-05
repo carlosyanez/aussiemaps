@@ -74,7 +74,8 @@ list_structure <- function(year,filters=NULL){
 
   file_name <- str_c(year,"_structure")
 
-  data <- load_aussiemaps_parquet(file_name)
+  data <- load_aussiemaps_parquet(file_name) |>
+           collect()
 
   if(!is.null(filters)){
     for(i in 1:length(filters)){
@@ -83,15 +84,13 @@ list_structure <- function(year,filters=NULL){
       values_i <- str_squish(filters[[i]])
 
       data <- data |>
+              mutate(across(where(is.character), ~ str_squish(.x))) |>
+              mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
               filter(if_any(all_of(c(attr_i)), ~ .x %in% values_i))
 
     }
   }
 
-  data <- data |>
-          collect() |>
-          mutate(across(where(is.character), ~ str_squish(.x))) |>
-          mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
 
   return(data)
 
