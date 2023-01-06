@@ -1,13 +1,16 @@
-#' Get list of all aggregation options
-#' @return no output
+#' Get list of all geographic structures (or attributes)
+#' @description
 #' @importFrom  dplyr mutate across select filter rename any_of if_any distinct bind_rows collect arrange summarise all_of
 #' @importFrom  stringr str_detect str_remove str_c str_remove_all
-#' @importFrom tidyselect where
+#' @importFrom  tidyselect where
 #' @importFrom  fs path
 #' @importFrom  sf sf_use_s2
-#' @importFrom tidyr pivot_wider
+#' @importFrom  tidyr pivot_wider
 #' @importFrom  arrow read_parquet
 #' @importFrom  tibble tibble
+#' @examples \dontrun{
+#'
+#' }
 #' @export
 list_attributes <- function(){
 
@@ -63,34 +66,39 @@ list_attributes <- function(){
 
 
 #' Get list of all aggregation options
-#' @param year year when the boundaries were releaseed (2006,2011,2016,2022)
+#' @param year year when the boundaries were released (2006,2011,2016,2022)
 #' @param filters list containing data filters (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))
 #' @return tibble with structure
-#' @importFrom stringr str_c str_detect str_squish str_remove_all
+#' @importFrom stringr str_c str_detect str_replace_all str_squish
 #' @importFrom dplyr filter if_any collect mutate across
 #' @importFrom tidyselect where
 #' @export
 list_structure <- function(year,filters=NULL){
 
-  file_name <- str_c(year,"_structure")
+    file_name <- str_c(year,"_structure")
 
-  data <- load_aussiemaps_parquet(file_name) |>
-           collect()
+  data <- load_aussiemaps_parquet(file_name)
 
   if(!is.null(filters)){
     for(i in 1:length(filters)){
-
       attr_i   <- str_squish(names(filters)[i])
       values_i <- str_squish(filters[[i]])
+      if(length(values_i)>1){
+        values_i <- str_c(values_i,collapse="|")
+      }
 
       data <- data |>
-              mutate(across(where(is.character), ~ str_squish(.x))) |>
-              mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
-              filter(if_any(all_of(c(attr_i)), ~ .x %in% values_i))
+              mutate(across(where(is.character), ~ str_replace_all(.x, "\\s+", " "))) |>
+              mutate(across(where(is.character), ~ str_replace_all(.x, "\\s$",""))) |>
+              mutate(across(where(is.character), ~ str_replace_all(.x, "^\\s",""))) |>
+              mutate(across(where(is.character), ~ str_replace_all(.x, "[^A-z|0-9|[:punct:]|\\s]",""))) |>
+              filter(if_any(all_of(c(attr_i)), ~   str_detect(.x,!!values_i)))
+
 
     }
   }
 
+  data <- data |> collect()
 
   return(data)
 
