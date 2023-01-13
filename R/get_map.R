@@ -101,7 +101,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col contains
 #' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all  str_flatten_comma
 #' @importFrom rmapshaper ms_simplify
-#' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry
+#' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry st_buffer
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang .data
 #' @importFrom utils head
@@ -231,6 +231,7 @@ get_map_internal <- function(filter_table=NULL,
     sf_use_s2(FALSE)
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
                                                 group_by(across(c(aggregation,cols_to_keep))) |>
+                                                st_make_valid() |>
                                                 st_buffer(0) |>
                                                 summarise(.groups="drop") |>
                                                 st_make_valid() |>
