@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Another Australian maps package.">
+<meta name="description" content="Australian Election Results in R.">
 <title>aussiemaps • aussiemaps</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="aussiemaps">
-<meta property="og:description" content="Another Australian maps package.">
+<meta property="og:description" content="Australian Election Results in R.">
 <meta property="og:image" content="/img/bbox_ghcard.png">
 <meta property="og:image:alt" content="{aussiemaps}: Yet Another Australian maps package">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="index.html">aussiemaps</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.0008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.0011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,12 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/aussiemaps.html">How to use</a>
+  </div>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -70,17 +76,15 @@
 <div class="page-header"><h1 id="aussiemaps">aussiemaps<a class="anchor" aria-label="anchor" href="#aussiemaps"></a>
 </h1></div>
 <p><img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/hexSticker.png" width="175" height="200" align="right"></p>
-<p><strong>aussiemaps</strong> provides Australian LGA, suburbs and Postal Area maps directly in R, without any need to download and process shapefiles.</p>
-<p>The data for the package has been created using the scripts provided <a href="https://github.com/carlosyanez/Australian_Polygons" class="external-link">here</a>. The sf objects contain (Suburb,LGA, Postal Area) intersection polygons, which allow to select, filter and re-construct any of those geographic units.</p>
+<p><strong>aussiemaps</strong> provides maps for Australian LGA, suburbs, Postal Area maps, SA1,2,3,4, etc. - directly in R, without any need to download and process shapefiles.</p>
+<p>All the data is contained as a release (<a href="https://github.com/carlosyanez/aussiemaps/releases/tag/data" class="external-link">here</a>) in <a href="https://arrow.apache.org/docs/r/index.html" class="external-link">Apache Parquet format</a>, so it can be used directly in any programming language/tool/platform that supports Parquet.</p>
 <div class="section level2">
-<h2 id="installation-and-pre-requisites">Installation and pre-requisites<a class="anchor" aria-label="anchor" href="#installation-and-pre-requisites"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>First install required packages,then, install this package from github</p>
-<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>,<span class="st">"sf"</span>,<span class="st">"lwgeom"</span>,<span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"carlosyanez/aussiemaps"</span><span class="op">)</span></span></code></pre>
+<p>You can install this package from Github</p>
+<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"carlosyanez/aussiemaps"</span><span class="op">)</span></span></code></pre>
 <p>Alternatively, install from r-universe</p>
-<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>,<span class="st">"sf"</span>,<span class="st">"lwgeom"</span>,<span class="st">"devtools"</span><span class="op">)</span></span>
-<span></span>
+<pre><code><span></span>
 <span><span class="co"># Enable this universe</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    carlosyanez <span class="op">=</span> <span class="st">'https://carlosyanez.r-universe.dev'</span>,</span>
@@ -88,8 +92,18 @@
 <span></span>
 <span><span class="co"># Install some packages</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'aussiemaps'</span><span class="op">)</span></span></code></pre>
-<p>This package does not contain the <a href="https://github.com/carlosyanez/aussiemaps.data" class="external-link">data files</a>, which will be downloaded the first time you call the library. Alternatively, you can download them directly:</p>
-<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"carlosyanez/aussiemaps.data"</span><span class="op">)</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="how-to-use">How to use<a class="anchor" aria-label="anchor" href="#how-to-use"></a>
+</h2>
+<p>Read the [vignette]( (<a href="https://github.com/carlosyanez/aussiemaps/releases/tag/data" class="external-link">here</a>).</p>
+<p>Please note that no data is included in the package installation - data files will be downloaded and cached as needed.</p>
+</div>
+<div class="section level2">
+<h2 id="disclaimer">DISCLAIMER<a class="anchor" aria-label="anchor" href="#disclaimer"></a>
+</h2>
+<p><strong>THE DATA IN THIS FILE IS PROVIDED WITHOUT ANY GUARANTEES. USE AT YOUR OWN RISK!</strong></p>
+<p>If you detect any issues in the resulting maps, please submit an issue in the Github repository. Please don’t use this package or its data for any mission critical/important withouth reviewing its adequacy.</p>
 </div>
 <div class="section level2">
 <h2 id="not-for-you">Not for you?<a class="anchor" aria-label="anchor" href="#not-for-you"></a>
@@ -99,13 +113,14 @@
 <li>
 <a href="https://mdsumner.github.io/ozmaps/" class="external-link">ozmaps</a>, which has good nation-wide, states and LGA maps, as well as electoral divisions. This package is on CRAN.</li>
 <li>
-<a href="https://github.com/wfmackey/absmaps" class="external-link">absmaps</a>, which provides maps for all ABS statistical divisions.</li>
+<a href="https://github.com/wfmackey/absmapsdata" class="external-link">absmapsdata</a>, which provides maps for all ABS statistical divisions.</li>
+<li>You can always download the gpkg files from the ABS or <a href="https://data.gov.au" class="external-link uri">https://data.gov.au</a> .</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="issues-bugs-ideas">Issues? bugs? Ideas?<a class="anchor" aria-label="anchor" href="#issues-bugs-ideas"></a>
 </h2>
-<p>If you find something that is not quite right, please post an issue. If you have any ideas, or if you want to contribute, <a href="https://twitter.com/messages/25712933-3805104374?recipient_id=25712933&amp;text=Hello%20world" class="external-link">please let me know</a>!</p>
+<p>If you find something that is not quite right, please post an issue. If you have any ideas, or if you want to contribute, <a href="https://fosstodon.org/@carlosyanez" class="external-link">please let me know</a>!</p>
 </div>
 <div class="section level2">
 <h2 id="to-do">To Do<a class="anchor" aria-label="anchor" href="#to-do"></a>
@@ -116,10 +131,13 @@
 <h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
 </h2>
 <ul>
-<li>LGA and localities maps have been sourced from <a href="htttp:///data.gov.au">data.gov.au</a> and used under CC0-BY licence.</li>
-<li>Postal areas have constructed using definitions and shape files from the <a href="https://www.abs.gov.au/" class="external-link">Australian Bureau of Statistics (ABS)</a>
-</li>
+<li>Data in this package has been created from the <a href="https://www.abs.gov.au/" class="external-link">Australian Bureau of Statistics (ABS)</a> geopgraphic boundary files, available at the ABS’s website and at htttp://data.gov.au</li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="acknowledgment-of-country">Acknowledgment of Country<a class="anchor" aria-label="anchor" href="#acknowledgment-of-country"></a>
+</h2>
+<p>The author of this package acknowledges the Aboriginal and Torres Strait Islander people as the traditional custodians of Australia, and pays respect to their Elders past, present and emerging.</p>
 </div>
 </div>
 
@@ -127,6 +145,7 @@
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/carlosyanez/aussiemaps/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/carlosyanez/aussiemaps/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -149,7 +168,8 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="http://www.carlosyanez.id.au" class="external-link">Carlos Yanez Santibanez</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<a href="http://www.carlosyanez.id.au" class="external-link">Carlos Yáñez Santibáñez</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -167,7 +187,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="http://www.carlosyanez.id.au" class="external-link">Carlos Yanez Santibanez</a>.</p>
+<p>Developed by <a href="http://www.carlosyanez.id.au" class="external-link">Carlos Yáñez Santibáñez</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

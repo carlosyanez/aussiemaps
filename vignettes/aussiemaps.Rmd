@@ -1,5 +1,5 @@
 ---
-title: "Aussiemaps"
+title: "How to use aussiemaps"
 resource_files:
   - vignetttes/house-preference-flow*.png
 author: "Carlos YANEZ SANTIBANEZ"
@@ -222,12 +222,17 @@ sydney_area <- get_map(filter_table = greater_sydney,
                        year=2021,
                        aggregation = "GCCSA_NAME_2021",
                        use_cache = TRUE) 
-#> Reading layer `8c99638c' from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\8c99638c.gpkg' using driver `GPKG'
-#> Simple feature collection with 1 feature and 39 fields
+#> Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'
+#> Writing 12948 features with 42 fields without geometries.
+#> Reading query `SELECT * FROM '2021_New.South.Wales' WHERE id IN (SELECT id FROM id)'
+#> from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'
+#> Simple feature collection with 12948 features and 40 fields
 #> Geometry type: MULTIPOLYGON
 #> Dimension:     XY
 #> Bounding box:  xmin: 149.9719 ymin: -34.33116 xmax: 151.6301 ymax: -33.00031
 #> Geodetic CRS:  GDA2020
+#> Writing layer `8c99638c' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/8c99638c.gpkg' using driver `GPKG'
+#> Writing 1 features with 39 fields and geometry type Multi Polygon.
 
 #outline
 
@@ -316,12 +321,17 @@ brisbane_ced <- get_map(filters = list(GCCSA_NAME_2021=c("Brisbane")),
                         year = 2021,
                         aggregation = c("CED_NAME_2021"),
                         use_cache = TRUE)
-#> Reading layer `b26452fe' from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\b26452fe.gpkg' using driver `GPKG'
-#> Simple feature collection with 15 features and 39 fields
+#> Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'
+#> Writing 6497 features with 42 fields without geometries.
+#> Reading query `SELECT * FROM '2021_Queensland' WHERE id IN (SELECT id FROM id)'
+#> from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'
+#> Simple feature collection with 6497 features and 40 fields
 #> Geometry type: MULTIPOLYGON
 #> Dimension:     XY
 #> Bounding box:  xmin: 152.0734 ymin: -28.36387 xmax: 153.5467 ymax: -26.45233
 #> Geodetic CRS:  GDA2020
+#> Writing layer `b26452fe' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/b26452fe.gpkg' using driver `GPKG'
+#> Writing 15 features with 39 fields and geometry type Multi Polygon.
 
 chileans$Value
 #>  [1]  85 109  64 228  44  90 241  87  66 180 267 107  96 223  66

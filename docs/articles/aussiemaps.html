@@ -4,20 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="aussiemaps">
 <title>How to use aussiemaps • aussiemaps</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/sandstone/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="How to use aussiemaps">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="How to use aussiemaps">
 <meta property="og:description" content="aussiemaps">
-<meta property="og:image" content="https://carlosyanez.github.io/carlosyanez/img/bbox_ghcard.png">
-<meta property="og:image:alt" content="aussiemaps: Another Australian maps package.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:creator" content="@carlosyanez">
-<meta name="twitter:site" content="@carlosyanez">
+<meta property="og:image" content="/img/bbox_ghcard.png">
+<meta property="og:image:alt" content="{aussiemaps}: Yet Another Australian maps package">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -29,199 +26,478 @@
   gtag('config', 'G-G75W4FBYH8');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">aussiemaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.0000</span>
-      </span>
-    </div>
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    
+    <a class="navbar-brand me-2" href="../index.html">aussiemaps</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.0011</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li>
-  <a href="../articles/aussiemaps.html">Get started</a>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/carlosyanez/aussiemaps/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-</div>
-<!--/.nav-collapse -->
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/aussiemaps.html">How to use</a>
   </div>
-<!--/.container -->
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/carlosyanez/aussiemaps/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.navbar -->
 
-      
+    
+  </div>
+</nav><div class="container template-article">
 
-      </header><script src="aussiemaps_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>How to use aussiemaps</h1>
+
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="" class="logo" alt=""><h1>How to use aussiemaps</h1>
+                        <h4 data-toc-skip class="author">Carlos YANEZ
+SANTIBANEZ</h4>
             
+            <h4 data-toc-skip class="date">2023-01-13</h4>
       
       
-      <div class="hidden name"><code>aussiemaps.Rmd</code></div>
-
+      <div class="d-none name"><code>aussiemaps.Rmd</code></div>
     </div>
 
     
     
-<div id="how-to-use" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-to-use" class="anchor"></a>How to use</h2>
-<p>The main function in this package is <strong>get_map()</strong>, which retrieves a selected portion of the map based on a filter “tibble” and an aggregation attribute.</p>
-<p>Filter tibbles can be created any combination of attributes available on <strong>list_aggregations</strong>, as long as <em>State</em> is present. Another way to create a filter tibble is to subset <strong>locations.table</strong>, which is included in package.</p>
-<p>Aggregations are optional, if not added, will retrieve the granular polygons directly.</p>
-<p>The below plot shows and example on how to retrieve different sf objects, with different aggregations (postal area 3004 covers parts of two different suburbs. South Yarra is shared across two LGAs).</p>
+<div class="section level2">
+<h2 id="aussiemaps---yet-another-maps-package">{aussiemaps} - Yet another maps package<a class="anchor" aria-label="anchor" href="#aussiemaps---yet-another-maps-package"></a>
+</h2>
+<p>This package has been built to facilitate the use of the geographic
+boundary files published by the Australian Bureau of Statistics (ABS).
+The ABS has published several boundary files - i.e. the <a href="https://www.abs.gov.au/statistics/statistical-geography/australian-statistical-geography-standard-asgs" class="external-link">Australian
+Statistical Geography Standard (ASGS)</a> from 2006 onwards and the <a href="https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/DEDA554E1B6BB78BCA25791F000EEA26" class="external-link">Australian
+Standard Geographical Classification (ASGC)</a> before that - covering
+both:</p>
+<ul>
+<li>Statistical Geographic Structures created and maintained by the ABS
+- and used to collect data.</li>
+<li>Non-ABS structure, e.g Postal Areas, Electoral Divisions, LGA
+boundaries.</li>
+</ul>
+<p>This package has four versions of the above, aligned with Census
+years 2006, 2011,2016 and 2021. This makes it easy to mix use with
+Census data packs or the {auscensus} package.</p>
+<p>This package provides access to a processed version of those
+boundaries - as sf objects, allowing it to cater for the following
+scenarios:</p>
+<ul>
+<li>Get the boundaries of an electoral division across time.</li>
+<li>Get all the S1 or S1 areas within a Council area.</li>
+<li>Get all postcodes in a state or territory.</li>
+</ul>
+<p>This repository also contains the R script used to process the files.
+Although not tested, the functions could also accommodate BYO structures
+for other years.</p>
+</div>
+<div class="section level2">
+<h2 id="getting-started-">Getting started.<a class="anchor" aria-label="anchor" href="#getting-started-"></a>
+</h2>
+<p>The core function of this package is get_map(), which retrieves the
+sf files. get_map provides several filters to narrow down the data
+retrieved and avoid getting everything unless is needed. The key
+parameters for this function are:</p>
+<ul>
+<li>How the data will be filtered (e.g. return only objects in a
+particular state, council or metro area)</li>
+<li>Which year/version of the data will be retrieved?</li>
+<li>Which aggregation will be used (e.g. which will be the resulting
+objects)</li>
+</ul>
+<p>Filters and column names follow the same name convention used in the
+original ABS files. The function list_attributes(), will present them in
+tibble format:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">melb_inner1_filter</span><span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>LGA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Melbourne"</span>,<span class="st">"Port Phillip"</span>,<span class="st">"Stonnington"</span><span class="op">)</span>,State<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"VIC"</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span> 
-
-<span class="va">melb_inner1</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span><span class="va">melb_inner1_filter</span>,aggregation <span class="op">=</span> <span class="st">"LGA"</span><span class="op">)</span> 
-
-<span class="va">melb_inner1.centroid</span> <span class="op">&lt;-</span> <span class="fu">st_centroid</span><span class="op">(</span><span class="va">melb_inner1</span><span class="op">)</span>
-
-<span class="co">#works with pipes too</span>
-<span class="va">melb_inner2</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>LOCALITY<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"South Yarra"</span><span class="op">)</span>,State<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"VIC"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-               <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">melb_inner3</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>POA_CODE16<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"3004"</span><span class="op">)</span>,State<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"VIC"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-               <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">melb_inner1</span>,colour<span class="op">=</span><span class="st">"white"</span>,size<span class="op">=</span><span class="fl">1.2</span>,fill<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">melb_inner2</span>,<span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">LOCALITY</span><span class="op">)</span>,alpha<span class="op">=</span><span class="fl">0.8</span>,colour<span class="op">=</span><span class="st">"white"</span>,size<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">melb_inner3</span>,<span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">POA_CODE16</span><span class="op">)</span>,alpha<span class="op">=</span><span class="fl">0.8</span>,colour<span class="op">=</span><span class="st">"white"</span>,size<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf_text</span><span class="op">(</span>data <span class="op">=</span> <span class="va">melb_inner1.centroid</span>, <span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">LGA</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_ochre</span><span class="op">(</span><span class="st">"lorikeet"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">custom_map_theme</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Arbitrary selection of South Yarra and Postal Area 3004"</span>, 
-       caption<span class="op">=</span><span class="st">"Sources:data.gov.au, ABS"</span><span class="op">)</span>
- 
-
-<span class="va">p1</span></code></pre></div>
-<center>
-<img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/map1.png" heigth="80%" style="width:80.0%">
-</center>
-<p>The package also contains a number of pre-defined “regions”. These are either official (e.g. Grampians Region) or <em>unofficial</em> (e.g. Limestone coast) divisions. These regions can also cross state lines (e.g. Gold Coast - Tweed Heads). To find out the existing regions, run <em>list_regions()</em>. With the region name, <em>get_region()</em> will produce the corresponding filter tibble.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/list_attributes.html">list_attributes</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 10 × 5</span></span>
+<span><span class="co">#&gt;    attributes `2006`         `2011`         `2016`         `2021`        </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;         </span></span>
+<span><span class="co">#&gt;  1 CD_CODE    CD_CODE_2006   &lt;NA&gt;           &lt;NA&gt;           &lt;NA&gt;          </span></span>
+<span><span class="co">#&gt;  2 CED_CODE   CED_CODE_2006  CED_CODE_2011  CED_CODE_2016  CED_CODE_2021 </span></span>
+<span><span class="co">#&gt;  3 CED_NAME   CED_NAME_2006  CED_NAME_2011  CED_NAME_2016  CED_NAME_2021 </span></span>
+<span><span class="co">#&gt;  4 IARE_CODE  IARE_CODE_2006 IARE_CODE_2011 IARE_CODE_2016 IARE_CODE_2021</span></span>
+<span><span class="co">#&gt;  5 IARE_NAME  IARE_NAME_2006 IARE_NAME_2011 IARE_NAME_2016 IARE_NAME_2021</span></span>
+<span><span class="co">#&gt;  6 ILOC_CODE  ILOC_CODE_2006 ILOC_CODE_2011 ILOC_CODE_2016 ILOC_CODE_2021</span></span>
+<span><span class="co">#&gt;  7 ILOC_NAME  ILOC_NAME_2006 ILOC_NAME_2011 ILOC_NAME_2016 ILOC_NAME_2021</span></span>
+<span><span class="co">#&gt;  8 IREG_CODE  IREG_CODE_2006 IREG_CODE_2011 IREG_CODE_2016 IREG_CODE_2021</span></span>
+<span><span class="co">#&gt;  9 IREG_NAME  IREG_NAME_2006 IREG_NAME_2011 IREG_NAME_2016 IREG_NAME_2021</span></span>
+<span><span class="co">#&gt; 10 LGA_CODE   LGA_CODE_2006  LGA_CODE_2011  LGA_CODE_2016  LGA_CODE_2022</span></span></code></pre></div>
+<p>Let’s say we want to retrieve all SA1 in the City of Melbourne for
+2016 - this can be done via:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co">#get regions</span>
-<span class="va">riverina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_region.html">get_region</a></span><span class="op">(</span><span class="st">"The Riverina"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>aggregation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LGA"</span>,<span class="st">"State"</span>,<span class="st">"Region"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co">#draw contour for filtering</span>
-<span class="va">riverina_contour</span> <span class="op">&lt;-</span> <span class="va">riverina</span> <span class="op">%&gt;%</span> 
-                     <span class="fu">group_by</span><span class="op">(</span><span class="va">Region</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">summarise</span><span class="op">(</span>.groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-                     <span class="fu"><a href="../reference/clean_polygons.html">clean_polygons</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co">#get rivers from OSM</span>
-
-<span class="va">riverina_bbox</span> <span class="op">&lt;-</span> <span class="fu">st_bbox</span><span class="op">(</span><span class="va">riverina</span><span class="op">)</span>
-
-<span class="va">rivers</span> <span class="op">&lt;-</span> <span class="fu">opq</span><span class="op">(</span><span class="va">riverina_bbox</span><span class="op">)</span> <span class="op">%&gt;%</span>
-        <span class="fu">add_osm_feature</span><span class="op">(</span>key <span class="op">=</span> <span class="st">"waterway"</span>,
-                  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"river"</span>,<span class="st">"canal"</span>,<span class="st">"creeks"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-        <span class="fu">osmdata_sf</span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">rivers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">rivers</span><span class="op">$</span><span class="va">osm_lines</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">osm_id</span>,<span class="va">name</span><span class="op">)</span>,
-                <span class="va">rivers</span><span class="op">$</span><span class="va">osm_multilines</span><span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">osm_id</span>,<span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-          <span class="fu">st_transform</span><span class="op">(</span><span class="fu">st_crs</span><span class="op">(</span><span class="va">riverina_contour</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-          <span class="fu">st_intersection</span><span class="op">(</span><span class="va">riverina_contour</span><span class="op">)</span>
-
-<span class="co">#plot</span>
-
-<span class="va">p2</span><span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">riverina</span>, <span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">LGA</span><span class="op">)</span>, colour<span class="op">=</span><span class="st">"white"</span>, size<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">rivers</span>,colour<span class="op">=</span><span class="st">"blue"</span>,size<span class="op">=</span><span class="fl">1.1</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">custom_map_theme</span><span class="op">(</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">scale_fill_ochre</span><span class="op">(</span><span class="op">)</span>  <span class="op">+</span> 
-  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Rivers and Canals in The Riverina"</span>, 
-       caption<span class="op">=</span><span class="st">"Sources:data.gov.au (map), openstreetmap (rivers)"</span><span class="op">)</span></code></pre></div>
-<center>
-<img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/map2.png" heigth="80%" style="width:80.0%">
-</center>
-<p>Since the loaded objects are sf objects, they can be easily merge with data frames or tibbles to add additional data for visualisation.</p>
+<code class="sourceCode R"><span><span class="va">melbourne_sa1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>LGA_NAME_2016<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Melbourne"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                         year<span class="op">=</span><span class="fl">2016</span>,</span>
+<span>                         aggregation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SA1_MAINCODE_2016"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 249 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_Victoria' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 249 features and 37 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 144.8971 ymin: -37.85067 xmax: 144.9914 ymax: -37.77545</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span></span>
+<span><span class="co">#just an empty plot</span></span>
+<span></span>
+<span><span class="va">melbourne_sa1</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span>fill<span class="op">=</span><span class="st">"azure1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"SA1s in the City of Melbourne"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="articles/get-data-unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="filtering-via-regular-expressions">Filtering via regular expressions<a class="anchor" aria-label="anchor" href="#filtering-via-regular-expressions"></a>
+</h2>
+<p>The filter arguments are intended to be regular expressions, for
+instance:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co"># load dataset from github</span>
-<span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/dipalira/Melbourne-Housing-Data-Kaggle/raw/master/Data/Melbourne_housing_FULL.csv"</span>
-<span class="va">melb_housing</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-
-<span class="co"># get median price by suburb</span>
-<span class="va">melb_price</span> <span class="op">&lt;-</span> <span class="va">melb_housing</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Type</span><span class="op">==</span><span class="st">"h"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-              <span class="fu">group_by</span><span class="op">(</span><span class="va">Suburb</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-              <span class="fu">summarise</span><span class="op">(</span>medianprice<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">Price</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,.groups<span class="op">=</span><span class="st">"drop"</span><span class="op">)</span>
-
-<span class="co">#join get sf object and add median prices</span>
-<span class="va">Melbourne</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_region.html">get_region</a></span><span class="op">(</span><span class="st">"Greater Metropolitan Melbourne"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-             <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>aggregation<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LOCALITY"</span>,<span class="st">"Metro.Region"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-             <span class="fu">left_join</span><span class="op">(</span><span class="va">melb_price</span>,by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LOCALITY"</span><span class="op">=</span><span class="st">"Suburb"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-             <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Metro.Region</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Inner Melbourne"</span>,<span class="st">"Metropolitan Melbourne"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co">#plot</span>
-<span class="va">p3</span><span class="op">&lt;-</span> <span class="va">Melbourne</span> <span class="op">%&gt;%</span> <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">geom_sf</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">medianprice</span><span class="op">)</span>, colour<span class="op">=</span><span class="st">"white"</span>, size<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
-   <span class="fu">custom_map_theme</span><span class="op">(</span><span class="op">)</span><span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span>,
-          legend.direction <span class="op">=</span> <span class="st">"vertical"</span><span class="op">)</span> <span class="op">+</span> 
-    <span class="fu">scale_fill_gradient2</span><span class="op">(</span>name<span class="op">=</span><span class="st">"Median Price"</span>,
-                         labels<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span>, big.mark <span class="op">=</span> <span class="st">","</span>, scientific <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Median House Price in Melbourne's Housing Kaggle Dataset"</span>, 
-         caption<span class="op">=</span><span class="st">"Sources:data.gov.au (map), Github (data)"</span><span class="op">)</span> </code></pre></div>
-<center>
-<img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/map3.png" heigth="80%" style="width:80.0%">
-</center>
+<code class="sourceCode R"><span></span>
+<span><span class="va">preston</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>SSC_NAME_2016<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Preston"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                         year<span class="op">=</span><span class="fl">2016</span>,</span>
+<span>                         aggregation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SSC_NAME_2016"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 119 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_New.South.Wales' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 36 features and 35 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 150.8487 ymin: -33.95678 xmax: 150.8979 ymax: -33.9263</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 119 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_Queensland' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 5 features and 35 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 148.6178 ymin: -27.68302 xmax: 152.0004 ymax: -20.34465</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 119 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_Tasmania' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 2 features and 35 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 145.9943 ymin: -41.3658 xmax: 146.1147 ymax: -41.24951</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 119 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_Victoria' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 74 features and 37 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 144.979 ymin: -37.75573 xmax: 145.0383 ymax: -37.72792</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 119 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_Western.Australia' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 2 features and 35 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 115.6286 ymin: -33.44906 xmax: 116.1876 ymax: -32.79339</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span></span>
+<span><span class="va">preston</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">SSC_NAME_2016</span>,<span class="va">UCL_NAME_2016</span>,<span class="va">STE_NAME_2016</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Simple feature collection with 8 features and 3 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 115.6286 ymin: -41.3658 xmax: 152.0004 ymax: -20.34465</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; # A tibble: 8 × 4</span></span>
+<span><span class="co">#&gt;   SSC_NAME_2016              UCL_NAME_2016                       STE_NAME_2016                                                                        geom</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                      &lt;chr&gt;                               &lt;chr&gt;                                                                  &lt;MULTIPOLYGON [°]&gt;</span></span>
+<span><span class="co">#&gt; 1 Prestons                   Sydney                              New South Wales   (((150.8607 -33.9541, 150.8602 -33.95399, 150.8596 -33.95383, 150.8591…</span></span>
+<span><span class="co">#&gt; 2 Preston (Vic.)             Melbourne                           Victoria          (((144.9984 -37.7301, 145.0005 -37.73032, 145.002 -37.73047, 145.0023 …</span></span>
+<span><span class="co">#&gt; 3 Preston (Toowoomba - Qld)  Remainder of State/Territory (Qld)  Queensland        (((151.9545 -27.64808, 151.9559 -27.64938, 151.9545 -27.64808, 151.953…</span></span>
+<span><span class="co">#&gt; 4 Preston (Whitsunday - Qld) Remainder of State/Territory (Qld)  Queensland        (((148.6227 -20.3747, 148.6229 -20.37434, 148.623 -20.37383, 148.6231 …</span></span>
+<span><span class="co">#&gt; 5 Preston Beach              Remainder of State/Territory (WA)   Western Australia (((115.6492 -32.88399, 115.6491 -32.88388, 115.649 -32.88336, 115.6489…</span></span>
+<span><span class="co">#&gt; 6 Preston Settlement         Remainder of State/Territory (WA)   Western Australia (((116.117 -33.40392, 116.122 -33.40121, 116.1222 -33.39111, 116.1236 …</span></span>
+<span><span class="co">#&gt; 7 Preston (Tas.)             Remainder of State/Territory (Tas.) Tasmania          (((146.076 -41.33851, 146.0757 -41.33829, 146.0756 -41.3382, 146.0754 …</span></span>
+<span><span class="co">#&gt; 8 South Preston              Remainder of State/Territory (Tas.) Tasmania          (((146.076 -41.33851, 146.0759 -41.33858, 146.0758 -41.33867, 146.0757…</span></span></code></pre></div>
+<p>Whereas</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">prestons</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>SSC_NAME_2016<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^Pres"</span><span class="op">)</span>,</span>
+<span>                                 STE_NAME_2016<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wales"</span>,<span class="st">"^T"</span><span class="op">)</span></span>
+<span>                                 <span class="op">)</span>,</span>
+<span>                         year<span class="op">=</span><span class="fl">2016</span>,</span>
+<span>                         aggregation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SSC_NAME_2016"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 38 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_New.South.Wales' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 36 features and 35 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 150.8487 ymin: -33.95678 xmax: 150.8979 ymax: -33.9263</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 38 features with 36 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2016_Tasmania' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 2 features and 35 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 146.0066 ymin: -41.33851 xmax: 146.1147 ymax: -41.09649</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span></span>
+<span><span class="va">prestons</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">SSC_NAME_2016</span>,<span class="va">UCL_NAME_2016</span>,<span class="va">STE_NAME_2016</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Simple feature collection with 3 features and 3 fields</span></span>
+<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 146.0066 ymin: -41.33851 xmax: 150.8979 ymax: -33.9263</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA94</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span><span class="co">#&gt;   SSC_NAME_2016    UCL_NAME_2016                       STE_NAME_2016                                                                                  geom</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;                               &lt;chr&gt;                                                                                 &lt;POLYGON [°]&gt;</span></span>
+<span><span class="co">#&gt; 1 Prestons         Sydney                              New South Wales ((150.8607 -33.9541, 150.8602 -33.95399, 150.8596 -33.95383, 150.8591 -33.95373, 1…</span></span>
+<span><span class="co">#&gt; 2 Preservation Bay Remainder of State/Territory (Tas.) Tasmania        ((146.0401 -41.09734, 146.0403 -41.09661, 146.0403 -41.09649, 146.0404 -41.09651, …</span></span>
+<span><span class="co">#&gt; 3 Preston (Tas.)   Remainder of State/Territory (Tas.) Tasmania        ((146.0962 -41.25072, 146.0963 -41.2506, 146.0964 -41.25055, 146.0964 -41.25054, 1…</span></span></code></pre></div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
+<div class="section level2">
+<h2 id="even-more-complex-filtering">Even more complex filtering<a class="anchor" aria-label="anchor" href="#even-more-complex-filtering"></a>
+</h2>
+<p>If more complex subsetting is needed, it is possible to pass a table
+with the elements to be selected. In order to do that, list_structure()
+comes to help. This function uses the same year and filters parameters
+than get_map() (actually this function calls the former if no table is
+provided). Once you have the dataset, you can use any ad-hoc filter to
+get the needed structures. For example</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">greater_sydney</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_structure.html">list_structure</a></span><span class="op">(</span>year<span class="op">=</span><span class="fl">2021</span>,filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GCCSA_NAME_2021<span class="op">=</span><span class="st">"Greater Sydney"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#use_cache option stores the results/reuses pre-processed results</span></span>
+<span><span class="va">sydney_area</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filter_table <span class="op">=</span> <span class="va">greater_sydney</span>,</span>
+<span>                       year<span class="op">=</span><span class="fl">2021</span>,</span>
+<span>                       aggregation <span class="op">=</span> <span class="st">"GCCSA_NAME_2021"</span>,</span>
+<span>                       use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 12948 features with 42 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2021_New.South.Wales' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 12948 features and 40 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 149.9719 ymin: -34.33116 xmax: 151.6301 ymax: -33.00031</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA2020</span></span>
+<span><span class="co">#&gt; Writing layer `8c99638c' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/8c99638c.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 1 features with 39 fields and geometry type Multi Polygon.</span></span>
+<span></span>
+<span><span class="co">#outline</span></span>
+<span></span>
+<span><span class="co"># all suburbs starting wit A</span></span>
+<span><span class="va">suburbs_a_filter</span> <span class="op">&lt;-</span> <span class="va">greater_sydney</span> <span class="op">|&gt;</span></span>
+<span>                    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">SAL_NAME_2021</span>,<span class="st">"^A"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">suburbs_a</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filter_table <span class="op">=</span> <span class="va">suburbs_a_filter</span>,</span>
+<span>                       year<span class="op">=</span><span class="fl">2021</span>,</span>
+<span>                       aggregation <span class="op">=</span> <span class="st">"SAL_NAME_2021"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                <span class="fu">mutate</span><span class="op">(</span>border<span class="op">=</span><span class="st">"orange"</span>,fill<span class="op">=</span><span class="st">"orange"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 473 features with 42 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2021_New.South.Wales' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 473 features and 40 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 150.6731 ymin: -34.25982 xmax: 151.4437 ymax: -33.25952</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA2020</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">sydney_area</span>,fill<span class="op">=</span><span class="st">"white"</span>,colour<span class="op">=</span><span class="st">"black"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span>data<span class="op">=</span><span class="va">suburbs_a</span>,fill<span class="op">=</span><span class="st">"orange"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Suburbs starting with A - Sydney"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="articles/get-data-unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="aggregation">Aggregation<a class="anchor" aria-label="anchor" href="#aggregation"></a>
+</h2>
+<p>It is worth noticing that the <em>aggregation</em> parameter accepts
+more than one variable. Those parameters are passed to dplyr::group_by()
+before aggregation - thus more variables will impact how sf objects are
+aggregated. For instance, if we look at the postal areas (ABS
+approximation of a postcode) in the cities of Melbourne and Port
+Phillip:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">poas_inner_melbourne</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>LGA_NAME_2022<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Melbourne"</span>,<span class="st">"Phillip$"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                year<span class="op">=</span><span class="fl">2021</span>,</span>
+<span>                                aggregation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"POA_NAME_2021"</span>,<span class="st">"LGA_NAME_2022"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 626 features with 42 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2021_Victoria' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 626 features and 43 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 144.8971 ymin: -37.89172 xmax: 145.0105 ymax: -37.77543</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA2020</span></span>
+<span></span>
+<span><span class="va">poas_inner_melbourne</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>colour<span class="op">=</span><span class="fu">case_when</span><span class="op">(</span></span>
+<span>    <span class="va">POA_NAME_2021</span><span class="op">==</span><span class="st">"3004"</span> <span class="op">~</span> <span class="st">"orange"</span>,</span>
+<span>    <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"grey"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">colour</span>,colour<span class="op">=</span><span class="va">LGA_NAME_2022</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_identity</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Postcode 3004 extends across two LGAs"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="articles/get-data-unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" width="100%">
+## Using external data</p>
+<p>This package provides sf data, thus the result can be easily merged
+with any other data frame. Since data has been taken from the ABS and
+the output contains both names and <strong>codes</strong> of geographic
+structures, data can be joined using an un-ambiguous key. Furthermore,
+with {auscensus}, this package can be used as data filters to retrieve
+said data in the first place. For example:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Chileans by Commonwealth Electoral Divisions in Metropolitan Brisbane, 2021</span></span>
+<span></span>
+<span><span class="va">attr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_structure.html">list_structure</a></span><span class="op">(</span>year<span class="op">=</span><span class="fl">2021</span>,filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GCCSA_NAME_2021<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Brisbane"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">distinct</span><span class="op">(</span><span class="va">CED_NAME_2021</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">chileans</span> <span class="op">&lt;-</span> <span class="fu">auscensus</span><span class="fu">::</span><span class="fu"><a href="https://carlosyanez.github.io/auscensus/reference/get_census_summary.html" class="external-link">get_census_summary</a></span><span class="op">(</span>table_number<span class="op">=</span> <span class="st">"09"</span>,</span>
+<span>                                          selected_years <span class="op">=</span> <span class="st">"2021"</span>,</span>
+<span>                                          geo_structure <span class="op">=</span> <span class="st">"CED"</span>,</span>
+<span>                                          geo_unit_names <span class="op">=</span>   <span class="va">attr</span><span class="op">$</span><span class="va">CED_NAME_2021</span>,</span>
+<span>                                          attribute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Chileans<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Persons_chile_total"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                          reference_total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Total<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Persons_total_total"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                          percentage_scale <span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">brisbane_ced</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_map.html">get_map</a></span><span class="op">(</span>filters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GCCSA_NAME_2021<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Brisbane"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                        year <span class="op">=</span> <span class="fl">2021</span>,</span>
+<span>                        aggregation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CED_NAME_2021"</span><span class="op">)</span>,</span>
+<span>                        use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Updating layer `id' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 6497 features with 42 fields without geometries.</span></span>
+<span><span class="co">#&gt; Reading query `SELECT * FROM '2021_Queensland' WHERE id IN (SELECT id FROM id)'</span></span>
+<span><span class="co">#&gt; from data source `C:\Users\carlo\OneDrive\Documents\.aussiemaps_cache\temp.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Simple feature collection with 6497 features and 40 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 152.0734 ymin: -28.36387 xmax: 153.5467 ymax: -26.45233</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GDA2020</span></span>
+<span><span class="co">#&gt; Writing layer `b26452fe' to data source `C:/Users/carlo/OneDrive/Documents/.aussiemaps_cache/b26452fe.gpkg' using driver `GPKG'</span></span>
+<span><span class="co">#&gt; Writing 15 features with 39 fields and geometry type Multi Polygon.</span></span>
+<span></span>
+<span><span class="va">chileans</span><span class="op">$</span><span class="va">Value</span></span>
+<span><span class="co">#&gt;  [1]  85 109  64 228  44  90 241  87  66 180 267 107  96 223  66</span></span>
+<span></span>
+<span><span class="va">brisbane_ced</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">chileans</span>,by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CED_NAME_2021"</span><span class="op">=</span><span class="st">"Unit"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">Value</span>,colour<span class="op">=</span><span class="va">Value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_continuous</span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Chileans in Bribane's Federal Electorates"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="articles/get-data-unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="data-aggregation">Data Aggregation<a class="anchor" aria-label="anchor" href="#data-aggregation"></a>
+</h2>
+<p>As a bonus function, <em>geo_aggregate()</em> aggregates data,
+transforming between geographic structures. For instance, let’s imagine
+that for the previous case, it is only possible to get data by SA2.
+<em>geo_aggregate()</em> can aggregate the data to obtain an
+approximation for each electorate. When an SA1 is not fully contained by
+an electorate, the function will use the overlapping area as the
+weighting factor.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">attr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/list_structure.html">list_structure</a></span><span class="op">(</span>year<span class="op">=</span><span class="fl">2021</span>,filters<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GCCSA_NAME_2021<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Brisbane"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">distinct</span><span class="op">(</span><span class="va">SA2_CODE_2021</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">chileans_sa2</span> <span class="op">&lt;-</span> <span class="fu">auscensus</span><span class="fu">::</span><span class="fu"><a href="https://carlosyanez.github.io/auscensus/reference/get_census_summary.html" class="external-link">get_census_summary</a></span><span class="op">(</span>table_number<span class="op">=</span> <span class="st">"09"</span>,</span>
+<span>                                          selected_years <span class="op">=</span> <span class="st">"2021"</span>,</span>
+<span>                                          geo_structure <span class="op">=</span> <span class="st">"SA2"</span>,</span>
+<span>                                          geo_unit_codes <span class="op">=</span>     <span class="va">attr</span><span class="op">$</span><span class="va">SA2_CODE_2021</span>,</span>
+<span>                                          attribute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Chileans<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Persons_chile_total"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>                  <span class="fu">rename</span><span class="op">(</span><span class="st">"SA2_CODE_2021"</span><span class="op">=</span><span class="st">"Census_Code"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># please note these Electoral divisions are not built from SA2s - proportional allocation will result in factional </span></span>
+<span><span class="co"># Therefore - This is an approximation</span></span>
+<span><span class="va">chileans</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geo_aggregate.html">geo_aggregate</a></span><span class="op">(</span>original_data <span class="op">=</span> <span class="va">chileans_sa2</span>,</span>
+<span>                          values_col <span class="op">=</span> <span class="st">"Value"</span>,</span>
+<span>                          original_geo <span class="op">=</span> <span class="st">"SA2_CODE_2021"</span>,</span>
+<span>                          new_geo      <span class="op">=</span> <span class="st">"CED_NAME_2021"</span>,</span>
+<span>                          grouping_col <span class="op">=</span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Year"</span>,<span class="st">"Attribute"</span><span class="op">)</span>,</span>
+<span>                          year<span class="op">=</span><span class="fl">2021</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>            <span class="fu">rename</span><span class="op">(</span><span class="st">"Unit"</span><span class="op">=</span><span class="st">"CED_NAME_2021"</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="va">brisbane_ced</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">chileans</span>,by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CED_NAME_2021"</span><span class="op">=</span><span class="st">"Unit"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill<span class="op">=</span><span class="va">Value</span>,colour<span class="op">=</span><span class="va">Value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_continuous</span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title<span class="op">=</span><span class="st">"Chileans in Bribane's Federal Electorates"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="articles/get-data-unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" width="100%"></p>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
+
+
+    <footer><div class="pkgdown-footer-left">
+  <p></p>
+<p>Developed by <a href="http://www.carlosyanez.id.au" class="external-link">Carlos Yáñez Santibáñez</a>.</p>
 </div>
 
-
-
-      <footer><div class="copyright">
-  <p>Developed by <a href="http://www.carlosyanez.cl">Carlos Yanez Santibanez</a>.</p>
+<div class="pkgdown-footer-right">
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
-<div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
-</div>
-
-      </footer>
+    </footer>
 </div>
 
   
 
+  
 
   </body>
 </html>

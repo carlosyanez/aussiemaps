@@ -6,15 +6,11 @@ aussiemaps
 
 <img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/hexSticker.png" width = "175" height = "200" align="right" />
 
-**aussiemaps** provides Australian LGA, suburbs and Postal Area maps
-directly in R, without any need to download and process shapefiles.
+**aussiemaps** provides maps for  Australian LGA, suburbs, Postal Area maps, SA1,2,3,4, etc. - directly in R, without any need to download and process shapefiles.
 
-The data for the package has been created using the scripts provided
-[here](https://github.com/carlosyanez/Australian_Polygons). The sf
-objects contain (Suburb,LGA, Postal Area) intersection polygons, which
-allow to select, filter and re-construct any of those geographic units.
+All the data is contained as a release ([here](https://github.com/carlosyanez/aussiemaps/releases/tag/data)) in [Apache Parquet format](https://arrow.apache.org/docs/r/index.html), so it can be used directly in any programming language/tool/platform that supports Parquet.
 
-## Installation and pre-requisites
+## Installation
 
 You can install this package from Github
 
@@ -35,7 +31,18 @@ install.packages('aussiemaps')
 
 ```
 
+## How to use
+
+Read the [vignette]( ([here](https://github.com/carlosyanez/aussiemaps/releases/tag/data)).
+
 Please note that no data is included in the package installation - data files  will be downloaded and cached as needed.
+
+## DISCLAIMER
+
+**THE DATA  IN THIS FILE IS PROVIDED WITHOUT ANY GUARANTEES. USE AT YOUR OWN RISK!**
+
+If you detect any issues in the resulting maps, please submit an issue in the Github repository. 
+Please don't use this package or its data for any mission critical/important withouth reviewing its adequacy.
 
 
 ## Not for you?
@@ -49,6 +56,7 @@ some use cases. There are other great Australian maps packages, such as:
     This package is on CRAN.
 -   [absmapsdata](https://github.com/wfmackey/absmapsdata), which provides maps
     for all ABS statistical divisions.
+-   You can always download the gpkg files from the ABS or https://data.gov.au .
 
 ## Issues? bugs? Ideas?
 

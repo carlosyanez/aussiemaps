@@ -19,20 +19,21 @@ navbar:
   structure:
     left:  [home, reference,articles]
     right: [github]
+  components:
+   articles:
+    text: Articles
+    menu:
+    - text: "How to use"
+      href: articles/aussiemaps.html
+
+home:
+  title: aussiemaps
+  description: Australian Election Results in R.
 repo:
   url:
     home: https://github.com/carlosyanez/aussiemaps/
     issues: https://github.com/carlosyanez/aussiemaps/issues/
     user: https://github.com/carlosyanez/
 authors:
-  Carlos Yanez Santibanez:
+  Carlos Yáñez Santibáñez:
     href: http://www.carlosyanez.id.au
-
-home:
-  title: aussiemaps
-  description: Another Australian maps package.
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{How to use aussiemaps}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}

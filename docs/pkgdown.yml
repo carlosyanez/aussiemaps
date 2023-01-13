@@ -1,6 +1,7 @@
 pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
-articles: {}
-last_built: 2022-12-27T13:42Z
+articles:
+  aussiemaps: aussiemaps.html
+last_built: 2023-01-13T05:57Z
 

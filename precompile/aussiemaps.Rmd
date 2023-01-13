@@ -1,7 +1,7 @@
 ---
-title: "Aussiemaps"
+title: "How to use aussiemaps"
 resource_files:
-  - vignetttes/house-preference-flow*.png
+  - vignetttes/get-data-*.png
 author: "Carlos YANEZ SANTIBANEZ"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
