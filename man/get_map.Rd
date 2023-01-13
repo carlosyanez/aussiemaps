@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_map.R
 \name{get_map}
 \alias{get_map}
-\title{Get sf object containing selected map polygons}
+\title{Get a map sf tibble}
 \usage{
 get_map(
   filter_table = NULL,
@@ -10,25 +10,52 @@ get_map(
   year,
   aggregation = NULL,
   simplification_factor = 1,
-  smoothing_threshold = 4
+  smoothing_threshold = 4,
+  use_cache = FALSE,
+  cache_file = NULL
 )
 }
 \arguments{
-\item{filter_table}{table to filter (you can start with location_table)}
+\item{filter_table}{A data frame containing the filter table, usually the output of list_structure().}
 
-\item{filters}{list with filters}
+\item{filters}{A list of filters to be used. Item names should name column names in list_structure(). Contents should be vectors with regular expressions.}
 
-\item{year}{year}
+\item{year}{A number indicating the year for which the map should be created.}
 
-\item{aggregation}{name of column to aggregate (POA_CODE16, LOCALITY,LGA)}
+\item{aggregation}{A vector containing the aggregation parameters,matching list_structure() column names .}
 
-\item{simplification_factor}{0-1 simplication threshold to pass to rmapshaper::ms_simplify()}
+\item{simplification_factor}{A number indicating the simplification factor.}
 
-\item{smoothing_threshold}{smoothing threshold (default to 1, as in km^2)}
+\item{smoothing_threshold}{A number indicating the smoothing threshold.}
+
+\item{use_cache}{A boolean indicating whether to use the cache.}
+
+\item{cache_file}{Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).}
 }
 \value{
-sf object with selected polygons
+A map object.
 }
 \description{
-Get sf object containing selected map polygons
+This function tibble with sf objects, for a particular year.
+It allows to filter the results using a geo structure names / codes, and results can be aggregated by those too.
+Optionally, this function stores the results in the cache for faster retrieval of large objects (e.g. when covering)
+a metropolitan area.
+}
+\examples{
+\dontrun{
+ small case
+ preston <- get_map(filters=list(SSC_NAME_2016=c("Preston")),
+                      year=2016,
+                     aggregation = c("SSC_NAME_2016"))
+ big map of Sydney,cached
+ sydney_area <- get_map(filter_table = greater_sydney,
+                        year=2021,
+                        aggregation = "GCCSA_NAME_2021",
+                        use_cache = TRUE)
+
+}
+
+}
+\seealso{
+\code{\link{list_structure}}
 }

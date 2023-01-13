@@ -1,6 +1,12 @@
 #' Get list of all geographic structures (or attributes)
+
+#' @title List  geographic structures (or attributes)
+#'
 #' @description
-#' @importFrom  dplyr mutate across select filter rename any_of if_any distinct bind_rows collect arrange summarise all_of
+#' This function finds all the available geographic structures dataframe with the structures for each year.
+#'
+#' @return A tibble with the attributes for each year.
+#' @importFrom  dplyr mutate across select filter rename any_of if_any distinct bind_rows collect arrange summarise all_of case_when
 #' @importFrom  stringr str_detect str_remove str_c str_remove_all
 #' @importFrom  tidyselect where
 #' @importFrom  fs path
@@ -8,10 +14,11 @@
 #' @importFrom  tidyr pivot_wider
 #' @importFrom  arrow read_parquet
 #' @importFrom  tibble tibble
-#' @examples \dontrun{
-#'
-#' }
 #' @export
+#' @keywords lists
+#' @examples \dontrun{
+#' list_attributes()
+#' }
 list_attributes <- function(){
 
   cache_dir <- find_maps_cache()
@@ -46,7 +53,11 @@ list_attributes <- function(){
 
     data_i <- data_i |>
               mutate(across(c("attributes"), ~ str_remove(.x, "_[0-9]{4}"))) |>
-              mutate(across(c("Year"), ~       str_extract(.x, "[0-9]{4}")))
+              mutate(across(c("Year"), ~       str_extract(.x, "[0-9]{4}"))) |>
+              mutate(across(c("Year"),  ~ case_when(
+                .x=="2022" ~ "2021",
+                TRUE ~ .x
+              )))
 
 
     data   <- bind_rows(data,data_i)
@@ -65,19 +76,34 @@ list_attributes <- function(){
 }
 
 
-#' Get list of all aggregation options
-#' @param year year when the boundaries were released (2006,2011,2016,2022)
-#' @param filters list containing data filters (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))
-#' @return tibble with structure
-#' @importFrom stringr str_c str_detect str_replace_all str_squish
+
+#' List Structure
+#' @description produce table with geo structure
+#' @param year A character string of the year for which the structure is requested.
+#' @param filters A list with the attributes and values of the filters to be applied  (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))
+#'
+#' @return A data frame with the structure requested.
+#' @examples \dontrun{
+#' list_structure("2021")
+#' list_structure("2021", list("CED_NAME_2021"=c("Wills","Melbourne"))
+#' }
+#' @importFrom stringr str_c str_squish str_replace_all str_detect
 #' @importFrom dplyr filter if_any collect mutate across
 #' @importFrom tidyselect where
+#'
+#' @seealso \code{\link{get_map}}
 #' @export
 list_structure <- function(year,filters=NULL){
 
     file_name <- str_c(year,"_structure")
 
   data <- load_aussiemaps_parquet(file_name)
+
+  data <- data |>
+    mutate(across(where(is.character), ~ str_replace_all(.x, "\\s+", " "))) |>
+    mutate(across(where(is.character), ~ str_replace_all(.x, "\\s$",""))) |>
+    mutate(across(where(is.character), ~ str_replace_all(.x, "^\\s",""))) |>
+    mutate(across(where(is.character), ~ str_replace_all(.x, "[^A-z|0-9|[:punct:]|\\s]","")))
 
   if(!is.null(filters)){
     for(i in 1:length(filters)){
@@ -88,10 +114,6 @@ list_structure <- function(year,filters=NULL){
       }
 
       data <- data |>
-              mutate(across(where(is.character), ~ str_replace_all(.x, "\\s+", " "))) |>
-              mutate(across(where(is.character), ~ str_replace_all(.x, "\\s$",""))) |>
-              mutate(across(where(is.character), ~ str_replace_all(.x, "^\\s",""))) |>
-              mutate(across(where(is.character), ~ str_replace_all(.x, "[^A-z|0-9|[:punct:]|\\s]",""))) |>
               filter(if_any(all_of(c(attr_i)), ~   str_detect(.x,!!values_i)))
 
 
@@ -113,6 +135,23 @@ list_structure <- function(year,filters=NULL){
 #' @importFrom stringr str_squish str_remove_all
 #' @importFrom tidyselect where
 #' @export
+list_proportions <- function(attribute_name, ids=NULL){
+
+  areas_prop <- load_aussiemaps_parquet(attribute_name)
+
+  if(!is.null(ids)){
+
+    areas_prop <- areas_prop |>
+    filter(if_any(c("id"), ~ .x %in% filter_table$id))
+
+  }
+  areas_prop <- areas_prop |>
+                collect()  |>
+                mutate(across(where(is.character), ~str_squish(.x))) |>
+                mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
+
+  return(areas_prop)
+}
 list_proportions <- function(attribute_name, ids=NULL){
 
   areas_prop <- load_aussiemaps_parquet(attribute_name)

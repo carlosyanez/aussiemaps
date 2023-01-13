@@ -1,8 +1,105 @@
-#' Get sf object containing selected map polygons
+#' Get a map sf tibble
+#'
+#' @description This function tibble with sf objects, for a particular year.
+#' It allows to filter the results using a geo structure names / codes, and results can be aggregated by those too.
+#' Optionally, this function stores the results in the cache for faster retrieval of large objects (e.g. when covering)
+#' a metropolitan area.
+#'
+#'
+#' @importFrom digest digest
+#' @importFrom stringr str_c
+#' @importFrom dplyr select matches
+#' @importFrom sf st_read st_write
+#' @importFrom lwgeom lwgeom_extSoftVersion
+#' @param filter_table A data frame containing the filter table, usually the output of list_structure().
+#' @param filters A list of filters to be used. Item names should name column names in list_structure(). Contents should be vectors with regular expressions.
+#' @param year A number indicating the year for which the map should be created.
+#' @param aggregation A vector containing the aggregation parameters,matching list_structure() column names .
+#' @param simplification_factor A number indicating the simplification factor.
+#' @param smoothing_threshold A number indicating the smoothing threshold.
+#' @param use_cache A boolean indicating whether to use the cache.
+#' @param cache_file Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).
+#'
+#' @return A map object.
+#'
+#' @examples \dontrun{
+#'  small case
+#'  preston <- get_map(filters=list(SSC_NAME_2016=c("Preston")),
+#'                       year=2016,
+#'                      aggregation = c("SSC_NAME_2016"))
+#'  big map of Sydney,cached
+#'  sydney_area <- get_map(filter_table = greater_sydney,
+#'                         year=2021,
+#'                         aggregation = "GCCSA_NAME_2021",
+#'                         use_cache = TRUE)
+#'
+#' }
+#'
+#' @export
+#' @seealso \code{\link{list_structure}}
+#'
+get_map <- function(filter_table=NULL, #filter table is a data frame
+                    filters=NULL, #filters is a list
+                    year, #year is a number
+                    aggregation=NULL, #aggregation is a list
+                    simplification_factor=1, #simplification factor is a number
+                    smoothing_threshold=4, #smoothing threshold is a number
+                    use_cache=FALSE, #use cache is a boolean
+                    cache_file=NULL){ #cache file is a string
+
+
+  dummy <- lwgeom_extSoftVersion()
+  if(is.null(filter_table)&is.null(filters)) stop("Either filter table or filters need to be provided")
+
+  #get filter table if not provided
+  if(is.null(filter_table)){
+    filter_table <- list_structure(year,filters)
+  }
+
+  #create hash
+
+  if(is.null(cache_file)){
+    hash <- str_c(year,simplification_factor,smoothing_threshold,sep="-")
+
+    filter_table_hash <- digest(filter_table,"xxhash32",seed=1234)
+    aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
+
+    cache_file <- path(find_maps_cache(),
+                       digest(str_c(hash,filter_table_hash,aggregation_hash,sep="-"),"xxhash32",seed=1234),
+                       ext="gpkg")
+  }else{
+    cache_file <- path(find_maps_cache(),cache_file)
+  }
+
+
+
+  if(file_exists(cache_file) & use_cache){
+    message(str_c("loading from cache: ", cache_file))
+    data <- st_read(cache_file)
+
+  }else{
+
+    data <- get_map_internal(filter_table,
+                             year,
+                             aggregation,
+                             simplification_factor,
+                             smoothing_threshold)
+    if(use_cache){
+      st_write(data,cache_file)
+    }
+
+  }
+
+  return(data)
+}
+
+
+
+#' Get sf object containing selected map polygons - Internal function
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
-#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col
-#' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all str_squish
+#' @importFrom dplyr mutate across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col contains
+#' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all  str_flatten_comma
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry
 #' @importFrom tidyr pivot_longer
@@ -17,22 +114,12 @@
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  simplification_factor  0-1 simplication threshold to pass to rmapshaper::ms_simplify()
 #' @param  smoothing_threshold smoothing threshold (default to 1, as in km^2)
-#' @export
-get_map <- function(filter_table=NULL,
-                    filters=NULL,
+#' @noRd
+get_map_internal <- function(filter_table=NULL,
                     year,
                     aggregation=NULL,
                     simplification_factor=1,
                     smoothing_threshold=4){
-
-  if(is.null(filter_table)&is.null(filters)) stop("Either filter table or filters need to be provided")
-
-  #get filter table if not provided
-  if(is.null(filter_table)){
-    filter_table <- list_structure(year,filters) |>
-      select(-matches("AREA_ALBERS_SQKM")) |>
-      select(-matches("\\."))
-  }
 
   cache_dir  <- find_maps_cache()
 
@@ -62,9 +149,11 @@ get_map <- function(filter_table=NULL,
   data_sf <- NULL
 
   for(repo_i in required_states){
-    data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table))) |>
-              select(-matches("AREA_ALBERS_SQKM")) |>
-              select(-matches("\\."))              |>
+    data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
+
+     col_names <- colnames(data_i)
+
+     data_i <- data_i |>
               mutate(across(where(is.character), ~str_squish(.x))) |>
               mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
 
@@ -118,11 +207,13 @@ get_map <- function(filter_table=NULL,
       pull()
 
     cols_to_keep <- c(cols_to_keep,"Year")
+    cols_to_keep <- cols_to_keep[str_detect(cols_to_keep,"AREA_ALBERS_SQKM",TRUE)]
 
     #columns to merge
 
     cols_to_merge <- colnames(filter_table)
     cols_to_merge <- cols_to_merge[!(cols_to_merge %in% c(cols_to_keep,aggregation,"id","area"))]
+    cols_to_merge <- cols_to_merge[str_detect(cols_to_merge,"AREA_ALBERS_SQKM",TRUE)]
 
     #new aggregated sum
     areas_prop <- list()

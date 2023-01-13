@@ -2,18 +2,27 @@
 % Please edit documentation in R/lists.R
 \name{list_structure}
 \alias{list_structure}
-\title{Get list of all aggregation options}
+\title{List Structure}
 \usage{
 list_structure(year, filters = NULL)
 }
 \arguments{
-\item{year}{year when the boundaries were releaseed (2006,2011,2016,2022)}
+\item{year}{A character string of the year for which the structure is requested.}
 
-\item{filters}{list containing data filters (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))}
+\item{filters}{A list with the attributes and values of the filters to be applied  (e.g. list("CED_NAME_2021"=c("Wills","Melbourne")))}
 }
 \value{
-tibble with structure
+A data frame with the structure requested.
 }
 \description{
-Get list of all aggregation options
+produce table with geo structure
+}
+\examples{
+\dontrun{
+list_structure("2021")
+list_structure("2021", list("CED_NAME_2021"=c("Wills","Melbourne"))
+}
+}
+\seealso{
+\code{\link{get_map}}
 }

@@ -2,36 +2,37 @@
 % Please edit documentation in R/geo_aggregate.R
 \name{geo_aggregate}
 \alias{geo_aggregate}
-\title{Convert data, aggregating smallar geographic structures into larger ones.}
+\title{Aggregate data to a new geography}
 \usage{
 geo_aggregate(
   original_data,
   values_col,
   original_geo,
   new_geo,
-  grouping_col,
+  grouping_col = NULL,
   year,
   proportions_manual = NULL
 )
 }
 \arguments{
-\item{original_data}{data frame with data}
+\item{original_data}{A data frame of original data}
 
-\item{values_col}{name of the column with numeric data}
+\item{values_col}{The name of the column containing the values to be aggregated}
 
-\item{original_geo}{name of the column representing the smallest geo unit (using the names from geo structure)}
+\item{original_geo}{The name of the column containing the original geography}
 
-\item{new_geo}{name of the column representing the largest geo unit (using the names from geo structure)}
+\item{new_geo}{The name of the column containing the new geography}
 
-\item{grouping_col}{vector with all other columns to be preserved during the transformation}
+\item{grouping_col}{The name of the column containing the grouping variables}
 
-\item{year}{year the geo structures belong to}
+\item{year}{The year of the data to be aggregated}
 
-\item{proportions_manual}{manual list of correspondences, it will override in-package proportions based on area.}
+\item{proportions_manual}{A data frame of manual proportions,it will override in-package proportions based on area.}
 }
 \value{
-tibble
+A data frame containing the aggregated data
 }
 \description{
-Convert data, aggregating smallar geographic structures into larger ones.
+Convert data, aggregating smaller geographic structures into larger ones.
+By default it uses area to apportion values when there is no one-to-one correspondence. Weighting table can be provided
 }

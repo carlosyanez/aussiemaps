@@ -2,13 +2,22 @@
 % Please edit documentation in R/lists.R
 \name{list_attributes}
 \alias{list_attributes}
-\title{Get list of all aggregation options}
+\title{List  geographic structures (or attributes)}
 \usage{
 list_attributes()
 }
 \value{
-no output
+A tibble with the attributes for each year.
 }
 \description{
-Get list of all aggregation options
+This function finds all the available geographic structures dataframe with the structures for each year.
 }
+\details{
+Get list of all geographic structures (or attributes)
+}
+\examples{
+\dontrun{
+list_attributes()
+}
+}
+\keyword{lists}

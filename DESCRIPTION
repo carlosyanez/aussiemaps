@@ -1,12 +1,14 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.2.0.0010
-Authors@R: 
-    person(given = "Carlos",
-           family = "Yanez Santibanez",
-           role = c("aut", "cre"),
-           email = "carlos.yanez.s@gmail.com")
-Description: Granular map of Australian Localities/Suburbs, LGAs and Postal Areas.
+Version: 0.2.0.0011
+Authors@R: c(
+    person("Carlos", "Yáñez Santibáñez", , "carlos.yanez.s@gmail.com", role = c("aut", "cre")),
+    person(given="Craig", family="Alexander", email= "Craig.Alexander.2@glasgow.ac.uk", role=c("ths")),
+    person("Australian Bureau of Statistic", role = c("cph"))
+    )
+Description: Granular maps of Australia  using ABS boundaries from 2006-2021.
+URL: https://carlosyanez.github.io/aussiemaps/
+BugReports: https://github.com/carlosyanez/aussiemaps/issues
 License: CC BY-SA 4.0
 Encoding: UTF-8
 LazyData: true
@@ -16,8 +18,10 @@ StagedInstall: FALSE
 Imports: 
       arrow,
       dplyr,
+      digest,
       fs,
       lubridate,
+      lwgeom,
       piggyback,
       rgdal,
       rlang,
@@ -33,6 +37,7 @@ Imports:
       zip
 Suggests: 
     rmarkdown,
-    knitr
+    knitr,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
-
+Config/testthat/edition: 3

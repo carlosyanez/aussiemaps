@@ -1,20 +1,23 @@
-#' Convert data, aggregating smallar geographic structures into larger ones.
-#' @return tibble
+#' Aggregate data to a new geography
+#'
+#' @description Convert data, aggregating smaller geographic structures into larger ones.
+#' By default it uses area to apportion values when there is no one-to-one correspondence. Weighting table can be provided
 #' @importFrom  dplyr select any_of collect rename left_join group_by across summarise anti_join bind_rows
 #' @importFrom  rlang .data :=
-#' @param original_data data frame with data
-#' @param values_col name of the column with numeric data
-#' @param original_geo name of the column representing the smallest geo unit (using the names from geo structure)
-#' @param new_geo name of the column representing the largest geo unit (using the names from geo structure)
-#' @param grouping_col vector with all other columns to be preserved during the transformation
-#' @param year year the geo structures belong to
-#' @param proportions_manual manual list of correspondences, it will override in-package proportions based on area.
+#' @param original_data A data frame of original data
+#' @param values_col The name of the column containing the values to be aggregated
+#' @param original_geo The name of the column containing the original geography
+#' @param new_geo The name of the column containing the new geography
+#' @param grouping_col The name of the column containing the grouping variables
+#' @param year The year of the data to be aggregated
+#' @param proportions_manual A data frame of manual proportions,it will override in-package proportions based on area.
+#' @return A data frame containing the aggregated data
 #' @export
 geo_aggregate <- function(original_data,
                           values_col,
                           original_geo,
                           new_geo,
-                          grouping_col,
+                          grouping_col=NULL,
                           year,
                           proportions_manual=NULL){
 

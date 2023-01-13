@@ -6,7 +6,7 @@ author: "Carlos YANEZ SANTIBANEZ"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Auscensus - Getting Data}
+  %\VignetteIndexEntry{How to use aussiemaps}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,98 +23,216 @@ library(tidyverse)
 library(auscensus)
 library(auspol)
 library(aussiemaps)
-library(leaflet)
 
 ```
 
+## {aussiemaps} - Yet another maps package
 
+This package has been built to facilitate the use of the geographic boundary files published by the Australian Bureau of Statistics (ABS). The ABS has published several boundary files - i.e. the [Australian Statistical Geography Standard (ASGS)](https://www.abs.gov.au/statistics/statistical-geography/australian-statistical-geography-standard-asgs) from 2006 onwards and the  [Australian Standard Geographical Classification (ASGC)](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/DEDA554E1B6BB78BCA25791F000EEA26) before that - covering both:
+
+-   Statistical Geographic Structures created and maintained by the ABS - and used to collect data.
+-   Non-ABS structure, e.g Postal Areas, Electoral Divisions, LGA boundaries.
+
+This package has four versions of the above, aligned with Census years 2006, 2011,2016 and 2021. This makes it easy to mix use with Census data packs or the {auscensus} package.
+
+This package provides access to a processed version of those boundaries - as sf objects, allowing it to cater for the following scenarios:
+
+* Get the boundaries of an electoral division across time.
+* Get all the S1 or S1 areas within a Council area.
+* Get all postcodes in a state or territory.
+
+This repository also contains the R script used to process the files. Although not tested, the functions could also accommodate BYO structures for other years.
+
+## Getting started.
+
+The core function of this package is get_map(), which retrieves the sf files. get_map provides several filters to narrow down the data retrieved and avoid getting everything unless is needed. The key parameters for this function are:
+
+- How the data will be filtered (e.g. return only objects in a particular state, council or metro area)
+- Which year/version of the data will be retrieved?
+- Which aggregation will be used (e.g. which will be the resulting objects)
+
+
+
+Filters and column names follow the same name convention used in the original ABS files. The function list_attributes(), will present them in tibble format:
 
 ```{r}
-#list_census_tables()
-#list_census_attributes("13",table_name_regex="Persons")
-"Persons_uses_other_language_spanish_total"
+list_attributes() |>
+  head(10)
+```
 
-list_census_geo_types()
-census_table <-"13"
-data_to_retrieve <- list("Spanish Speakers"="Persons_uses_other_language_spanish_total")
+Let's say we want to retrieve all SA1 in the City of Melbourne for 2016 - this can be done via:
 
+```{r}
+melbourne_sa1 <- get_map(filters=list(LGA_NAME_2016=c("Melbourne")),
+                         year=2016,
+                         aggregation = c("SA1_MAINCODE_2016"))
 
-selected_filter <- list(GCCSA_NAME_2021="Greater Melbourne")
-selected_year <- "2021"
-aggregations <- "LGA_NAME_2022"
-aggregations_2 <- "LGA"
+#just an empty plot
 
-data_structure<- list_structure(year=selected_year,filters=selected_filter)
-
-census_summary <-get_census_summary(table_number=census_table,
-                  selected_years = selected_year,
-                   geo_structure=aggregations_2,
-                   attributes = data_to_retrieve,
-                   geo_unit_codes=str_c("LGA",unique(data_structure$LGA_CODE_2022)))
-
-
-map <-get_map(filters=selected_filter,
-              aggregation = aggregations,
-              year=selected_year) 
-
-#pal <- colorNumeric("viridis", NULL)
-pal <- colorNumeric("Greens", census_summary$Value)
-
-
-map %>% 
-  select(LGA_CODE_2022,label) %>%
-  mutate(across(any_of("LGA_CODE_2022"), ~ str_c("LGA",.x))) %>%
-  left_join(census_summary %>% select(Census_Code,Value),
-                  by=c("LGA_CODE_2022"="Census_Code")) %>%
-leaflet() %>%
-  addTiles() %>%
-  addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.6,
-    fillColor = ~pal(Value),
-    label = ~paste0(label, ": ", formatC(Value, big.mark = ","))) %>%
-  addLegend(pal = pal, values = ~Value, opacity = 1.0)
+melbourne_sa1 |>
+  ggplot()+
+  geom_sf(fill="azure1") +
+  theme_void() +
+  labs(title="SA1s in the City of Melbourne")
 
 ```
 
+## Filtering via regular expressions
+
+The filter arguments are intended to be regular expressions, for instance:
 
 ```{r}
 
-census_table <-"13"
-data_to_retrieve <- list("Spanish Speakers"="Persons_uses_other_language_spanish_total")
+preston <- get_map(filters=list(SSC_NAME_2016=c("Preston")),
+                         year=2016,
+                         aggregation = c("SSC_NAME_2016"))
 
-
-selected_filter <- list(LGA_NAME_2022="Yarra Ranges")
-selected_year <- "2021"
-aggregations <- "SA1_CODE_2021"
-aggregations_2 <- "SA1"
-
-data_structure<- list_structure(year=selected_year,filters=selected_filter)
-
-census_summary <-get_census_summary(table_number=census_table,
-                  selected_years = selected_year,
-                   geo_structure=aggregations_2,
-                   attributes = data_to_retrieve,
-                   geo_unit_codes=unique(data_structure$SA1_CODE_2021))
-
-
-map <-get_map(filters=selected_filter,
-              #aggregation = aggregations,
-              year=selected_year) 
-
-pal <- colorNumeric("viridis", NULL)
-#pal <- colorNumeric("Greens", census_summary$Value)
-
-
-map %>% 
-  select(SA1_CODE_2021) %>%
-  mutate(label=SA1_CODE_2021) %>%
-  left_join(census_summary %>% select(Census_Code,Value),
-                  by=c("SA1_CODE_2021"="Census_Code")) %>%
-leaflet() %>%
-  addTiles() %>%
-  addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.6,
-    fillColor = ~pal(Value),
-    label = ~paste0(label, ": ", formatC(Value, big.mark = ","))) %>%
-  addLegend(pal = pal, values = ~Value, opacity = 1.0)
+preston |>
+  select(SSC_NAME_2016,UCL_NAME_2016,STE_NAME_2016)
 
 ```
 
+Whereas
+
+```{r}
+prestons <- get_map(filters=list(SSC_NAME_2016=c("^Pres"),
+                                 STE_NAME_2016=c("Wales","^T")
+                                 ),
+                         year=2016,
+                         aggregation = c("SSC_NAME_2016"))
+
+prestons |>
+  select(SSC_NAME_2016,UCL_NAME_2016,STE_NAME_2016)
+
+```
+
+## Even more complex filtering
+
+If more complex subsetting is needed, it is possible to pass a table with the elements to be selected. In order to do that, list_structure() comes to help. This function uses the same year and filters parameters than get_map() (actually this function calls the former if no table is provided). Once you have the dataset, you can use any ad-hoc filter to get the needed structures. For example
+
+```{r}
+
+greater_sydney <- list_structure(year=2021,filters=list(GCCSA_NAME_2021="Greater Sydney"))
+
+#use_cache option stores the results/reuses pre-processed results
+sydney_area <- get_map(filter_table = greater_sydney,
+                       year=2021,
+                       aggregation = "GCCSA_NAME_2021",
+                       use_cache = TRUE) 
+
+#outline
+
+# all suburbs starting wit A
+suburbs_a_filter <- greater_sydney |>
+                    filter(str_detect(SAL_NAME_2021,"^A"))
+
+suburbs_a  <- get_map(filter_table = suburbs_a_filter,
+                       year=2021,
+                       aggregation = "SAL_NAME_2021") |>
+                mutate(border="orange",fill="orange")
+
+
+ggplot() +
+  geom_sf(data=sydney_area,fill="white",colour="black")+
+  geom_sf(data=suburbs_a,fill="orange") +
+  labs(title="Suburbs starting with A - Sydney") +
+  theme_void()
+
+```
+
+## Aggregation
+
+It is worth noticing that the *aggregation* parameter accepts more than one variable. Those parameters are passed to dplyr::group_by() before aggregation - thus more variables will impact how sf objects are aggregated. For instance, if we look at the postal areas (ABS approximation of a postcode) in the cities of Melbourne and Port Phillip:
+
+```{r}
+
+poas_inner_melbourne <- get_map(filters=list(LGA_NAME_2022=c("Melbourne","Phillip$")),
+                                year=2021,
+                                aggregation = c("POA_NAME_2021","LGA_NAME_2022"))
+
+poas_inner_melbourne |>
+  mutate(colour=case_when(
+    POA_NAME_2021=="3004" ~ "orange",
+    TRUE ~ "grey"
+  )) |>
+  ggplot()+
+  geom_sf(aes(fill=colour,colour=LGA_NAME_2022)) +
+  scale_fill_identity() +
+  theme_void() +
+  labs(title="Postcode 3004 extends across two LGAs")
+
+```
+## Using external data
+
+ This package provides sf data, thus the result can be easily merged with any other data frame. Since data has been taken from the ABS and the output contains both names and **codes** of geographic structures, data can be joined using an un-ambiguous key. Furthermore, with {auscensus}, this package can be used as data filters to retrieve said data in the first place. For example:
+ 
+```{r}
+
+# Chileans by Commonwealth Electoral Divisions in Metropolitan Brisbane, 2021
+
+attr <- list_structure(year=2021,filters=list(GCCSA_NAME_2021=c("Brisbane"))) |>
+        distinct(CED_NAME_2021)
+
+chileans <- auscensus::get_census_summary(table_number= "09",
+                                          selected_years = "2021",
+                                          geo_structure = "CED",
+                                          geo_unit_names =   attr$CED_NAME_2021,
+                                          attribute = list(Chileans=c("Persons_chile_total")),
+                                          reference_total = list(Total=c("Persons_total_total")),
+                                          percentage_scale =100)
+
+brisbane_ced <- get_map(filters = list(GCCSA_NAME_2021=c("Brisbane")),
+                        year = 2021,
+                        aggregation = c("CED_NAME_2021"),
+                        use_cache = TRUE)
+
+chileans$Value
+
+brisbane_ced |>
+  left_join(chileans,by=c("CED_NAME_2021"="Unit")) |>
+  ggplot(aes(fill=Value,colour=Value)) +
+  geom_sf() +
+  scale_fill_continuous()+
+  labs(title="Chileans in Bribane's Federal Electorates") +
+  theme_void()
+  
+
+```
+ 
+## Data Aggregation
+
+As a bonus function, *geo_aggregate()*  aggregates data, transforming between geographic structures. For instance, let's imagine that for the previous case, it is only possible to get data by SA2. *geo_aggregate()* can aggregate the data to obtain an approximation for each electorate. When an SA1 is not fully contained by an electorate, the function will use the overlapping area as the weighting factor.
+
+```{r}
+
+attr <- list_structure(year=2021,filters=list(GCCSA_NAME_2021=c("Brisbane"))) |>
+        distinct(SA2_CODE_2021)
+
+chileans_sa2 <- auscensus::get_census_summary(table_number= "09",
+                                          selected_years = "2021",
+                                          geo_structure = "SA2",
+                                          geo_unit_codes =     attr$SA2_CODE_2021,
+                                          attribute = list(Chileans=c("Persons_chile_total"))) |>
+                  rename("SA2_CODE_2021"="Census_Code")
+
+# please note these Electoral divisions are not built from SA2s - proportional allocation will result in factional 
+# Therefore - This is an approximation
+chileans <- geo_aggregate(original_data = chileans_sa2,
+                          values_col = "Value",
+                          original_geo = "SA2_CODE_2021",
+                          new_geo      = "CED_NAME_2021",
+                          grouping_col =   c("Year","Attribute"),
+                          year=2021) |>
+            rename("Unit"="CED_NAME_2021")
+
+
+
+brisbane_ced |>
+  left_join(chileans,by=c("CED_NAME_2021"="Unit")) |>
+  ggplot(aes(fill=Value,colour=Value)) +
+  geom_sf() +
+  scale_fill_continuous()+
+  labs(title="Chileans in Bribane's Federal Electorates") +
+  theme_void()
+
+```
