@@ -65,8 +65,7 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 #' Helper function to import gpkg data
 #'
 #' @importFrom fs path file_copy
-#' @importFrom rgdal ogrListLayers
-#' @importFrom sf st_write st_read
+#' @importFrom sf st_write st_read st_layers
 #' @importFrom stringr str_c str_remove_all str_squish
 #' @importFrom dplyr mutate across
 #' @importFrom tidyselect where
@@ -81,7 +80,7 @@ load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
 
   file_copy(file_name,temp_gpkg,overwrite=TRUE)
 
-  data_layer <- ogrListLayers(temp_gpkg)[1]
+  data_layer <- st_layers(file_name)$name[1]
 
   if(!is.null(filter_ids)){
     st_write(filter_ids,temp_gpkg,layer="id",append=TRUE)

@@ -1,10 +1,10 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.2.0.0011
+Version: 0.2.0.0013
 Authors@R: c(
     person("Carlos", "Yáñez Santibáñez", , "carlos.yanez.s@gmail.com", role = c("aut", "cre")),
     person(given="Craig", family="Alexander", email= "Craig.Alexander.2@glasgow.ac.uk", role=c("ths")),
-    person("Australian Bureau of Statistic", role = c("cph"))
+    person("Australian Bureau of Statistics", role = c("cph"))
     )
 Description: Granular maps of Australia  using ABS boundaries from 2006-2021.
 URL: https://carlosyanez.github.io/aussiemaps/
@@ -23,7 +23,6 @@ Imports:
       lubridate,
       lwgeom,
       piggyback,
-      rgdal,
       rlang,
       rmapshaper,
       sf,
