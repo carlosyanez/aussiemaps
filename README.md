@@ -33,7 +33,7 @@ install.packages('aussiemaps')
 
 ## How to use
 
-Read the [vignette]( ([here](https://github.com/carlosyanez/aussiemaps/releases/tag/data)).
+Read the [vignette](https://github.com/carlosyanez/aussiemaps/releases/tag/data).
 
 Please note that no data is included in the package installation - data files  will be downloaded and cached as needed.
 
