@@ -231,6 +231,7 @@ get_map_internal <- function(filter_table=NULL,
     sf_use_s2(FALSE)
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
                                                 group_by(across(c(aggregation,cols_to_keep))) |>
+                                                st_buffer(0) |>
                                                 summarise(.groups="drop") |>
                                                 st_make_valid() |>
                                                 st_union(by_feature = TRUE) |>
