@@ -1,3 +1,4 @@
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/carlosyanez/aussiemaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/carlosyanez/aussiemaps/actions/workflows/R-CMD-check.yaml)[![aussiemaps status badge](https://carlosyanez.r-universe.dev/badges/aussiemaps)](https://carlosyanez.r-universe.dev)
 
 aussiemaps
@@ -5,7 +6,7 @@ aussiemaps
 
 <img src="https://github.com/carlosyanez/aussiemaps/raw/master/img/hexSticker.png" width = "175" height = "200" align="right" />
 
-**aussiemaps** provides maps for  Australian LGA, suburbs, Postal Area maps, SA1,2,3,4, etc. - directly in R, without any need to download and process shapefiles.
+**aussiemaps** provides maps for  Australian LGA, suburbs, Postal Area maps, SA1/2/3/4, etc. - directly in R, without any need to download and process shapefiles.
 
 All the data is contained as a release ([here](https://github.com/carlosyanez/aussiemaps/releases/tag/data)) in [Apache Parquet format](https://arrow.apache.org/docs/r/index.html), so it can be used directly in any programming language/tool/platform that supports Parquet.
 
