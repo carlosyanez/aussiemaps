@@ -1,4 +1,5 @@
-[![R-CMD-check](https://github.com/carlosyanez/aussiemaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/carlosyanez/aussiemaps/actions/workflows/R-CMD-check.yaml)[![R](https://github.com/carlosyanez/aussiemaps/actions/wo[![aussiemaps status badge](https://carlosyanez.r-universe.dev/badges/aussiemaps)](https://carlosyanez.r-universe.dev)
+[![R-CMD-check](https://github.com/carlosyanez/aussiemaps/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/carlosyanez/aussiemaps/actions/workflows/R-CMD-check.yaml)
+[![aussiemaps status badge](https://carlosyanez.r-universe.dev/badges/aussiemaps)](https://carlosyanez.r-universe.dev)
 
 aussiemaps
 ================
