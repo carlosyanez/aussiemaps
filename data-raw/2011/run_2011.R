@@ -41,7 +41,7 @@ state_short <- "Tas"
 
 poas_state <- 7000:7999
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # ACT ----
@@ -49,62 +49,62 @@ state       <- "Australian Capital Territory"
 state_short <- "Act"
 poas_state <- c(2600:2618,2900:2920,2620,2540)
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # Victoria ----
 state       <- "Victoria"
 state_short <- "Vic"
-ceds_2018 <- list_divisions(filters=list(StateAb="VIC",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="VIC",`2010`=TRUE)) %>% pull(DivisionNm)
 poas_state <- 3000:3999
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # NSW ----
 state       <- "New South Wales"
 state_short <- "Nsw"
-ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2010`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(2000:2599,2619:2899,2921:2999,2406,2540,2611,3585,3586,3644,3691,3707,4380,4377,4383,4385)
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 
 # Queensland ----
 state       <- "Queensland"
 state_short <- "Qld"
-ceds_2018 <- list_divisions(filters=list(StateAb="QLD",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="QLD",`2010`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(4000:4999,2406)
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # South Australia ----
 state       <- "South Australia"
 state_short <- "Sa"
-ceds_2018 <- list_divisions(filters=list(StateAb="SA",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="SA",`2010`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(5000:5799,0872)
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # Western Australia ----
 state       <- "Western Australia"
 state_short <- "Wa"
-ceds_2018 <- list_divisions(filters=list(StateAb="WA",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="WA",`2010`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(6000:6797,0872)
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # Northern Territory ----
 state       <- "Northern Territory"
 state_short <- "Nt"
-ceds_2018 <- list_divisions(filters=list(StateAb="NT",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="NT",`2010`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(0800:0899,4825)
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # Other Territories ----
@@ -126,7 +126,7 @@ ceds_2011_out <- load_geo(nonabs,"commonwealth_electoral_division_2011") %>%
               ),by="CED_NAME_2011")
 
 
-source(here("data-raw","sequence_2011.R"))
+source(here("data-raw","2011","sequence_2011.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
 # create master list, with areas ----

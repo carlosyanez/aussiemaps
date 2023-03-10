@@ -487,6 +487,8 @@ full_overlap <- full_coverage(base,
                               base_id="SA1_MAINCODE_2011",
                               bigger_id="TR_CODE_2011")
 
+if(!is.null(full_overlap)){
+
 overlapped <- full_overlap %>%
   distinct(SA1_MAINCODE_2011) %>%
   mutate(dummy=TRUE)
@@ -527,7 +529,7 @@ base <- base %>%
 base <- bind_rows(base,intersects,non_matched) %>%
   mutate(id=row_number())
 sa1_nbr <- c(sa1_nbr,nrow(base))
-
+}
 st_write_parquet(base,base_file)
 rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected)
 
@@ -539,10 +541,20 @@ if(exists("ceds_2011_out")){
 }else{
   library(auspol)
   divisions <- list_divisions(filters=list(StateAb=str_to_upper(state_short))) %>%
-              filter(`2007`) %>%
-              pull(DivisionNm)
+    filter(`2010`) %>%
+    mutate(CED_NAME_2011=str_to_lower(DivisionNm),
+           CED_NAME_2011 = str_squish(CED_NAME_2011)) |>
+    distinct(CED_NAME_2011,DivisionNm)
+
+
   ind <- load_geo(nonabs, layer="commonwealth_electoral_division_2011") %>%
-    filter(CED_NAME_2011 %in% divisions)
+         mutate(CED_NAME_2011=str_to_lower(CED_NAME_2011),
+                CED_NAME_2011 = str_squish(CED_NAME_2011)) |>
+         left_join(divisions,by="CED_NAME_2011") |>
+         filter(!is.na(DivisionNm)) |>
+         mutate(CED_NAME_2011=DivisionNm,.keep="unused")
+
+
 
   full_overlap <- full_coverage(base,
                                 bigger=ind,
@@ -575,8 +587,6 @@ if(exists("ceds_2011_out")){
       left_join(intersected,by="id") %>%
       filter(is.na(dummy)) %>%
       select(-dummy)
-
-
   }else{
     intersects <- base %>% filter(is.null(id))
     non_matched <- base %>% filter(is.null(id))

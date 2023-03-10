@@ -540,9 +540,16 @@ if(exists("ceds_2016_out")){
   library(auspol)
   divisions <- list_divisions(filters=list(StateAb=str_to_upper(state_short))) %>%
               filter(`2016`) %>%
-              pull(DivisionNm)
+    mutate(CED_NAME_2016=str_to_lower(DivisionNm),
+           CED_NAME_2016 = str_squish(CED_NAME_2016)) |>
+    distinct(CED_NAME_2011,DivisionNm)
+
   ind <- load_geo(nonabs, layer="commonwealth_electoral_division_2016") %>%
-    filter(CED_NAME_2016 %in% divisions)
+    mutate(CED_NAME_2016=str_to_lower(CED_NAME_2016),
+           CED_NAME_2016 = str_squish(CED_NAME_2016)) |>
+    left_join(divisions,by="CED_NAME_2011") |>
+    filter(!is.na(DivisionNm)) |>
+    mutate(CED_NAME_2016=DivisionNm,.keep="unused")
 
   full_overlap <- full_coverage(base,
                                 bigger=ind,

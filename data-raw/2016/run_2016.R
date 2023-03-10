@@ -55,7 +55,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 # Victoria ----
 state       <- "Victoria"
 state_short <- "Vic"
-ceds_2018 <- list_divisions(filters=list(StateAb="VIC",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="VIC",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- 3000:3999
 
 source(here("data-raw","sequence_2016.R"))
@@ -64,7 +64,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 # NSW ----
 state       <- "New South Wales"
 state_short <- "Nsw"
-ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(2000:2599,2619:2899,2921:2999,2406,2540,2611,3585,3586,3644,3691,3707,4380,4377,4383,4385)
 
 source(here("data-raw","sequence_2016.R"))
@@ -74,7 +74,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 # Queensland ----
 state       <- "Queensland"
 state_short <- "Qld"
-ceds_2018 <- list_divisions(filters=list(StateAb="QLD",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="QLD",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(4000:4999,2406)
 
 source(here("data-raw","sequence_2016.R"))
@@ -83,7 +83,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 # South Australia ----
 state       <- "South Australia"
 state_short <- "Sa"
-ceds_2018 <- list_divisions(filters=list(StateAb="SA",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="SA",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(5000:5799,0872)
 
 source(here("data-raw","sequence_2016.R"))
@@ -92,7 +92,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 # Western Australia ----
 state       <- "Western Australia"
 state_short <- "Wa"
-ceds_2018 <- list_divisions(filters=list(StateAb="WA",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="WA",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(6000:6797,0872)
 
 source(here("data-raw","sequence_2016.R"))
@@ -101,7 +101,7 @@ rm(list=ls()[!(ls() %in% keep_vars)])
 # Northern Territory ----
 state       <- "Northern Territory"
 state_short <- "Nt"
-ceds_2018 <- list_divisions(filters=list(StateAb="NT",`2019`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="NT",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(0800:0899,4825)
 
 source(here("data-raw","sequence_2016.R"))
