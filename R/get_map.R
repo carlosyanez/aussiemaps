@@ -146,10 +146,36 @@ get_map_internal <- function(filter_table=NULL,
                      filter(if_any(all_of(as.vector(state_col)), ~ .x %in% repo))           |>
                      pull()
 
+  #decide what to keep
+
+  cols_to_keep <-filter_table |>
+    mutate(across(everything(), as.character)) |>
+    select(-any_of(c("id","area","Year"))) |>
+    pivot_longer(-any_of(aggregation),values_to = "value",names_to = "geo_unit") |>
+    distinct() |>
+    group_by(across(all_of(c(aggregation,"geo_unit")))) |>
+    summarise(n=n(),.groups="drop") |>
+    group_by(across(all_of(c("geo_unit")))) |>
+    summarise(n=mean(n),.groups="drop") |>
+    filter(if_any(c("n"), ~ .x==1)) |>
+    select(any_of("geo_unit")) |>
+    distinct() |>
+    pull()
+
+  cols_to_keep <- c(cols_to_keep,"Year")
+  cols_to_keep <- cols_to_keep[str_detect(cols_to_keep,"AREA_ALBERS_SQKM",TRUE)]
+
+  #columns to merge
+
+  cols_to_merge <- colnames(filter_table)
+  cols_to_merge <- cols_to_merge[!(cols_to_merge %in% c(cols_to_keep,aggregation,"id","area"))]
+  cols_to_merge <- cols_to_merge[str_detect(cols_to_merge,"AREA_ALBERS_SQKM",TRUE)]
+
   data_sf <- NULL
   message("collecting")
   for(repo_i in required_states){
     message(repo_i)
+
     data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
 
     col_names <- colnames(data_i)
@@ -157,7 +183,12 @@ get_map_internal <- function(filter_table=NULL,
      data_i <- data_i |>
               mutate(across(where(is.character), ~str_squish(.x))) |>
               mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
-              mutate(across(any_of(c("id")), as.character))
+              mutate(across(any_of(c("id")), as.character)) |>
+              group_by(across(c(aggregation,cols_to_keep))) |>
+              st_make_valid() |>
+              st_buffer(0) |>
+              summarise(.groups="drop") |>
+              st_make_valid()
 
     data_sf <- bind_rows(data_sf,data_i)
 
@@ -193,30 +224,6 @@ get_map_internal <- function(filter_table=NULL,
       data_sf           <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other",TRUE)))
     }
 
-    #decide what to keep
-
-    cols_to_keep <-filter_table |>
-      mutate(across(everything(), as.character)) |>
-      select(-any_of(c("id","area","Year"))) |>
-      pivot_longer(-any_of(aggregation),values_to = "value",names_to = "geo_unit") |>
-      distinct() |>
-      group_by(across(all_of(c(aggregation,"geo_unit")))) |>
-      summarise(n=n(),.groups="drop") |>
-      group_by(across(all_of(c("geo_unit")))) |>
-      summarise(n=mean(n),.groups="drop") |>
-      filter(if_any(c("n"), ~ .x==1)) |>
-      select(any_of("geo_unit")) |>
-      distinct() |>
-      pull()
-
-    cols_to_keep <- c(cols_to_keep,"Year")
-    cols_to_keep <- cols_to_keep[str_detect(cols_to_keep,"AREA_ALBERS_SQKM",TRUE)]
-
-    #columns to merge
-
-    cols_to_merge <- colnames(filter_table)
-    cols_to_merge <- cols_to_merge[!(cols_to_merge %in% c(cols_to_keep,aggregation,"id","area"))]
-    cols_to_merge <- cols_to_merge[str_detect(cols_to_merge,"AREA_ALBERS_SQKM",TRUE)]
 
     #new aggregated sum
     areas_prop <- list()
