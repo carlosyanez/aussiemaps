@@ -112,6 +112,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @importFrom units set_units
 #' @importFrom smoothr fill_holes
 #' @importFrom tidyselect where
+#' @importFrom tibble tibble
 #' @param  filter_table table to filter (you can start with location_table)
 #' @param  filters list with filters
 #' @param  year year
@@ -195,19 +196,39 @@ get_map_internal <- function(filter_table=NULL,
 
     }else{
 
-      data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
+      data_base <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
 
-      col_names <- colnames(data_i)
+      data_base <- data_base |>
+        mutate(across(where(is.character), ~str_squish(.x))) |>
+        mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
+        mutate(across(any_of(c("id")), as.character)) |>
+        st_make_valid() |>
+        st_buffer(0)
 
-      data_i <- data_i |>
-              mutate(across(where(is.character), ~str_squish(.x))) |>
-              mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
-              mutate(across(any_of(c("id")), as.character)) |>
-              group_by(across(c(aggregation,cols_to_keep))) |>
-              st_make_valid() |>
-              st_buffer(0) |>
-              summarise(.groups="drop") |>
-              st_make_valid()
+      #col_names <- colnames(data_base[1,])
+
+      #distinct values
+      distinct_combos <- data_base |> st_drop_geometry() |>
+                        select(any_of(c(aggregation,cols_to_keep))) |>
+                        distinct() |>
+                        mutate(filter_flag=TRUE)
+      data_i <- NULL
+
+      for(j in 1:nrow(distinct_combos)){
+          message(str_c("merging ",j," out of ",nrow(distinct_combos)))
+          data_j <- data_base |>
+                    left_join(distinct_combos[j,],by=c(aggregation,cols_to_keep)) |>
+                    filter(filter_flag) |>
+                    select(-any_of(c("filter_flag"))) |>
+                    group_by(across(c(aggregation,cols_to_keep))) |>
+                    summarise(.groups="drop") |>
+                    st_make_valid()
+          if(is.null(data_i)){
+            data_i <- data_j
+          }else{
+            data_i <- bind_rows(data_i,data_j)
+          }
+      }
 
       st_write(data_i,cache_file)
 
@@ -263,15 +284,20 @@ get_map_internal <- function(filter_table=NULL,
 
     sf_use_s2(FALSE)
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
-                                                group_by(across(c(aggregation,cols_to_keep))) |>
                                                 st_make_valid() |>
                                                 st_buffer(0) |>
+                                                group_by(across(c(aggregation,cols_to_keep))) |>
                                                 summarise(.groups="drop") |>
                                                 st_make_valid() |>
                                                 st_union(by_feature = TRUE) |>
-                                                fill_holes(set_units(smoothing_threshold,"km^2"))
-    ))
+                                                st_make_valid()))
 
+    data_sf$empty <- st_is_empty(data_sf)
+
+    data_sf <-  data_sf |>
+                filter(!empty)|>
+                select(-any_of(c("empty"))) |>
+                fill_holes(set_units(smoothing_threshold,"km^2"))
 
     for(col_to_merge  in cols_to_merge){
 
