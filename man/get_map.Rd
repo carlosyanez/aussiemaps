@@ -12,7 +12,8 @@ get_map(
   simplification_factor = 1,
   smoothing_threshold = 4,
   use_cache = FALSE,
-  cache_file = NULL
+  cache_file = NULL,
+  cache_intermediates = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ get_map(
 \item{use_cache}{A boolean indicating whether to use the cache.}
 
 \item{cache_file}{Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).}
+
+\item{cache_intermediates}{whether to cache state intermediate aggregations}
 }
 \value{
 A map object.
