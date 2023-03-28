@@ -19,6 +19,7 @@
 #' @param smoothing_threshold A number indicating the smoothing threshold.
 #' @param use_cache A boolean indicating whether to use the cache.
 #' @param cache_file Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).
+#' @param cache_intermediates  whether to cache state intermediate aggregations
 #'
 #' @return A map object.
 #'
@@ -45,7 +46,8 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                     simplification_factor=1, #simplification factor is a number
                     smoothing_threshold=4, #smoothing threshold is a number
                     use_cache=FALSE, #use cache is a boolean
-                    cache_file=NULL){ #cache file is a string
+                    cache_file=NULL,
+                    cache_intermediates=FALSE){ #cache file is a string
 
 
   dummy <- lwgeom_extSoftVersion()
@@ -65,7 +67,8 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
     aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
 
     cache_file <- path(find_maps_cache(),
-                       digest(str_c(hash,filter_table_hash,aggregation_hash,sep="-"),"xxhash32",seed=1234),
+                       str_c("cache_",digest(str_c(hash,filter_table_hash,aggregation_hash,sep="-"),
+                                             "xxhash32",seed=1234)),
                        ext="gpkg")
   }else{
     cache_file <- path(find_maps_cache(),cache_file)
@@ -83,7 +86,8 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                              year,
                              aggregation,
                              simplification_factor,
-                             smoothing_threshold)
+                             smoothing_threshold,
+                             cache_intermediates)
     if(use_cache){
       st_write(data,cache_file)
     }
@@ -114,12 +118,14 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  simplification_factor  0-1 simplication threshold to pass to rmapshaper::ms_simplify()
 #' @param  smoothing_threshold smoothing threshold (default to 1, as in km^2)
+#' @param  cache_intermediates whether to cache state intermediates
 #' @noRd
 get_map_internal <- function(filter_table=NULL,
                     year,
                     aggregation=NULL,
                     simplification_factor=1,
-                    smoothing_threshold=4){
+                    smoothing_threshold=4,
+                    cache_intermediates=FALSE){
 
   cache_dir  <- find_maps_cache()
 
@@ -175,12 +181,25 @@ get_map_internal <- function(filter_table=NULL,
   message("collecting")
   for(repo_i in required_states){
     message(repo_i)
+    filter_table_hash <- digest(filter_table,"xxhash32",seed=1234)
+    aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
 
-    data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
+    cache_file <- path(find_maps_cache(),
+                       str_c("intermediate_",digest(str_c(repo_i,filter_table_hash,aggregation_hash,sep="-"),
+                                                   "xxhash32",seed=1234)),
+                       ext="gpkg")
 
-    col_names <- colnames(data_i)
+    if(file_exists(cache_file) & cache_intermediates){
+      message("reading from cache")
+      data_i <- st_read(cache_file)
 
-     data_i <- data_i |>
+    }else{
+
+      data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
+
+      col_names <- colnames(data_i)
+
+      data_i <- data_i |>
               mutate(across(where(is.character), ~str_squish(.x))) |>
               mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
               mutate(across(any_of(c("id")), as.character)) |>
@@ -189,6 +208,10 @@ get_map_internal <- function(filter_table=NULL,
               st_buffer(0) |>
               summarise(.groups="drop") |>
               st_make_valid()
+
+      st_write(data_i,cache_file)
+
+    }
 
     data_sf <- bind_rows(data_sf,data_i)
 
