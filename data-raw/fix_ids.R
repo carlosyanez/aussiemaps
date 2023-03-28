@@ -39,7 +39,7 @@ for(i in 1:length(years)){
     #map_i <- st_read(path(cache_dir,str_c(map,".gpkg")))
 
     map_i_id_1 <- map_i |> st_drop_geometry() |> head(1) |> pull(id)
-    if(str_detect(map_i_id_1,"-",TRUE)){
+    if(str_detect(as.character(map_i_id_1),"-",TRUE)){
     changes_i <- TRUE
     state_col <- colnames(map_i)[str_detect(colnames(map_i),"STATE|STE")]
     state_col <- state_col[str_detect(state_col,"CODE")]
@@ -68,7 +68,7 @@ for(i in 1:length(years)){
 
   }
 
-  if(changes[i]){
+  if(any(changes[i])){
   geo_structure <-  geo_structure |>
     relocate(id,.before=1) |>
     select(-matches("\\."))

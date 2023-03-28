@@ -147,11 +147,12 @@ get_map_internal <- function(filter_table=NULL,
                      pull()
 
   data_sf <- NULL
-
+  message("collecting")
   for(repo_i in required_states){
+    message(repo_i)
     data_i <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
 
-     col_names <- colnames(data_i)
+    col_names <- colnames(data_i)
 
      data_i <- data_i |>
               mutate(across(where(is.character), ~str_squish(.x))) |>
@@ -167,6 +168,7 @@ get_map_internal <- function(filter_table=NULL,
   #aggregate
 
   if(!is.null(aggregation)){
+    message(str_c("aggregating by ",aggregation))
 
     aggregation <- as.vector(aggregation)
 
@@ -188,7 +190,7 @@ get_map_internal <- function(filter_table=NULL,
 
     if(external_territories){
       data_sf_external  <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other")))
-      data_sf           <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other"),TRUE))
+      data_sf           <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other",TRUE)))
     }
 
     #decide what to keep
