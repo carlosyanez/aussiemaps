@@ -50,7 +50,7 @@ load_aussiemaps <- function(aussiemaps_file) {
 #'
 #' @importFrom arrow open_dataset
 #' @param aussiemaps_file name of the file to download.
-#' @return sf parque binding
+#' @return sf parquet binding
 #' @noRd
 load_aussiemaps_parquet <- function(aussiemaps_file){
 

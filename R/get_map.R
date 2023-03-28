@@ -155,7 +155,8 @@ get_map_internal <- function(filter_table=NULL,
 
      data_i <- data_i |>
               mutate(across(where(is.character), ~str_squish(.x))) |>
-              mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
+              mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
+              mutate(across(any_of(c("id")), as.character))
 
     data_sf <- bind_rows(data_sf,data_i)
 
