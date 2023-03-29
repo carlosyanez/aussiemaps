@@ -482,6 +482,7 @@ ind <- load_geo(nonabs, layer="tourism_region_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
 
+if(nrow(ind)>0){
 full_overlap <- full_coverage(base,
                               bigger=ind,
                               base_id="SA1_MAINCODE_2016",
@@ -527,7 +528,7 @@ base <- base %>%
 base <- bind_rows(base,intersects,non_matched) %>%
   mutate(id=row_number())
 sa1_nbr <- c(sa1_nbr,nrow(base))
-
+}
 st_write_parquet(base,base_file)
 rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 
@@ -542,12 +543,12 @@ if(exists("ceds_2016_out")){
               filter(`2016`) %>%
     mutate(CED_NAME_2016=str_to_lower(DivisionNm),
            CED_NAME_2016 = str_squish(CED_NAME_2016)) |>
-    distinct(CED_NAME_2011,DivisionNm)
+    distinct(CED_NAME_2016,DivisionNm)
 
   ind <- load_geo(nonabs, layer="commonwealth_electoral_division_2016") %>%
     mutate(CED_NAME_2016=str_to_lower(CED_NAME_2016),
            CED_NAME_2016 = str_squish(CED_NAME_2016)) |>
-    left_join(divisions,by="CED_NAME_2011") |>
+    left_join(divisions,by="CED_NAME_2016") |>
     filter(!is.na(DivisionNm)) |>
     mutate(CED_NAME_2016=DivisionNm,.keep="unused")
 
@@ -771,6 +772,7 @@ sa1_nbr <- c(sa1_nbr,nrow(base))
 st_write_parquet(base,base_file)
 rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 
+base <- base |> st_make_valid()
 
 # write ----
 #st_write(base,here("data-raw",str_c(state,".geojson")))

@@ -130,6 +130,12 @@ get_map_internal <- function(filter_table=NULL,
 
   cache_dir  <- find_maps_cache()
 
+  #just in case, delete any zip files from cache (from aborted reads)
+  zip_files <- dir_ls(cache_dir,regexp = "zip$")
+  file_delete(zip_files)
+
+  # continue
+
   file_regex <- str_c(year,"_[A-Z]{1}")
 
   repo_base      <- get_repo_files() |>

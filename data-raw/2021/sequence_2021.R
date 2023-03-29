@@ -187,12 +187,12 @@ rm(base_renmant,ced2021,intersects,full_overlap,non_matched)
 
 #LGAs ----
 
-lga <- load_geo(nonabs,"LGA_2022_AUST_GDA2020", state=state)
+lga <- load_geo(nonabs,"LGA_2021_AUST_GDA2020", state=state)
 
 full_overlap <- full_coverage(base,
                               bigger=lga,
                               base_id="id",
-                              bigger_id="LGA_CODE_2022")
+                              bigger_id="LGA_CODE_2021")
 
 
 base_renmant <- base  %>%
@@ -202,9 +202,9 @@ base_renmant <- base  %>%
 intersects <- intersections(base_renmant,
                             bigger=lga,
                             base_id="id",
-                            bigger_id="LGA_CODE_2022",
+                            bigger_id="LGA_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="LGA_NAME_2022")
+                            bigger_empty_label="LGA_NAME_2021")
 
 non_matched <- base %>%
   filter(if_any(c("id"), ~ !(.x %in% unique(c(full_overlap$id,
@@ -216,7 +216,7 @@ non_matched <- base %>%
 
 base <- base %>%
   left_join(full_overlap,by="id") %>%
-  filter(!is.na(LGA_NAME_2022))
+  filter(!is.na(LGA_NAME_2021))
 
 base <- bind_rows(base,intersects,non_matched) %>%
   mutate(id=row_number())
@@ -323,6 +323,8 @@ base <- bind_rows(base,intersects,non_matched) %>%
 st_write_parquet(base,base_file)
 sa1_nbr <- c(sa1_nbr,nrow(base))
 rm(base_renmant,sed,intersects,full_overlap,non_matched)
+
+base <- base |> st_make_valid()
 
 # write ---
 #st_write(base,here("data-raw",str_c(state,".geojson")))

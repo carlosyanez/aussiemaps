@@ -89,7 +89,7 @@ load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
     query_text <- str_c("SELECT * FROM '",data_layer,"'")
   }
 
-  data <- st_read(temp_gpkg,query=query_text) |>
+  data <- st_read(temp_gpkg,query=query_text,quiet=TRUE) |>
     mutate(across(where(is.character), ~ str_squish(.x))) |>
     mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
 
