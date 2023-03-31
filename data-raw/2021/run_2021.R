@@ -130,7 +130,7 @@ ceds_2021_out <- load_geo(nonabs,"CED_2021_AUST_GDA2020") %>%
 source(here("data-raw","2021","sequence_2021.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
 
-# create master list, with areas ---
+# create master list, with areas -----
 
 dir_create(here("data-raw","processed"))
 

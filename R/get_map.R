@@ -244,7 +244,7 @@ get_map_internal <- function(filter_table=NULL,
 
   }
 
-  rm(data_i)
+  #rm(data_i)
 
   #aggregate
 
