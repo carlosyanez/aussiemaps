@@ -83,7 +83,7 @@ load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
   data_layer <- st_layers(file_name)$name[1]
 
   if(!is.null(filter_ids)){
-    st_write(filter_ids,temp_gpkg,layer="id",append=TRUE)
+    st_write(filter_ids,temp_gpkg,layer="id",append=TRUE,quiet=TRUE)
     query_text <- str_c("SELECT * FROM '",data_layer,"' WHERE id IN (SELECT id FROM id)")
   }else{
     query_text <- str_c("SELECT * FROM '",data_layer,"'")

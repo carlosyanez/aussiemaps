@@ -203,8 +203,9 @@ get_map_internal <- function(filter_table=NULL,
     }else{
 
       data_base <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
-
+      message("normalising")
       data_base <- data_base |>
+        mutate(Year=year) |>
         mutate(across(where(is.character), ~str_squish(.x))) |>
         mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]"))) |>
         mutate(across(any_of(c("id")), as.character)) |>
@@ -226,7 +227,7 @@ get_map_internal <- function(filter_table=NULL,
                     left_join(distinct_combos[j,],by=c(aggregation,cols_to_keep)) |>
                     filter(filter_flag) |>
                     select(-any_of(c("filter_flag"))) |>
-                    group_by(across(c(aggregation,cols_to_keep))) |>
+                    group_by(across(any_of(c(aggregation,cols_to_keep)))) |>
                     summarise(.groups="drop") |>
                     st_make_valid()
           if(is.null(data_i)){
@@ -241,6 +242,7 @@ get_map_internal <- function(filter_table=NULL,
     }
 
     data_sf <- bind_rows(data_sf,data_i)
+    rm(data_i)
 
   }
 
@@ -348,44 +350,6 @@ get_map_internal <- function(filter_table=NULL,
       data_sf <- bind_rows(data_sf,data_sf_external)
    }
 
-
-
-
-  #  # join_key <- as.vector("geo_col")
-  #
-  # #  for(i in 1:aggregation){
-  #
-  #   names(join_key) <- aggregation[i]
-  #
-  #   data_sf <- data_sf |>
-  #              left_join(areas_prop[[i]], by=join_key) |>
-  #               filter(if_any(c("prop_i"), ~  !is.na(.x)))
-  #
-  #   if("prop" %in% colnames(data_sf)){
-  #
-  #   }else{
-  #     data_sf <- data_sf |>
-  #                rename()
-  #
-  #   }
-  #   }
-
-
-   # exists_name <- any(colnames(data_sf)==str_replace(aggregation,"_(.*?)CODE","_NAME"))
-
-    # #if(exists_name){
-    #   agg_label <- colnames(data_sf)[str_detect(colnames(data_sf),
-    #                                           str_replace(aggregation,"_(.*?)CODE","_NAME"))]
-    #
-    #   data_sf$label <- data_sf |>
-    #                   select(any_of(as.vector(agg_label))) |>
-    #                   st_drop_geometry() |>
-    #                    pull()
-    #
-    #   data_sf <- data_sf |>
-    #               mutate(label=if_else(.data$prop==1,.data$label,str_c(.data$label, " (partial)")))
-    #
-    # }
 
   #simplify
     tryCatch(data_sf <- suppressMessages(suppressWarnings(
