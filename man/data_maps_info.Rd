@@ -4,7 +4,10 @@
 \alias{data_maps_info}
 \title{Helper function to update/download  data}
 \usage{
-data_maps_info()
+data_maps_info(...)
+}
+\arguments{
+\item{...}{fs::dir_info() parameters}
 }
 \value{
 nothing

@@ -4,10 +4,10 @@
 \alias{data_maps_delete}
 \title{Helper function to delete  data}
 \usage{
-data_maps_delete(file = NULL)
+data_maps_delete(...)
 }
 \arguments{
-\item{file}{to delete - defaults to all of them (provide full path, can obtain from data_maps_info)}
+\item{...}{fs::dir_info() parameters}
 }
 \value{
 nothing

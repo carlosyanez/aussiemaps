@@ -52,25 +52,24 @@ manage_maps_cache_dir <- function(path) {
 
 #' Helper function to update/download  data
 #' @importFrom fs dir_info
+#' @param  ... fs::dir_info() parameters
 #' @returns nothing
 #' @export
 #' @keywords helpers
-data_maps_info <- function(){
+data_maps_info <- function(...){
   cache_dir <- Sys.getenv('aussiemaps_cache_dir')
-  dir_info(cache_dir)
+  dir_info(cache_dir,...)
 }
 
 #' Helper function to delete  data
 #' @importFrom fs dir_ls file_delete
 #' @returns nothing
-#' @param file to delete - defaults to all of them (provide full path, can obtain from data_maps_info)
+#' @param  ... fs::dir_info() parameters
 #' @export
 #' @keywords helpers
-data_maps_delete <- function(file=NULL){
-  if(is.null(file)){
-    file <- data_maps_info()$path
-  }
+data_maps_delete <- function(...){
 
+  file <- data_maps_info(...)$path
   file_delete(file)
 }
 

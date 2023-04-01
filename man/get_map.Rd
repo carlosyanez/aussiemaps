@@ -13,7 +13,7 @@ get_map(
   smoothing_threshold = 4,
   use_cache = FALSE,
   cache_file = NULL,
-  cache_intermediates = FALSE
+  cache_intermediates = TRUE
 )
 }
 \arguments{
