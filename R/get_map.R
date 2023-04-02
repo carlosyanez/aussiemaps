@@ -16,6 +16,7 @@
 #' @param year A number indicating the year for which the map should be created.
 #' @param aggregation A vector containing the aggregation parameters,matching list_structure() column names .
 #' @param simplification_factor A number indicating the simplification factor.
+#' @param new_crs CRS value if transformation is needed.
 #' @param smoothing_threshold A number indicating the smoothing threshold.
 #' @param use_cache A boolean indicating whether to use the cache.
 #' @param cache_file Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).
@@ -43,7 +44,8 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                     filters=NULL, #filters is a list
                     year, #year is a number
                     aggregation=NULL, #aggregation is a list
-                    simplification_factor=1, #simplification factor is a number
+                    simplification_factor=NULL, #simplification factor is a number
+                    new_crs = NULL,
                     smoothing_threshold=4, #smoothing threshold is a number
                     use_cache=FALSE, #use cache is a boolean
                     cache_file=NULL,
@@ -61,7 +63,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
   #create hash
 
   if(is.null(cache_file)){
-    hash <- str_c(year,simplification_factor,smoothing_threshold,sep="-")
+    hash <- str_c(year,simplification_factor,smoothing_threshold,new_crs,sep="-")
 
     filter_table_hash <- digest(filter_table,"xxhash32",seed=1234)
     aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
@@ -87,6 +89,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                              year,
                              aggregation,
                              simplification_factor,
+                             new_crs,
                              smoothing_threshold,
                              cache_intermediates)
     if(use_cache){
@@ -106,26 +109,29 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @importFrom dplyr mutate reframe across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col contains
 #' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all
 #' @importFrom rmapshaper ms_simplify
-#' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry st_buffer st_is_empty
+#' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry st_buffer st_is_empty st_crs st_transform
 #' @importFrom tidyr pivot_longer
 #' @importFrom rlang .data
 #' @importFrom utils head
 #' @importFrom units set_units
 #' @importFrom smoothr fill_holes
 #' @importFrom tidyselect where
-#' @importFrom tibble tibble
+#' @importFrom tibble tibble add_column
+#' @importFrom nngeo st_remove_holes
 #' @param  filter_table table to filter (you can start with location_table)
 #' @param  filters list with filters
 #' @param  year year
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  simplification_factor  0-1 simplication threshold to pass to rmapshaper::ms_simplify()
+#' @param  new_crs use to transform projection
 #' @param  smoothing_threshold smoothing threshold (default to 1, as in km^2)
 #' @param  cache_intermediates whether to cache state intermediates
 #' @noRd
 get_map_internal <- function(filter_table=NULL,
                     year,
                     aggregation=NULL,
-                    simplification_factor=1,
+                    simplification_factor=NULL,
+                    new_crs = NULL,
                     smoothing_threshold=4,
                     cache_intermediates=TRUE){
 
@@ -225,11 +231,13 @@ get_map_internal <- function(filter_table=NULL,
           message(str_c("merging ",j," out of ",nrow(distinct_combos)))
           data_j <- suppressMessages(data_base |>
                     left_join(distinct_combos[j,],by=c(aggregation,cols_to_keep)) |>
-                    filter(filter_flag) |>
-                    select(-any_of(c("filter_flag"))) |>
-                    group_by(across(any_of(c(aggregation,cols_to_keep)))) |>
-                    summarise(.groups="drop") |>
-                    st_make_valid())
+                    filter(if_any(c("filter_flag"), ~ .x==TRUE)) |>
+                    select(-any_of(c("filter_flag"))))
+
+          data_j <- distinct_combos[j,] |>
+                    add_column(geom=st_union(data_j)) |>
+                    st_as_sf()
+
           if(is.null(data_i)){
             data_i <- data_j
           }else{
@@ -244,6 +252,12 @@ get_map_internal <- function(filter_table=NULL,
     data_sf <- bind_rows(data_sf,data_i)
     rm(data_i)
 
+  }
+
+  #remove holes
+  if(!is.null(smoothing_threshold)){
+   data_sf <- fill_holes(data_sf,set_units(smoothing_threshold,"km^2"))
+   data_sf <- st_remove_holes(data_sf)
   }
 
   #aggregate
@@ -271,14 +285,14 @@ get_map_internal <- function(filter_table=NULL,
     external_territories <- any(str_detect(required_states,"Other"))
 
     if(external_territories){
-      data_sf_external  <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other")))
-      data_sf           <- data_sf |> filter(if_any(as.vector(state_col), ~ str_detect(.x,"Other",TRUE)))
+      data_sf_external  <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other")))
+      data_sf           <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other",TRUE)))
     }
     #new aggregated sum
     areas_prop <- list()
     for(i in 1:length(aggregation)){
       areas_prop[[i]] <- load_aussiemaps_parquet(aggregation[i]) |>
-                         filter(if_any(c("id"), ~ .x %in% filter_table$id)) |>
+                         filter(if_any(any_of(c("id")), ~ .x %in% filter_table$id)) |>
                          collect() |>
                          group_by(across(c("geo_col")))   |>
                          summarise(across(any_of("prop"), ~ sum(.x)),.groups="drop")
@@ -286,23 +300,23 @@ get_map_internal <- function(filter_table=NULL,
 
     }
     #sf_use_s2(FALSE)
-    data_sf <- suppressMessages(suppressWarnings(data_sf |>
-                                                st_make_valid() |>
-                                                st_buffer(0) |>
-                                                group_by(across(any_of(unique(c(aggreg_orig,
-                                                                         aggregation,
-                                                                         cols_to_keep))))) |>
-                                                summarise(.groups="drop") |>
-                                                st_make_valid() |>
-                                                st_union(by_feature = TRUE) |>
-                                                st_make_valid()))
+    #data_sf <- suppressMessages(suppressWarnings(data_sf |>
+    #                                            st_make_valid() |>
+    #                                            st_buffer(0) |>
+    #                                            group_by(across(any_of(unique(c(aggreg_orig,
+    #                                                                     aggregation,
+    #                                                                     cols_to_keep))))) |>
+    #                                            summarise(.groups="drop") |>
+    #                                            st_make_valid() |>
+    #                                            st_union(by_feature = TRUE) |>
+    #                                            st_make_valid()))
 
     data_sf$empty <- st_is_empty(data_sf)
 
     data_sf <-  data_sf |>
-                filter(!empty)|>
-                select(-any_of(c("empty"))) |>
-                fill_holes(set_units(smoothing_threshold,"km^2"))
+                filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
+                select(-any_of(c("empty"))) #|>
+                #fill_holes(set_units(smoothing_threshold,"km^2"))
 
     merged_col  <- filter_table |>
                    mutate(Year=year) |>
@@ -313,38 +327,47 @@ get_map_internal <- function(filter_table=NULL,
 
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
               left_join(merged_col,by=aggregation) |>
-              relocate("geom",.after=last_col())))
+              relocate(any_of(c("geom","geometry")),.after=last_col())))
 
-   if(external_territories){
-
-     data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
-                                                    group_by(across(any_of(c(aggregation,cols_to_keep)))) |>
-                                                    summarise(.groups="drop") |>
-                                                    st_make_valid() |>
-                                                    st_union(by_feature = TRUE) |>
-                                                    fill_holes(set_units(smoothing_threshold,"km^2"))
-     ))
+    if(external_territories){
+   #
+   #   data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
+   #                                                  group_by(across(any_of(c(aggregation,cols_to_keep)))) |>
+   #                                                  summarise(.groups="drop") |>
+   #                                                  st_make_valid() |>
+   #                                                  st_union(by_feature = TRUE) |>
+   #                                                  fill_holes(set_units(smoothing_threshold,"km^2"))
+   #   ))
 
      merged_col  <- filter_table |>
        mutate(Year=year) |>
        select(any_of(c(aggregation,cols_to_merge))) |>
        distinct()                                               |>
        group_by(across(any_of(c(aggregation))))            |>
-       reframe(across(any_of(cols_to_merge), ~ merge_distinct(.x)))
+       reframe(across(any_of(cols_to_merge), merge_distinct))
 
      data_sf <- suppressMessages(suppressWarnings(data_sf |>
                                                     left_join(merged_col,by=aggregation) |>
-                                                    relocate("geom",.after=last_col())))
+                                                    relocate(any_of(c("geom","geometry")),.after=last_col())))
 
 
       data_sf <- bind_rows(data_sf,data_sf_external)
    }
 
   #simplify
+  if(!is.null(simplification_factor)){
     tryCatch(data_sf <- suppressMessages(suppressWarnings(
                data_sf |>
                ms_simplify(keep=simplification_factor))),
                 error = function(e) e)
+  }
+
+  #change crs
+    if(!is.null(new_crs)){
+      tryCatch(data_sf <- suppressMessages(suppressWarnings(
+        st_transform(data_sf,crs=st_crs(new_crs)))),
+        error = function(e) e)
+    }
 
   }
 

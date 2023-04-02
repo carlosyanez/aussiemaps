@@ -9,7 +9,8 @@ get_map(
   filters = NULL,
   year,
   aggregation = NULL,
-  simplification_factor = 1,
+  simplification_factor = NULL,
+  new_crs = NULL,
   smoothing_threshold = 4,
   use_cache = FALSE,
   cache_file = NULL,
@@ -26,6 +27,8 @@ get_map(
 \item{aggregation}{A vector containing the aggregation parameters,matching list_structure() column names .}
 
 \item{simplification_factor}{A number indicating the simplification factor.}
+
+\item{new_crs}{CRS value if transformation is needed.}
 
 \item{smoothing_threshold}{A number indicating the smoothing threshold.}
 
