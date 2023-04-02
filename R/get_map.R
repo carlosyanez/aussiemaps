@@ -256,6 +256,7 @@ get_map_internal <- function(filter_table=NULL,
 
   #remove holes
   if(!is.null(smoothing_threshold)){
+   message("filling holes")
    data_sf <- fill_holes(data_sf,set_units(smoothing_threshold,"km^2"))
    data_sf <- st_remove_holes(data_sf)
   }
