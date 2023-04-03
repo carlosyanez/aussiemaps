@@ -40,7 +40,7 @@ state       <- "Tasmania"
 state_short <- "Tas"
 
 poas_state <- 7000:7999
-ceds_2018 <- list_divisions(filters=list(StateAb="ACT",`2022`=TRUE)) %>% pull(DivisionNm)
+ceds_2018 <- list_divisions(filters=list(StateAb="TAS",`2022`=TRUE)) %>% pull(DivisionNm)
 
 source(here("data-raw","2021","sequence_2021.R"))
 rm(list=ls()[!(ls() %in% keep_vars)])
