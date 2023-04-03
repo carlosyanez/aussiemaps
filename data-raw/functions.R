@@ -61,12 +61,11 @@ full_coverage <-function(base,bigger,base_id,bigger_id,divisions=10){
   return(results)
 }
 
-intersections  <- function(base_renmant,bigger,base_id,bigger_id,base_empty_label,bigger_empty_label){
+intersections  <- function(base_renmant,bigger,base_id,bigger_id,base_empty_label,bigger_empty_label,threshold=0.03){
 
   base_cols   <- colnames(base_renmant)
   bigger_cols <- colnames(bigger)
   remnant     <- bigger_cols[!(bigger_cols %in% base_cols)]
-  threshold   <- 0.03
 
   a <- st_intersects(base_renmant,bigger, sparse = FALSE) %>% as.data.frame(.)
 

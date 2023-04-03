@@ -2,7 +2,11 @@
 
 ## The file provides structure from SA1-SA4- to australia, which builds up without overlaps
 #main_layers
+if(!exists("base")){
 base <- load_geo(main, layer = "SA1_2021_AUST_GDA2020",state=state)
+}else{
+  message("base exists!")
+}
 sa1_nbr <- nrow(base)
 
 state_boundary <- load_geo(main,layer="STE_2021_AUST_GDA2020",state=state)
@@ -32,7 +36,8 @@ intersects <- intersections(base_renmant,
                             base_id="SA1_CODE_2021",
                             bigger_id="ILOC_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="ILOC_NAME_2021"
+                            bigger_empty_label="ILOC_NAME_2021",
+                            threshold = threshold
                             )
 
 intersected <- intersects %>%
@@ -77,7 +82,8 @@ intersects <- intersections(base_renmant,
                             base_id="id",
                             bigger_id="UCL_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="UCL_NAME_2021")
+                            bigger_empty_label="UCL_NAME_2021",
+                            threshold = threshold)
 
 non_matched <- base %>%
               filter(if_any(c("id"), ~ !(.x %in% unique(c(full_overlap$id,
@@ -118,7 +124,9 @@ intersects <- intersections(base_renmant,
                             base_id="id",
                             bigger_id="TR_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="TR_NAME_2021")
+                            bigger_empty_label="TR_NAME_2021",
+                            threshold = threshold
+)
 
 
 non_matched <- base %>%
@@ -163,7 +171,9 @@ intersects <- intersections(base_renmant,
                             base_id="id",
                             bigger_id="CED_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="CED_NAME_2021")
+                            bigger_empty_label="CED_NAME_2021",
+                            threshold = threshold
+)
 
 non_matched <- base %>%
   filter(if_any(c("id"), ~ !(.x %in% unique(c(full_overlap$id,
@@ -204,7 +214,9 @@ intersects <- intersections(base_renmant,
                             base_id="id",
                             bigger_id="LGA_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="LGA_NAME_2021")
+                            bigger_empty_label="LGA_NAME_2021",
+                            threshold = threshold
+)
 
 non_matched <- base %>%
   filter(if_any(c("id"), ~ !(.x %in% unique(c(full_overlap$id,
@@ -235,6 +247,7 @@ full_overlap <- full_coverage(base,
                               bigger_id="POA_CODE_2021")
 
 
+
 base_renmant <- base  %>%
   filter(!(id %in% full_overlap$id))
 
@@ -244,7 +257,9 @@ intersects <- intersections(base_renmant,
                             base_id="id",
                             bigger_id="POA_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="POA_NAME_2021")
+                            bigger_empty_label="POA_NAME_2021",
+                            threshold = threshold
+)
 
 non_matched <- base %>%
   filter(if_any(c("id"), ~ !(.x %in% unique(c(full_overlap$id,
@@ -304,7 +319,9 @@ intersects <- intersections(base_renmant,
                             base_id="id",
                             bigger_id="SAL_CODE_2021",
                             base_empty_label="SA2_NAME_2021",
-                            bigger_empty_label="SAL_NAME_2021")
+                            bigger_empty_label="SAL_NAME_2021",
+                            threshold = threshold
+)
 
 non_matched <- base %>%
   filter(if_any(c("id"), ~ !(.x %in% unique(c(full_overlap$id,
@@ -328,5 +345,8 @@ base <- base |> st_make_valid()
 
 # write ---
 #st_write(base,here("data-raw",str_c(state,".geojson")))
+if(!exists("dont_write")){
 st_write(base,here("data-raw",str_c("2021_",state,".gpkg")))
+}
 sa1_nbr
+

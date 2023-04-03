@@ -32,6 +32,7 @@ other_layers      <- rgdal::ogrListLayers(other)
 temp_file <- here("data-raw","temp_df.parquet")
 base_file <- here("data-raw","base_sf3.parquet")
 ced_file <- here("data-raw","source","divisions-Aug-2021-by-2016-SA1")
+threshold <- 0.03
 
 keep_vars <- c(ls(),"keep_vars")
 # Tasmania ----
