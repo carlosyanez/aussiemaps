@@ -309,7 +309,7 @@ for(i in 1:(length(split)-1)){
 }
 
 full_overlap <- tibble()
-if(length(full_overlap_i)>0)){
+if(length(full_overlap_i)>0){
 for(i in 1:length(full_overlap_i)){
   full_overlap <- bind_rows(full_overlap,full_overlap_i)
 }

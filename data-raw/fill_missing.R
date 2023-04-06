@@ -6,6 +6,7 @@ library(leaflet)
 library(aussiemaps)
 library(sfarrow)
 library(auspol)
+library(here)
 
 
 
@@ -201,7 +202,8 @@ state_short <- "Nsw"
 ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2022`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(2000:2599,2619:2899,2921:2999,2406,2540,2611,3585,3586,3644,3691,3707,4380,4377,4383,4385)
 
-data_base <- load_aussiemaps_gpkg("2021_New.South.Wales.gpkg")
+data_base <- load_aussiemaps_gpkg("2021_New.South.Wales")
+
 b         <-  load_geo(main, layer = "SA1_2021_AUST_GDA2020",state=state)
 b$empty <- b |> st_is_empty()
 b <- b |> filter(!empty) |> select(-empty)
@@ -276,9 +278,10 @@ for(i in 1:nrow(b)){
   sa1 <- b[i,]
   sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2021)
 
-  existing <- data_base |> filter(SA1_CODE_2021==sa_code)
+  existing <- data_base |> filter(SA1_CODE_2021==sa_code) |> st_make_valid()
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
     st_as_sf() |>
+    st_make_valid() |>
     smoothr::fill_holes(units::set_units(1,"km^2"))
 
 
@@ -863,7 +866,9 @@ save_zip_gpkg(file,
 geo_structure  <- bind_rows(geo_structure,
                             map |> st_drop_geometry())
 
-#save structure, create proportions
+geo_structure |> distinct(STATE_NAME_2021)
+
+#save structure, create proportions ----
 
 geo_structure <- geo_structure |>
   relocate(id,.before=1)
