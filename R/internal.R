@@ -26,7 +26,13 @@ load_aussiemaps <- function(aussiemaps_file) {
   file_detect <- any(str_detect(cache_files,aussiemaps_file))
 
   if(!file_detect) {
-    filename <- str_c(aussiemaps_file,".zip")
+
+    files <- get_repo_files()$file_name
+    files <- files[str_detect(files,aussiemaps_file)]
+
+    for(filename in files){
+
+    #filename <- file
 
     url  <- pb_download_url(filename,
                               repo = "carlosyanez/aussiemaps",
@@ -38,6 +44,7 @@ load_aussiemaps <- function(aussiemaps_file) {
 
     unzip(file_path,exdir = cache_dir)
     file.remove(file_path)
+    }
   }
   cache_files <- data_maps_info()$path
   file_path <- cache_files[str_detect(cache_files,aussiemaps_file)]
@@ -49,6 +56,7 @@ load_aussiemaps <- function(aussiemaps_file) {
 #' Helper function to import gpkg data
 #'
 #' @importFrom arrow open_dataset
+#' @importFrom dplyr bind_rows
 #' @param aussiemaps_file name of the file to download.
 #' @return sf parquet binding
 #' @noRd
@@ -56,7 +64,17 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 
 
   file_name <- load_aussiemaps(aussiemaps_file)
-  data <- open_dataset(file_name,format="parquet")
+  data <- NULL
+  for(file in file_name){
+  data_i <- open_dataset(file,format="parquet")
+
+  if(is.null(data)){
+    data <- data_i
+  }else{
+    data <- bind_rows(data,data_i)
+  }
+
+  }
   return(data)
 
 }
@@ -67,7 +85,7 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 #' @importFrom fs path file_copy
 #' @importFrom sf st_write st_read st_layers
 #' @importFrom stringr str_c str_remove_all str_squish
-#' @importFrom dplyr mutate across
+#' @importFrom dplyr mutate across bind_rows
 #' @importFrom tidyselect where
 #' @param aussiemaps_file name of the file to download.
 #' @param filter_ids data frame with ids to filter (id column)
@@ -75,24 +93,32 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 #' @noRd
 load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
 
-  file_name <- load_aussiemaps(aussiemaps_file)
-  temp_gpkg <- path(find_maps_cache(),"temp.gpkg")
+  file_names <- load_aussiemaps(aussiemaps_file)
+  data <- NULL
+  for(file_name in file_names){
+    temp_gpkg <- path(find_maps_cache(),"temp.gpkg")
+    file_copy(file_name,temp_gpkg,overwrite=TRUE)
 
-  file_copy(file_name,temp_gpkg,overwrite=TRUE)
+    data_layer <- st_layers(file_name)$name[1]
 
-  data_layer <- st_layers(file_name)$name[1]
+    if(!is.null(filter_ids)){
+      st_write(filter_ids,temp_gpkg,layer="id",append=TRUE,quiet=TRUE)
+      query_text <- str_c("SELECT * FROM '",data_layer,"' WHERE id IN (SELECT id FROM id)")
+    }else{
+      query_text <- str_c("SELECT * FROM '",data_layer,"'")
+    }
 
-  if(!is.null(filter_ids)){
-    st_write(filter_ids,temp_gpkg,layer="id",append=TRUE,quiet=TRUE)
-    query_text <- str_c("SELECT * FROM '",data_layer,"' WHERE id IN (SELECT id FROM id)")
-  }else{
-    query_text <- str_c("SELECT * FROM '",data_layer,"'")
+    data_i <- st_read(temp_gpkg,query=query_text,quiet=TRUE) |>
+      mutate(across(where(is.character), ~ str_squish(.x))) |>
+      mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
+
+    if(is.null(data)){
+      data <- data_i
+    }else{
+      data <- bind_rows(data,data_i)
+    }
+
   }
-
-  data <- st_read(temp_gpkg,query=query_text,quiet=TRUE) |>
-    mutate(across(where(is.character), ~ str_squish(.x))) |>
-    mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
-
   return(data)
 }
 

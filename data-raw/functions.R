@@ -42,7 +42,7 @@ full_coverage <-function(base,bigger,base_id,bigger_id,divisions=10){
 
     bigger_row <- bigger_ids[i,] %>% select(any_of(bigger_id)) %>% pull()
 
-    indexes <- st_covered_by(base ,
+    indexes <- st_covered_by(base |> st_as_sf() ,
                              bigger %>%  filter(if_any(c(bigger_id), ~ .x==bigger_row)),
                              sparse = FALSE)
 

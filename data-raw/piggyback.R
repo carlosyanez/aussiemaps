@@ -34,9 +34,10 @@ for(file in files$path){
   #Sys.sleep(60)
 }
 
+today <- piggyback::pb_list(repo)
 
 today <- today |> filter(str_detect(file_name,"2021")) |>
-  filter(lubridate::date(timestamp)!=lubridate::today())
+  filter(lubridate::date(timestamp)==lubridate::today())
 
 files <- files |>
          filter(file_mod %in% today$file_name)

@@ -268,18 +268,24 @@ non_matched <- base %>%
                                                            pull()
   )))))
 
-
+if(!is.null(full_overlap)){
 base <- base %>%
   left_join(full_overlap,by="id") %>%
   filter(!is.na(POA_NAME_2021))
 
-base <- bind_rows(base,intersects,non_matched) %>%
+base <- bind_rows(base,intersects,non_matched)
+}else{
+  base <- bind_rows(intersects, non_matched)
+}
+base <- base %>%
   mutate(id=row_number())
+
 st_write_parquet(base,base_file)
 sa1_nbr <- c(sa1_nbr,nrow(base))
 rm(base_renmant,poa,intersects,full_overlap,non_matched)
 
 ## suburbs ----
+base<- st_as_sf(base)
 
 sal <- load_geo(nonabs,"SAL_2021_AUST_GDA2020", state=state) %>%
         mutate(SAL_NAME_2021=str_remove_all(SAL_NAME_2021,"\\((.*?)\\)"))
@@ -303,7 +309,7 @@ for(i in 1:(length(split)-1)){
 }
 
 full_overlap <- tibble()
-
+if(length(full_overlap_i)>0)){
 for(i in 1:length(full_overlap_i)){
   full_overlap <- bind_rows(full_overlap,full_overlap_i)
 }
@@ -312,6 +318,9 @@ full_overlap <- full_overlap %>% distinct()
 
 base_renmant <- base  %>%
   filter(!(id %in% full_overlap$id))
+}else{
+  base_renmant <-base
+}
 
 
 intersects <- intersections(base_renmant,
@@ -330,13 +339,23 @@ non_matched <- base %>%
                                                            pull()
   )))))
 
-
 base <- base %>%
-  left_join(full_overlap,by="id") %>%
-  filter(!is.na(SAL_NAME_2021))
-
-base <- bind_rows(base,intersects,non_matched) %>%
   mutate(id=row_number())
+
+if(nrow(full_overlap)==0) full_overlap <- NULL
+
+if(!is.null(full_overlap)){
+  base <- base %>%
+    left_join(full_overlap,by="id") %>%
+    filter(!is.na(POA_NAME_2021))
+
+  base <- bind_rows(base,intersects,non_matched)
+}else{
+  base <- bind_rows(intersects |> select(-any_of(c("id"))), non_matched |> select(-any_of(c("id"))))
+}
+
+
+
 st_write_parquet(base,base_file)
 sa1_nbr <- c(sa1_nbr,nrow(base))
 rm(base_renmant,sed,intersects,full_overlap,non_matched)

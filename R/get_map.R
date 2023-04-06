@@ -151,6 +151,8 @@ get_map_internal <- function(filter_table=NULL,
 
   repo      <- repo_base |>
                 filter(if_any(c("file_name"), ~ str_detect(.x,file_regex)))   |>
+                mutate(file_name=str_remove_all(file_name,"\\.[0-9]$"))       |>
+                distinct() |>
                 pull()
 
 
