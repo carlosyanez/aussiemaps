@@ -19,6 +19,7 @@ save_zip_gpkg <- function(file,source_dir,dest_dir){
  file_zip  <- str_remove(file,source_dir) %>%
       str_remove(.,"/") %>%
       str_remove(.,".gpkg") %>%
+      str_replace(.," ","\\.") %>%
       str_c(.,".zip")
 
   zip::zip(zipfile=path(dest_dir,file_zip),
