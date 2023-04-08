@@ -2,8 +2,10 @@
 
 ## The file provides structure from SA1-SA4- to australia, which builds up without overlaps
 #main_layers
+if(!exists("base")){
 base <- load_geo(main, layer = "statistical_area_level_1_2016") %>%
         filter(STE_NAME_2016==state)
+}
 sa1_nbr <- nrow(base)
 
 state_boundary <- load_geo(main,layer="state_2016")
