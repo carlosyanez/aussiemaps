@@ -17,7 +17,7 @@ dont_write <- TRUE
 
 main        <- here("data-raw","source","asgs2016absstructuresmainstructureandgccsa.gpkg")
 nonabs      <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
-#nonabs2018  <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
+nonabs2018  <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
 indigenous  <- here("data-raw","source","asgs2016absstructuresindigenousstructure.gpkg")
 other       <- here("data-raw","source","asgs2016absstructuressignificanturbanareasurbancentresandlocalitiessectionofstate.gpkg")
 
@@ -35,40 +35,44 @@ threshold <-0
 
 ## South Australia ----
 state       <- "South Australia"
-state_short <- "Tas"
+state_short <- "Sa"
 
 poas_state <- c(5000:5799,0872)
 ceds_2018 <- auspol::list_divisions(filters=list(StateAb="SA",`2016`=TRUE)) %>% pull(DivisionNm)
 
-data_base <- load_aussiemaps_gpkg("2016_South.Australia.gpkg")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
+data_base <- load_aussiemaps_gpkg("2016_South.Australia")
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016") |>
+              filter(STE_NAME_2016==state)
+
 b$empty <- b |> st_is_empty()
 b <- b |> filter(!empty) |> select(-empty)
 base <- NULL
 for(i in 1:nrow(b)){
 
 sa1 <- b[i,]
-sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
 existing <- tibble(a="sa_code",geom=st_union(existing)) |>
   st_as_sf() |>
   smoothr::fill_holes(units::set_units(1,"km^2"))
 
 
-base_i <- st_difference(sa1,existing)
-base_i <- st_cast(base_i, "POLYGON")
+tryCatch({
+  base_i <- st_difference(sa1,existing)
+  base_i <- st_cast(base_i, "POLYGON")
 
-base_i$area <- st_area(base_i)
-base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
+  base_i$area <- st_area(base_i)
+  base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
 
-message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-if(is.null(base)){
-  base <- base_i
-}else{
-  base <- bind_rows(base,base_i)
-}
-
+  message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
+  if(is.null(base)){
+    base <- base_i
+  }else{
+    base <- bind_rows(base,base_i)
+  }
+},
+error=function(e){message("didnt work")})
 }
 
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
@@ -96,14 +100,14 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
     st_as_sf() |>
     smoothr::fill_holes(units::set_units(1,"km^2"))
 
-
+tryCatch({
   base_i <- st_difference(sa1,existing)
   base_i <- st_cast(base_i, "POLYGON")
 
@@ -116,7 +120,8 @@ for(i in 1:nrow(b)){
   }else{
     base <- bind_rows(base,base_i)
   }
-
+},
+error=function(e){message("didnt work")})
 }
 
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
@@ -149,9 +154,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
     st_as_sf() |>
     smoothr::fill_holes(units::set_units(1,"km^2"))
@@ -213,9 +218,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
     st_as_sf() |>
     smoothr::fill_holes(units::set_units(1,"km^2"))
@@ -278,9 +283,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code) |> st_make_valid()
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code) |> st_make_valid()
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
     st_as_sf() |>
     st_make_valid() |>
@@ -337,9 +342,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
     st_as_sf() |>
     smoothr::fill_holes(units::set_units(1,"km^2"))
@@ -406,9 +411,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
 
   if(nrow(existing)>0){
 
@@ -488,9 +493,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
 
   if(nrow(existing)>0){
 
@@ -564,9 +569,9 @@ base <- NULL
 for(i in 1:nrow(b)){
 
   sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_CODE_2016)
+  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_CODE_2016==sa_code)
+  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
 
   if(nrow(existing)>0){
 
@@ -615,15 +620,15 @@ source(here("data-raw","2016","sequence_2016.R"))
 
 existing_poas <- data_base |>
                  st_drop_geometry() |>
-                  distinct(SA1_CODE_2016,POA_CODE_2016)
+                  distinct(SA1_MAINCODE_2016 ,POA_CODE_2016)
 
 existing_poas <- existing_poas |>
-                  left_join(existing_poas |>count(SA1_CODE_2016) |> filter(n==1),by="SA1_CODE_2016" ) |>
+                  left_join(existing_poas |>count(SA1_MAINCODE_2016 ) |> filter(n==1),by="SA1_MAINCODE_2016 " ) |>
                   filter(!is.na(n)) |>
                   select(-n) |>
                   rename("postcode"="POA_CODE_2016")
 
-base <- base |> left_join(existing_poas,by="SA1_CODE_2016") |>
+base <- base |> left_join(existing_poas,by="SA1_MAINCODE_2016 ") |>
   mutate(POA_CODE_2016=case_when(
     is.na(POA_CODE_2016) ~ postcode,
     TRUE ~ POA_CODE_2016

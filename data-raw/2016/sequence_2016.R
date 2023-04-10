@@ -45,7 +45,7 @@ intersected <- intersects %>%
 
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct() |> distinct(),by="SA1_MAINCODE_2016") %>%
   filter(!is.na(SA2_NAME_2016))
 
 base <- bind_rows(base,intersects) %>%
@@ -89,7 +89,7 @@ intersected <- intersects %>%
 }
 
 base <- base %>%
-  left_join(full_overlap,by="id") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(SA3_NAME_2016))
 
 base <- bind_rows(base,intersects) %>%
@@ -135,7 +135,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="id") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(SA4_NAME_2016))
 
 base <- bind_rows(base,intersects) %>%
@@ -154,15 +154,15 @@ ind <- load_geo(indigenous, layer="indigenous_location_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="ILOC_CODE_2016")
 
 overlapped <- full_overlap %>%
-              distinct(SA1_MAINCODE_2016) %>%
+              distinct(id) %>%
               mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-                left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+                left_join(overlapped,by="id") %>%
                 filter(is.na(dummy)) %>%
                 select(-dummy)
 
@@ -191,7 +191,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-        left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+        left_join(full_overlap |> distinct(),by="id") %>%
         filter(!is.na(ILOC_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -209,15 +209,15 @@ ind <- load_geo(indigenous, layer="indigenous_area_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="IARE_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -246,7 +246,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(IARE_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -264,15 +264,15 @@ ind <- load_geo(indigenous, layer="indigenous_region_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="IREG_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -301,7 +301,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(IREG_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -320,15 +320,15 @@ ind <- load_geo(other, layer="urban_centre_and_locality_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="UCL_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -357,7 +357,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(UCL_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -376,15 +376,15 @@ ind <- load_geo(other, layer="section_of_state_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="SOS_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -413,7 +413,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(SOS_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -431,15 +431,15 @@ ind <- load_geo(other, layer="section_of_state_range_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="SOSR_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -468,7 +468,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(SOSR_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -487,15 +487,15 @@ ind <- load_geo(nonabs, layer="tourism_region_2016") %>%
 if(nrow(ind)>0){
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="TR_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -524,7 +524,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(TR_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -556,15 +556,15 @@ if(exists("ceds_2016_out")){
 
   full_overlap <- full_coverage(base,
                                 bigger=ind,
-                                base_id="SA1_MAINCODE_2016",
+                                base_id="id",
                                 bigger_id="CED_CODE_2016")
 
   overlapped <- full_overlap %>%
-    distinct(SA1_MAINCODE_2016) %>%
+    distinct(id) %>%
     mutate(dummy=TRUE)
 
   base_renmant <- base  %>%
-    left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+    left_join(overlapped,by="id") %>%
     filter(is.na(dummy)) %>%
     select(-dummy)
 
@@ -593,7 +593,7 @@ if(exists("ceds_2016_out")){
   }
 
   base <- base %>%
-    left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+    left_join(full_overlap |> distinct(),by="id") %>%
     filter(!is.na(CED_CODE_2016))
 
   base <- bind_rows(base,intersects,non_matched) %>%
@@ -619,15 +619,15 @@ ind <- load_geo(nonabs, layer="local_government_area_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="LGA_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -656,7 +656,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(LGA_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -673,15 +673,15 @@ ind <- load_geo(nonabs, layer="post_code_area_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="POA_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -710,7 +710,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(POA_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
@@ -727,15 +727,15 @@ ind <- load_geo(nonabs, layer="state_suburb_2016") %>%
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
-                              base_id="SA1_MAINCODE_2016",
+                              base_id="id",
                               bigger_id="SSC_CODE_2016")
 
 overlapped <- full_overlap %>%
-  distinct(SA1_MAINCODE_2016) %>%
+  distinct(id) %>%
   mutate(dummy=TRUE)
 
 base_renmant <- base  %>%
-  left_join(overlapped,by="SA1_MAINCODE_2016") %>%
+  left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
 
@@ -764,7 +764,7 @@ if(nrow(base_renmant)>0){
 }
 
 base <- base %>%
-  left_join(full_overlap,by="SA1_MAINCODE_2016") %>%
+  left_join(full_overlap |> distinct(),by="id") %>%
   filter(!is.na(SSC_CODE_2016))
 
 base <- bind_rows(base,intersects,non_matched) %>%
