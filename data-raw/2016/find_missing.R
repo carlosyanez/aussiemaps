@@ -8,6 +8,7 @@ for(i in 1:nrow(b)){
   sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
   existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
+
   if(nrow(existing)>0){
 
   existing <- tibble(a="sa_code",geom=st_union(existing)) |>
@@ -27,7 +28,7 @@ for(i in 1:nrow(b)){
       base_i<-tibble()
     }else{
 
-    if(exist_area>sa1_area){
+    if(exist_area<sa1_area){
       base_i <- st_difference(sa1,existing)
     }else{
       base_i <- st_difference(existing,sa1)
@@ -53,6 +54,8 @@ for(i in 1:nrow(b)){
     base_i <- sa1
   }
   if(nrow(base_i)>0){
+    if(any(str_detect(colnames(base_i),"shape"))) base_i <- base_i |> rename("geom"="shape")
+
   if(is.null(base)){
     base <- base_i
   }else{
@@ -61,10 +64,6 @@ for(i in 1:nrow(b)){
   }
 }
 
-
-
-
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
 base <- base |> select(-a,-area)
 keep_vars <- unique(c(ls(),"keep_vars"))
-base <- base |> select(-geom)|>rename("geom"="shape")

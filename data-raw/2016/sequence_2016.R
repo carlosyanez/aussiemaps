@@ -21,14 +21,21 @@ full_overlap <- full_coverage(base,
                               base_id="SA1_MAINCODE_2016",
                               bigger_id="SA2_MAINCODE_2016")
 
+if(!is.null(full_overlap)){
+
 overlapped <- full_overlap %>%
   distinct(SA1_MAINCODE_2016) %>%
   mutate(dummy=TRUE)
+
 
 base_renmant <- base  %>%
   left_join(overlapped,by="SA1_MAINCODE_2016") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
+}else{
+  base_renmant <- base
+}
+
 
 
 intersects <- intersections(base_renmant,
