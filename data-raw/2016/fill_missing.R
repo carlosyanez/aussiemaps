@@ -73,56 +73,17 @@ st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),delete_dsn = TRUE)
 
 rm(base)
 
-
-
-
 ## Queensland ----
 state       <- "Queensland"
 state_short <- "Qld"
 ceds_2018 <- list_divisions(filters=list(StateAb="QLD",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(4000:4999,2406)
 
-data_base <- load_aussiemaps_gpkg("2016_Queensland.gpkg")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-base <- NULL
-for(i in 1:nrow(b)){
+data_base <- load_aussiemaps_gpkg("2016_Queensland")
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
 
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
-
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
-  existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-    st_as_sf() |>
-    smoothr::fill_holes(units::set_units(1,"km^2"))
-
-  tryCatch({
-    base_i <- st_difference(sa1,existing)
-    st_s
-    base_i <- st_cast(base_i, "POLYGON")
-
-    base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-    message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-
-  },
-  error = function(e){
-    message("same?!")
-  })
-  if(is.null(base)){
-    base <- base_i
-  }else{
-    base <- bind_rows(base,base_i)
-  }
-
-}
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-a,-area)
-keep_vars <- unique(c(ls(),"keep_vars"))
-
+source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- bind_rows(data_base |> select(-id),
@@ -147,51 +108,9 @@ ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2016`=TRUE)) %>% pull(Di
 poas_state <- c(2000:2599,2619:2899,2921:2999,2406,2540,2611,3585,3586,3644,3691,3707,4380,4377,4383,4385)
 
 data_base <- load_aussiemaps_gpkg("2016_New.South.Wales")
-
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-base <- NULL
-for(i in 1:nrow(b)){
-
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
-
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
-  existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-    st_as_sf() |>
-    smoothr::fill_holes(units::set_units(1,"km^2"))
-
-  tryCatch({
-    base_i <- st_difference(sa1,existing)
-    base_i <- st_cast(base_i, "POLYGON")
-
-    base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-    message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-  },
-  error = function(e){
-    message("same?!")
-  })
-  if(is.null(base)){
-    base <- base_i
-  }else{
-    base <- bind_rows(base,base_i)
-  }
-
-
-}
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-a,-area)
-keep_vars <- unique(c(ls(),"keep_vars"))
-
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
+source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- base |> st_make_valid()
@@ -212,48 +131,11 @@ state_short <- "Vic"
 ceds_2018 <- list_divisions(filters=list(StateAb="VIC",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- 3000:3999
 
-data_base <- load_aussiemaps_gpkg("2016_Victoria.gpkg")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-base <- NULL
-for(i in 1:nrow(b)){
+data_base <- load_aussiemaps_gpkg("2016_Victoria")
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
 
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
-
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code) |> st_make_valid()
-  existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-    st_as_sf() |>
-    st_make_valid() |>
-    smoothr::fill_holes(units::set_units(1,"km^2"))
-
-
-  tryCatch({
-    base_i <- st_difference(sa1,existing)
-    base_i <- st_cast(base_i, "POLYGON")
-
-    base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-    message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-  },
-  error = function(e){
-    message("same?!")
-  })
-
-}
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- st_cast(base,"POLYGON")
-base <- base |> select(-a,-area)
-keep_vars <- unique(c(ls(),"keep_vars"))
-
+source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- bind_rows(data_base |> select(-id),
@@ -271,45 +153,11 @@ state_short <- "Tas"
 poas_state <- 7000:7999
 ceds_2018 <- list_divisions(filters=list(StateAb="TAS",`2016`=TRUE)) %>% pull(DivisionNm)
 
-data_base <- load_aussiemaps_gpkg("2016_Tasmania.gpkg")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-base <- NULL
-for(i in 1:nrow(b)){
+data_base <- load_aussiemaps_gpkg("2016_Tasmania")
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
 
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
-
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
-  existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-    st_as_sf() |>
-    smoothr::fill_holes(units::set_units(1,"km^2"))
-
-  tryCatch({
-    base_i <- st_difference(sa1,existing)
-    base_i <- st_cast(base_i, "POLYGON")
-
-    base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-    message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-  },
-  error = function(e){
-    message("same?!")
-  })
-
-}
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-a,-area)
-keep_vars <- unique(c(ls(),"keep_vars"))
-
+source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
@@ -333,69 +181,19 @@ ceds_2018 <- list_divisions(filters=list(StateAb="ACT",`2016`=TRUE)) %>% pull(Di
 poas_state <- c(2600:2618,2900:2920,2620,2540)
 
 
-data_base <- load_aussiemaps_gpkg("2016_Australian.Capital.Territory.gpkg")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
+data_base <- load_aussiemaps_gpkg("2016_Australian.Capital.Territory")
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
 
-data_base$empty <- data_base |> st_is_empty()
-data_base <- data_base |> filter(!empty) |> select(-empty)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-
-data_base <- st_cast(data_base,"POLYGON")
-b <- st_cast(b,"POLYGON")
-
-base <- NULL
-for(i in 1:nrow(b)){
-
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
-
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
-
-  if(nrow(existing)>0){
-
-  existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-    st_as_sf() |>
-    smoothr::fill_holes(units::set_units(1,"km^2"))
-
-  tryCatch({
-    base_i <- st_difference(sa1,existing)
-    base_i <- st_cast(base_i, "POLYGON")
-
-    base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-    message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-  },
-  error = function(e){
-    message("same?!")
-  })
-  }
-  else{
-    base_i <- sa1
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-
-  }
-
-}
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-any_of(c("a","area")))
-keep_vars <- unique(c(ls(),"keep_vars"))
-
+source(here("data-raw","2016","find_missing.R"))
+if(!is.null(base)){
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- bind_rows(data_base |> select(-id),
                   base |> select(-id))
+}else{
+  base <- data_base
+}
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")))
 
 rm(base)
@@ -407,7 +205,7 @@ state       <- "Other Territories"
 state_short <- "Other"
 poas_state <- c(2540,2899,6798,6799,7151)
 
-ceds_2016_out <- load_geo(nonabs,"CED_2016_AUST_GDA2020") %>%
+ceds_2016_out <- load_geo(nonabs,"commonwealth_electoral_division_2016") %>%
   filter(CED_NAME_2016 %in% c("Fenner","Bean","Lingiari")) %>%
   st_drop_geometry() %>%
   select(CED_CODE_2016,CED_NAME_2016) %>%
@@ -423,74 +221,24 @@ ceds_2016_out <- load_geo(nonabs,"CED_2016_AUST_GDA2020") %>%
 
 
 data_base <- load_aussiemaps_gpkg("2016_Other.Territories")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-base <- NULL
-for(i in 1:nrow(b)){
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
 
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
+source(here("data-raw","2016","find_missing.R"))
 
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
+if(!is.null(base)){
+  source(here("data-raw","2016","sequence_2016.R"))
 
-  if(nrow(existing)>0){
-
-    existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-      st_as_sf() |>
-      smoothr::fill_holes(units::set_units(1,"km^2"))
-
-    tryCatch({
-      base_i <- st_difference(sa1,existing)
-      base_i <- st_cast(base_i, "POLYGON")
-
-      base_i$area <- st_area(base_i)
-      base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-      message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-      if(is.null(base)){
-        base <- base_i
-      }else{
-        base <- bind_rows(base,base_i)
-      }
-    },
-    error = function(e){
-      message("same?!")
-    })
-  }
-  else{
-    base_i <- sa1
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-
-  }
-
-}
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-a,-area)
-keep_vars <- unique(c(ls(),"keep_vars"))
-
-source(here("data-raw","2016","sequence_2016.R"))
-
-if(nrow(base)>0){
-base <- bind_rows(data_base |> select(-id),
-                  base |> select(-id))
+  base <- bind_rows(data_base |> select(-id),
+                    base |> select(-id))
 }else{
   base <- data_base
 }
-
 
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")))
 
 
 rm(base)
-
-
-
 
 ## Western Australia ----
 state       <- "Western Australia"
@@ -498,60 +246,13 @@ state_short <- "Wa"
 ceds_2018 <- list_divisions(filters=list(StateAb="WA",`2016`=TRUE)) %>% pull(DivisionNm)
 poas_state <- c(6000:6797,0872)
 
-data_base <- load_aussiemaps_gpkg("2016_Western.Australia.gpkg")
-b         <-  load_geo(main, layer = "SA1_2016_AUST_GDA2020",state=state)
-b$empty <- b |> st_is_empty()
-b <- b |> filter(!empty) |> select(-empty)
-base <- NULL
-for(i in 1:nrow(b)){
+data_base <- load_aussiemaps_gpkg("2016_Western.Australia")
+b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
+  filter(STE_NAME_2016==state)
 
-  sa1 <- b[i,]
-  sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
+source(here("data-raw","2016","find_missing.R"))
 
-  existing <- data_base |> filter(SA1_MAINCODE_2016 ==sa_code)
-
-  if(nrow(existing)>0){
-
-    existing <- tibble(a="sa_code",geom=st_union(existing)) |>
-      st_as_sf() |>
-      smoothr::fill_holes(units::set_units(1,"km^2"))
-
-    tryCatch({
-      base_i <- st_difference(sa1,existing)
-      base_i <- st_cast(base_i, "POLYGON")
-
-      base_i$area <- st_area(base_i)
-      base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
-
-      message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
-      if(is.null(base)){
-        base <- base_i
-      }else{
-        base <- bind_rows(base,base_i)
-      }
-    },
-    error = function(e){
-      message("same?!")
-    })
-  }
-  else{
-    base_i <- sa1
-    if(is.null(base)){
-      base <- base_i
-    }else{
-      base <- bind_rows(base,base_i)
-    }
-
-  }
-
-}
-
-
-base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-any_of(c("a","area")))
-
-keep_vars <- unique(c(ls(),"keep_vars"))
-
+if(!is.null(base)){
 source(here("data-raw","2016","sequence_2016.R"))
 
 
@@ -573,10 +274,11 @@ base <- base |> left_join(existing_poas,by="SA1_MAINCODE_2016 ") |>
   POA_NAME_2016=POA_CODE_2016) |>
   select(-postcode)
 
-
-
 base <- bind_rows(data_base |> select(-id),
                   base |> select(-id))
+}else{
+  base <- data_base
+}
 
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 

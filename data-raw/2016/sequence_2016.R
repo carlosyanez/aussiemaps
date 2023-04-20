@@ -37,7 +37,7 @@ base_renmant <- base  %>%
 }
 
 
-
+if(nrow(base_renmant)>0){
 intersects <- intersections(base_renmant,
                             bigger=sa,
                             base_id="SA1_MAINCODE_2016",
@@ -49,14 +49,16 @@ intersects <- intersections(base_renmant,
 intersected <- intersects %>%
   distinct(SA1_MAINCODE_2016) %>%
   mutate(dummy=TRUE)
-
+}
 
 base <- base %>%
   left_join(full_overlap |> distinct() |> distinct(),by="SA1_MAINCODE_2016") %>%
   filter(!is.na(SA2_NAME_2016))
 
+if(nrow(base_renmant)>0){
 base <- bind_rows(base,intersects) %>%
   mutate(id=row_number())
+}
 sa1_nbr <- c(sa1_nbr,nrow(base))
 
 # SA3s----
