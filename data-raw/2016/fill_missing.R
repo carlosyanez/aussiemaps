@@ -253,33 +253,13 @@ b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
 source(here("data-raw","2016","find_missing.R"))
 
 if(!is.null(base)){
-source(here("data-raw","2016","sequence_2016.R"))
+  source(here("data-raw","2016","sequence_2016.R"))
 
-
-existing_poas <- data_base |>
-                 st_drop_geometry() |>
-                  distinct(SA1_MAINCODE_2016 ,POA_CODE_2016)
-
-existing_poas <- existing_poas |>
-                  left_join(existing_poas |>count(SA1_MAINCODE_2016 ) |> filter(n==1),by="SA1_MAINCODE_2016 " ) |>
-                  filter(!is.na(n)) |>
-                  select(-n) |>
-                  rename("postcode"="POA_CODE_2016")
-
-base <- base |> left_join(existing_poas,by="SA1_MAINCODE_2016 ") |>
-  mutate(POA_CODE_2016=case_when(
-    is.na(POA_CODE_2016) ~ postcode,
-    TRUE ~ POA_CODE_2016
-  ),
-  POA_NAME_2016=POA_CODE_2016) |>
-  select(-postcode)
-
-base <- bind_rows(data_base |> select(-id),
-                  base |> select(-id))
+  base <- bind_rows(data_base |> select(-id),
+                    base |> select(-id))
 }else{
   base <- data_base
 }
-
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 
 
@@ -303,216 +283,33 @@ source(here("data-raw","functions.R"))
 files <- dir_ls(here("data-raw"),regexp = "gpkg")
 geo_structure <- NULL
 
-### ACT-----
 
-file <- files[1]
+files <- dir_ls(here("data-raw"),regexp = "gpkg")
+structure <- NULL
 
-map <- st_read(file) |>
-       mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
+for(file in files){
 
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
+  data <- st_read(file) |>
+    mutate(id=str_c(STE_CODE_2016,"-",row_number()))
+  data$area <- st_area(data)
 
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
+  st_write(data,file,append = FALSE,delete_dsn = TRUE)
 
-geo_structure <- map |> st_drop_geometry()
+  struct_i <- data |> st_drop_geometry()
 
-#### NSW ----
-file <- files[2]
+  if(is.null(structure)){
+    structure <- struct_i
 
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
+  }else{
+    structure <- bind_rows(structure,struct_i)
+  }
 
-map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
 
-map <- map |> mutate(POA_CODE_2016=case_when(
- is.na(POA_CODE_2016) & SAL_NAME_2016=="Cottonvale" ~ "4375",
- TRUE ~ POA_CODE_2016),
- POA_NAME_2016=POA_CODE_2016)
 
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
 
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### NT ----
-file <- files[3]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-
-nt_postcodes <- tibble::tribble(
-                      ~SAL_NAME_2016, ~postcode,
-                  "Newcastle Waters",    "0862",
-                          "Larrimah",    "0852",
-                       "Daly Waters",    "0852",
-                        "Koolpinyah",    "0822",
-                           "Araluen",    "0870",
-                         "Mataranka",    "0852",
-                      "Kaltukatjara",    "0872",
-                           "Ilparpa",    "0873",
-                         "Maranunga",    "0822",
-                            "Nauiyu",    "0822",
-                        "Gunbalanya",    "0822",
-                      "Wagait Beach",    "0822",
-                          "Sandover",    "0872",
-                       "West Arnhem",    "0822",
-                          "Lajamanu",    "0852",
-                     "Bynoe Harbour",    "0822",
-                      "Dundee Beach",    "0840",
-                      "Dundee Downs",    "0840",
-                     "Dundee Forest",    "0840",
-                      "Micket Creek",    "0822",
-                   "Van Diemen Gulf",    "0822",
-                            "Kakadu",    "0822"
-                  )
-
-map <- map |>
-  left_join(nt_postcodes,by="SAL_NAME_2016") |>
-  mutate(POA_CODE_2016=case_when(
-  is.na(POA_CODE_2016)  ~ postcode,
-  TRUE ~ POA_CODE_2016),
-  POA_NAME_2016=POA_CODE_2016) |>
-  select(-postcode)
-
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### Other Territories ----
-file <- files[4]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-
-#all postcodes covered
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### Queensland ----
-file <- files[5]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-
-#all postcodes covered
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### South Australia ----
-file <- files[6]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-
-#all postcodes covered
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### Tasmania ----
-file <- files[7]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-#all postcodes covered
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### Victoria ----
-file <- files[8]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-#all postcodes covered
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-### WA ----
-file <- files[9]
-
-map <- st_read(file) |>
-  mutate(id=str_c(STATE_CODE_2016,"-",row_number()))
-map$area <- st_area(map)
-
-#map|> st_drop_geometry() |> count(POA_CODE_2016) |> filter(is.na(POA_CODE_2016))
-#map |> st_drop_geometry() |> filter(is.na(POA_CODE_2016)) |> distinct(SAL_NAME_2016) |> clipr::write_clip()
-#all postcodes covered
-st_write(map,file,append = FALSE,delete_dsn = TRUE)
-
-save_zip_gpkg(file,
-              here("data-raw"),
-              here("data-raw","processed"))
-
-geo_structure  <- bind_rows(geo_structure,
-                            map |> st_drop_geometry())
-
-geo_structure |> distinct(STATE_NAME_2016)
+}
+geo_structure  <- structure
+rm(data,struct_i,structure)
 
 #save structure, create proportions ----
 
