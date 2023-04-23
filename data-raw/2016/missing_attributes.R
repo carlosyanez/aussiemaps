@@ -13,17 +13,17 @@ source(here("data-raw","functions.R"))
 source(here("R","internal.R"))
 
 
-main        <- here("data-raw","source","asgs2016absstructuresmainstructureandgccsa.gpkg")
-nonabs      <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
-nonabs2018  <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
-indigenous  <- here("data-raw","source","asgs2016absstructuresindigenousstructure.gpkg")
-other       <- here("data-raw","source","asgs2016absstructuressignificanturbanareasurbancentresandlocalitiessectionofstate.gpkg")
+main        <- here("data-raw","source","asgs2011absstructures.gpkg")
+nonabs      <- here("data-raw","source","asgs2011nonabsstructures.gpkg")
+#nonabs2018  <- here("data-raw","source","asgs2011nonabsstructures.gpkg")
+#indigenous  <- here("data-raw","source","asgs2011absstructuresindigenousstructure.gpkg")
+#other       <- here("data-raw","source","asgs2011absstructuressignificanturbanareasurbancentresandlocalitiessectionofstate.gpkg")
 
 
 main_layers       <- rgdal::ogrListLayers(main)
 nonabs_layers     <- rgdal::ogrListLayers(nonabs)
-indigenous_layers <- rgdal::ogrListLayers(indigenous)
-other_layers      <- rgdal::ogrListLayers(other)
+#indigenous_layers <- rgdal::ogrListLayers(indigenous)
+#other_layers      <- rgdal::ogrListLayers(other)
 
 
 
@@ -33,7 +33,7 @@ structure <- NULL
 for(file in files){
 
   data <- st_read(file) |>
-          mutate(id=str_c(STE_CODE_2016,"-",row_number()))
+          mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
   st_write(data,file,append = FALSE,delete_dsn = TRUE)
 
@@ -52,6 +52,7 @@ for(file in files){
 }
 rm(data)
 
+
 ### ACT-----
 
 file <- files[1]
@@ -60,14 +61,14 @@ file <- files[1]
 #structure <- data_base2 |> st_drop_geometry()
 cols <- colnames(structure)
 cols <- cols[str_detect(cols,"area|id",TRUE)]
-cols <- cols[str_detect(cols,"STATE",TRUE)]
+cols <- cols[str_detect(cols,"STE",TRUE)]
 missing <- tibble()
 
 for(col_name in cols){
  missing_i <- structure |>
-    select(any_of(col_name),STE_NAME_2016) |>
+    select(any_of(col_name),STE_NAME_2011) |>
     rename("col"=col_name) |>
-    count(col,STE_NAME_2016) |>
+    count(col,STE_NAME_2011) |>
     filter(is.na(col))
 
   if(nrow(missing_i)>0){
@@ -78,79 +79,86 @@ for(col_name in cols){
 
 }
 
-states_to_remediate <- missing |> distinct(STE_NAME_2016) |> pull()
+states_to_remediate <- missing |> distinct(STE_NAME_2011) |> pull()
 states_to_remediate <- states_to_remediate[str_detect(states_to_remediate,"Other Territories",TRUE)]
 
 geo_structure <- tibble()
 
 ## WA ------
-state <- states_to_remediate[1]
-missing |> filter(STATE_NAME_2021==state)
-data_base <- load_aussiemaps_gpkg("2021_Western.Australia.gpkg")
+state <- states_to_remediate[7]
+missing |> filter(STE_NAME_2011==state)
+#data_base <- load_aussiemaps_gpkg("2011_Western.Australia.gpkg")
+data_base <- st_read(here("data-raw","2011_Western Australia.gpkg"))
+
+data_base$empty <- st_is_empty(data_base)
+data_base <- data_base |>
+            filter(!empty) |>
+            filter(str_detect(SA2_NAME_2011,"Offshore",TRUE)) |>
+            select(-empty)
 
 #CED ----
 
 missing_ced <- data_base |> st_drop_geometry() |>
-               filter(is.na(CED_CODE_2021)) |>
-               select(id,SA1_CODE_2021,CED_CODE_2021,CED_NAME_2021)
+               filter(is.na(CED_CODE_2011)) |>
+               select(id,SA1_MAINCODE_2011,CED_CODE_2011,CED_NAME_2011)
 
 found <- data_base |> st_drop_geometry() |>
-  filter(!is.na(CED_CODE_2021)) |>
-  filter(SA1_CODE_2021 %in% missing_ced$SA1_CODE_2021) |>
-  distinct(SA1_CODE_2021,CED_CODE_2021,CED_NAME_2021)
+  filter(!is.na(CED_CODE_2011)) |>
+  filter(SA1_MAINCODE_2011 %in% missing_ced$SA1_MAINCODE_2011) |>
+  distinct(SA1_MAINCODE_2011,CED_CODE_2011,CED_NAME_2011)
 
 found <- found |>
-  left_join(found |> count(SA1_CODE_2021),by="SA1_CODE_2021") |>
-  rename("CED_CODE"="CED_CODE_2021",
-         "CED_NAME"="CED_NAME_2021")
+  left_join(found |> count(SA1_MAINCODE_2011),by="SA1_MAINCODE_2011") |>
+  rename("CED_CODE"="CED_CODE_2011",
+         "CED_NAME"="CED_NAME_2011")
 
 #1-to-1 correspondence, easy to fix
 
 data_base <- data_base |>
-  left_join(found |> select(-n),by="SA1_CODE_2021") |>
-  mutate(CED_NAME_2021=case_when(
-    is.na(CED_NAME_2021) ~ CED_NAME,
-    TRUE ~ CED_NAME_2021
+  left_join(found |> select(-n),by="SA1_MAINCODE_2011") |>
+  mutate(CED_NAME_2011=case_when(
+    is.na(CED_NAME_2011) ~ CED_NAME,
+    TRUE ~ CED_NAME_2011
   ),
-  CED_CODE_2021=case_when(
-    is.na(CED_CODE_2021) ~ CED_CODE,
-    TRUE ~ CED_CODE_2021
+  CED_CODE_2011=case_when(
+    is.na(CED_CODE_2011) ~ CED_CODE,
+    TRUE ~ CED_CODE_2011
   )) |>
   select(-CED_CODE,-CED_NAME)
 
-data_base |> st_drop_geometry |> count(CED_NAME_2021) |> filter(is.na(CED_NAME_2021))
+data_base |> st_drop_geometry() |> count(CED_NAME_2011) |> filter(is.na(CED_NAME_2011))
 
-# SAL ----
+# POA ----
 
-missing_sal <- data_base |>
-  filter(is.na(SAL_CODE_2021)) |>
-  select(-SAL_CODE_2021,SAL_NAME_2021)
+missing_poa <- data_base |>
+  filter(is.na(POA_CODE_2011 )) |>
+  select(-POA_CODE_2011 ,POA_NAME_2011 )
 
-sal <- load_geo(nonabs,"SAL_2021_AUST_GDA2020", state=state) %>%
-    mutate(SAL_NAME_2021=str_remove_all(SAL_NAME_2021,"\\((.*?)\\)"))
+poa <- load_geo(nonabs,"post_code_area_2011", state=state)
 
-#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2021")
-intersects <- intersections(missing_sal,sal, base_id="id",
-                                                          bigger_id="SAL_CODE_2021",
+#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2011")
+intersects <- intersections(missing_poa,poa, base_id="id",
+                                                          bigger_id="POA_CODE_2011",
                                                           base_empty_label="id",
-                                                          bigger_empty_label="SAL_NAME_2021",
+                                                          bigger_empty_label="POA_NAME_2011",
                                                           threshold = 0
 )
+intersects <- intersects |> mutate(POA_NAME_2011=POA_CODE_2011)
 
 data_base <- data_base |>
-  filter(!is.na(SAL_CODE_2021)) |>
+  filter(!is.na(POA_CODE_2011)) |>
   bind_rows(intersects) |>
   st_make_valid()
 
 data_base <- st_difference(data_base)
 
-data_base <-  data_base |> mutate(id=str_c(STATE_CODE_2021,"-",row_number()))
+data_base <-  data_base |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
 data_base$area <- st_area(data_base)
 
 
 ## geo-structure, save -----
-st_write(data_base,here("data-raw",str_c("2021_",state,".gpkg")))
+st_write(data_base,here("data-raw",str_c("2011_",state,".gpkg")),overwrite_dsn=TRUE)
 
 geo_structure <- bind_rows(geo_structure,
                            data_base |> st_drop_geometry())
@@ -158,198 +166,242 @@ geo_structure <- bind_rows(geo_structure,
 
 
 ## NT ------
-state <- states_to_remediate[2]
-missing |> filter(STATE_NAME_2021==state)
-data_base <- load_aussiemaps_gpkg("2021_Northern.Territory.gpkg")
+state <- states_to_remediate[1]
+missing |> filter(STE_NAME_2011==state)
+#data_base <- load_aussiemaps_gpkg("2011_Northern.Territory.gpkg")
+data_base <- st_read(here("data-raw","2011_Northern Territory.gpkg"))
 
-#just missing postcodes , can be written manually
+# postcodes loaded incorreclty, need to re-do ----
+data_base  <- data_base |> mutate(id=row_number())
+poas_state <- str_pad(c(0800:0899,4825),4,"left","0")
 
-data_base |> st_drop_geometry() |>
-  filter(is.na(POA_CODE_2021)) |>
-  distinct(SAL_NAME_2021)
+ind <- load_geo(nonabs, layer="post_code_area_2011") %>%
+  filter(POA_CODE_2011 %in% as.character(poas_state))
+
+if(any(str_detect(colnames(ind),"shape"))) {ind <- ind |> rename("geom"="shape")}
+
+data_base <- data_base |>select(-POA_CODE_2011,-POA_NAME_2011)
+
+full_overlap <- full_coverage(data_base,
+                              bigger=ind,
+                              base_id="id",
+                              bigger_id="POA_CODE_2011")
+
+overlapped <- full_overlap %>%
+  distinct(id) %>%
+  mutate(dummy=TRUE)
+
+base_renmant <- data_base  %>%
+  left_join(overlapped,by="id") %>%
+  filter(is.na(dummy)) %>%
+  select(-dummy)
+
+intersects <- intersections(base_renmant,
+                            bigger=ind,
+                            base_id="id",
+                            bigger_id="POA_CODE_2011",
+                            base_empty_label="SA2_NAME_2011",
+                            bigger_empty_label="POA_NAME_2011"
+)
+
+intersected <- intersects %>%
+  distinct(id) %>%
+  mutate(dummy=TRUE)
+
+non_matched <- base_renmant %>%
+  left_join(intersected,by="id") %>%
+  filter(is.na(dummy)) %>%
+  select(-dummy)
 
 data_base <- data_base |>
-            mutate(across(any_of(c("POA_CODE_2021","POA_NAME_2021")),
-                          ~ case_when(
-                            is.na(.x) & SAL_NAME_2021=="Araluen" ~ "0870",
-                            TRUE ~ .x
-                          )))
+  select(-any_of(c("POA_CODE_2011","POA_NAME_2011"))) |>
+  filter(!(id %in% intersected$id)) |>
+  left_join(full_overlap |> mutate(POA_NAME_2011=POA_CODE_2011),by="id") |>
+  bind_rows(intersects)
 
+# SA4 -----
+
+missing_sa4 <- data_base |> st_drop_geometry() |>
+  filter(is.na(SA4_CODE_2011)) |>
+  select(id,SA1_MAINCODE_2011,SA4_CODE_2011 ,SA4_NAME_2011 )
+
+found <- data_base |> st_drop_geometry() |>
+  filter(!is.na(SA4_CODE_2011)) |>
+  filter(SA1_MAINCODE_2011 %in% missing_sa4$SA1_MAINCODE_2011) |>
+  distinct(SA1_MAINCODE_2011,SA4_CODE_2011 ,SA4_NAME_2011)
+
+found <- found |>
+  left_join(found |> count(SA1_MAINCODE_2011),by="SA1_MAINCODE_2011") |>
+  rename("SA4_CODE"="SA4_CODE_2011",
+         "SA4_NAME"="SA4_NAME_2011")
+
+data_base <- data_base |>
+  left_join(found |> select(-n),by="SA1_MAINCODE_2011") |>
+  mutate(SA4_NAME_2011=case_when(
+    is.na(SA4_NAME_2011) ~ SA4_NAME,
+    TRUE ~ SA4_NAME_2011
+  ),
+  SA4_CODE_2011=case_when(
+    is.na(SA4_CODE_2011) ~ SA4_CODE,
+    TRUE ~ SA4_CODE_2011
+  )) |>
+  select(-SA4_CODE,-SA4_NAME)
+
+data_base |> st_drop_geometry()  |> filter(is.na(SA4_NAME_2011))
+#is migratory /offshore, remove
+data_base <- data_base |> filter(str_detect(SA2_NAME_2011,"Offshore",TRUE))
+
+## IARE -----
+
+missing_IARE <- data_base |> st_drop_geometry() |>
+  filter(is.na(IARE_CODE_2011)) |>
+  select(id,SA1_MAINCODE_2011,IARE_CODE_2011 ,IARE_NAME_2011 )
+
+found <- data_base |> st_drop_geometry() |>
+  filter(!is.na(IARE_CODE_2011)) |>
+  filter(SA1_MAINCODE_2011 %in% missing_IARE$SA1_MAINCODE_2011) |>
+  distinct(SA1_MAINCODE_2011,IARE_CODE_2011 ,IARE_NAME_2011)
+
+###duplicated - will need to do via intersect metho
+ind <- load_geo(main, layer="indigenous_area_2011") %>%
+  filter(STE_NAME_2011==state) %>%
+  select(-STE_CODE_2011,-STE_NAME_2011)
+
+missing_IARE <- data_base |>
+  filter(is.na(IARE_CODE_2011)) |>
+  select(-IARE_CODE_2011 ,-IARE_NAME_2011)
+
+
+intersects <- intersections(missing_IARE,
+                            bigger=ind,
+                            base_id="id",
+                            bigger_id="IARE_CODE_2011",
+                            base_empty_label="SA2_NAME_2011",
+                            bigger_empty_label="IARE_NAME_2011"
+)
+
+data_base <- data_base |>
+  filter(!is.na(IARE_CODE_2011)) |>
+  bind_rows(intersects)
+
+### TR----
+###it was migratory zone
+### CED
+###it was migratory zone
+## Year ----
+
+data_base <- data_base |> mutate(Year=2011)
+
+
+
+
+### save ----
 data_base <- st_difference(data_base)
-data_base <-  data_base |> mutate(id=str_c(STATE_CODE_2021,"-",row_number()))
+data_base <-  data_base |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
 data_base$area <- st_area(data_base)
 
 
-st_write(data_base,here("data-raw",str_c("2021_",state,".gpkg")))
+st_write(data_base,here("data-raw",str_c("2011_",state,".gpkg")))
 
 geo_structure <- bind_rows(geo_structure,
                            data_base |> st_drop_geometry())
 
 ## NSW ------
-state <- states_to_remediate[3]
-missing |> filter(STATE_NAME_2021==state)
-data_base <- load_aussiemaps_gpkg("2021_New.South.Wales.gpkg")
-
-sal <- load_geo(nonabs,"SAL_2021_AUST_GDA2020", state=state) %>%
-  mutate(SAL_NAME_2021=str_remove_all(SAL_NAME_2021,"\\((.*?)\\)"))
-
-missing_sal <- data_base |>
-  filter(is.na(SAL_CODE_2021)) |>
-  select(-SAL_CODE_2021,-SAL_NAME_2021)
-
-#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2021")
-intersects <- intersections(missing_sal,sal, base_id="id",
-                            bigger_id="SAL_CODE_2021",
-                            base_empty_label="id",
-                            bigger_empty_label="SAL_NAME_2021",
-                            threshold = 0
-)
+state <- states_to_remediate[2]
+missing |> filter(STE_NAME_2011==state)
+data_base <- st_read(here("data-raw","2011_New South Wales.gpkg"))
 
 data_base <- data_base |>
-  filter(!is.na(SAL_CODE_2021)) |>
-  bind_rows(intersects) |>
-  st_make_valid()
+             filter(str_detect(SA2_NAME_2011,"Migratory",TRUE)) |>
+             mutate(Year=2011)
 
-data_base$empty <- st_is_empty(data_base)
+#TR ----
+data_base |>
+  filter(is.na(TR_CODE_2011))
+#it was migratory zone
+
+#CED ---
+data_base |>
+  filter(is.na(CED_CODE_2011))
+#it was migratory zone
+
+# POA ----
+
+data_base |>
+  filter(is.na(POA_NAME_2011))
+# just for, easy fix
 
 data_base <- data_base |>
-  filter(!empty) |> select(-empty)
+  mutate(POA_CODE_2011=case_when(
+    SSC_NAME_2011 =="Nanima" ~ "2582",
+    SSC_NAME_2011 =="Springrange" ~ "2618",
+    SSC_NAME_2011 =="Wallaroo (NSW)" ~ "2618",
+    TRUE ~ POA_CODE_2011
+  ),
+  POA_NAME_2011=POA_CODE_2011)
 
-data_base <- data_base |> st_make_valid()
-data_base <- st_cast(data_base,"POLYGON")
+# write ----
 
 data_base <- st_difference(data_base)
+data_base <-  data_base |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
 data_base$area <- st_area(data_base)
 
-data_base |> filter(area=units::set_units(0,"m^2"))
-
-data_base <-  data_base |> mutate(id=str_c(STATE_CODE_2021,"-",row_number()))
-
-dedup_cols <- data_base[1,] |> st_drop_geometry() |> colnames()
-dedup_cols <- dedup_cols[str_detect(dedup_cols,"CODE")]
-dedup_cols <- c(dedup_cols,"area")
-
-dup <- data_base |> st_drop_geometry() |> count(across(any_of(dedup_cols))) |> filter(n>1)
-
-d2 <- data_base |> left_join(dup,by=dedup_cols) |> filter(!is.na(n))
-dup_d2 <- d2 |> st_drop_geometry() |> select(id)
-
-d2 <- d2 |>
-      select(-n) |>
-      mutate(id=row_number()) |>
-      group_by(across(any_of(dedup_cols))) |>
-      mutate(min=(id==min(id))) |>
-      ungroup() |>
-      filter(min) |>
-      select(-min)
-
-data_base <- data_base |>
-  filter(!(id %in% dup_d2)) |>
-  select(-id) |>
-  bind_rows(d2 |> select(-id)) |>
-  mutate(id=str_c(STATE_CODE_2021,"-",row_number())) |>
-  st_make_valid()
-
-st_write(data_base,here("data-raw",str_c("2021_",state,".gpkg")))
+st_write(data_base,here("data-raw",str_c("2011_",state,".gpkg")),delete_dsn = TRUE)
 
 geo_structure <- bind_rows(geo_structure,
                            data_base |> st_drop_geometry())
 
 ## QLD ------
-state <- states_to_remediate[4]
-missing |> filter(STATE_NAME_2021==state)
-data_base <- load_aussiemaps_gpkg("2021_Queensland.gpkg")
-
-sal <- load_geo(nonabs,"SAL_2021_AUST_GDA2020", state=state) %>%
-  mutate(SAL_NAME_2021=str_remove_all(SAL_NAME_2021,"\\((.*?)\\)"))
-
-missing_sal <- data_base |>
-  filter(is.na(SAL_CODE_2021)) |>
-  select(-SAL_CODE_2021,-SAL_NAME_2021)
-
-#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2021")
-intersects <- intersections(missing_sal,sal, base_id="id",
-                            bigger_id="SAL_CODE_2021",
-                            base_empty_label="id",
-                            bigger_empty_label="SAL_NAME_2021",
-                            threshold = 0
-)
+state <- states_to_remediate[3]
+missing |> filter(STE_NAME_2011==state)
+data_base <- st_read(here("data-raw","2011_Queensland.gpkg"))
 
 data_base <- data_base |>
-  filter(!is.na(SAL_CODE_2021)) |>
-  bind_rows(intersects) |>
+  filter(str_detect(SA2_NAME_2011,"Migratory",TRUE)) |>
+  mutate(Year=2011)
+
+ data_base |>
+  filter(is.na(TR_CODE_2011))
+
+ data_base |>
+   filter(is.na(CED_CODE_2011))
+ data_base |>
+   filter(is.na(POA_NAME_2011))
+
+data_base <- data_base |>
+  mutate(id=str_c(STE_CODE_2011,"-",row_number())) |>
   st_make_valid()
 
-data_base$empty <- st_is_empty(data_base)
+st_write(data_base,here("data-raw",str_c("2011_",state,".gpkg")),delete_dsn = TRUE)
 
-data_base <- data_base |>
-  filter(!empty) |> select(-empty)
-
-data_base <- data_base |> st_make_valid()
-data_base <- st_cast(data_base,"POLYGON")
-
-data_base$area <- st_area(data_base)
-
-data_base |> filter(area==units::set_units(0,"m^2"))
-
-data_base <-  data_base |> mutate(id=str_c(STATE_CODE_2021,"-",row_number()))
-
-dedup_cols <- data_base[1,] |> st_drop_geometry() |> colnames()
-dedup_cols <- dedup_cols[str_detect(dedup_cols,"CODE")]
-dedup_cols <- c(dedup_cols,"area")
-
-dup <- data_base |> st_drop_geometry() |> count(across(any_of(dedup_cols))) |> filter(n>1)
-
-d2 <- data_base |> left_join(dup,by=dedup_cols) |> filter(!is.na(n))
-dup_d2 <- d2 |> st_drop_geometry() |> select(id)
-
-d2 <- d2 |>
-  select(-n) |>
-  mutate(id=row_number()) |>
-  group_by(across(any_of(dedup_cols))) |>
-  mutate(min=(id==min(id))) |>
-  ungroup() |>
-  filter(min) |>
-  select(-min)
-
-data_base <- data_base |>
-  filter(!(id %in% dup_d2)) |>
-  select(-id) |>
-  bind_rows(d2 |> select(-id)) |>
-  mutate(id=str_c(STATE_CODE_2021,"-",row_number())) |>
-  st_make_valid()
-
-
-st_write(data_base,here("data-raw",str_c("2021_",state,".gpkg")))
-
-geo_structure <- bind_rows(geo_structure,
+geo_structure <- bind_rows(geo_structure |> mutate(area=as.numeric(area)),
                            data_base |> st_drop_geometry() |> mutate(area=as.numeric(area)))
 
 
 ## SA ------
 state <- states_to_remediate[5]
-missing |> filter(STATE_NAME_2021==state)
-data_base <- load_aussiemaps_gpkg("2021_South.Australia.gpkg")
+missing |> filter(STE_NAME_2011==state)
+data_base <- load_aussiemaps_gpkg("2011_South.Australia.gpkg")
 
-sal <- load_geo(nonabs,"SAL_2021_AUST_GDA2020", state=state) %>%
-  mutate(SAL_NAME_2021=str_remove_all(SAL_NAME_2021,"\\((.*?)\\)"))
+sal <- load_geo(nonabs,"SAL_2011_AUST_GDA2020", state=state) %>%
+  mutate(SAL_NAME_2011=str_remove_all(SAL_NAME_2011,"\\((.*?)\\)"))
 
 missing_sal <- data_base |>
-  filter(is.na(SAL_CODE_2021)) |>
-  select(-SAL_CODE_2021,-SAL_NAME_2021)
+  filter(is.na(SAL_CODE_2011)) |>
+  select(-SAL_CODE_2011,-SAL_NAME_2011)
 
-#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2021")
+#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2011")
 intersects <- intersections(missing_sal,sal, base_id="id",
-                            bigger_id="SAL_CODE_2021",
+                            bigger_id="SAL_CODE_2011",
                             base_empty_label="id",
-                            bigger_empty_label="SAL_NAME_2021",
+                            bigger_empty_label="SAL_NAME_2011",
                             threshold = 0
 )
 
 data_base <- data_base |>
-  filter(!is.na(SAL_CODE_2021)) |>
+  filter(!is.na(SAL_CODE_2011)) |>
   bind_rows(intersects) |>
   st_make_valid()
 
@@ -365,7 +417,7 @@ data_base$area <- st_area(data_base)
 
 data_base |> filter(area==units::set_units(0,"m^2"))
 
-data_base <-  data_base |> mutate(id=str_c(STATE_CODE_2021,"-",row_number()))
+data_base <-  data_base |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
 dedup_cols <- data_base[1,] |> st_drop_geometry() |> colnames()
 dedup_cols <- dedup_cols[str_detect(dedup_cols,"CODE")]
@@ -389,37 +441,37 @@ data_base <- data_base |>
   filter(!(id %in% dup_d2)) |>
   select(-id) |>
   bind_rows(d2 |> select(-id)) |>
-  mutate(id=str_c(STATE_CODE_2021,"-",row_number())) |>
+  mutate(id=str_c(STE_CODE_2011,"-",row_number())) |>
   st_make_valid()
 
 
-st_write(data_base,here("data-raw",str_c("2021_",state,".gpkg")))
+st_write(data_base,here("data-raw",str_c("2011_",state,".gpkg")))
 
 geo_structure <- bind_rows(geo_structure,
                            data_base |> st_drop_geometry() |> mutate(area=as.numeric(area)))
 
 ## VIC ------
 state <- states_to_remediate[6]
-missing |> filter(STATE_NAME_2021==state)
-data_base <- load_aussiemaps_gpkg("2021_Victoria.gpkg")
+missing |> filter(STE_NAME_2011==state)
+data_base <- load_aussiemaps_gpkg("2011_Victoria.gpkg")
 
-sal <- load_geo(nonabs,"SAL_2021_AUST_GDA2020", state=state) %>%
-  mutate(SAL_NAME_2021=str_remove_all(SAL_NAME_2021,"\\((.*?)\\)"))
+sal <- load_geo(nonabs,"SAL_2011_AUST_GDA2020", state=state) %>%
+  mutate(SAL_NAME_2011=str_remove_all(SAL_NAME_2011,"\\((.*?)\\)"))
 
 missing_sal <- data_base |>
-  filter(is.na(SAL_CODE_2021)) |>
-  select(-SAL_CODE_2021,-SAL_NAME_2021)
+  filter(is.na(SAL_CODE_2011)) |>
+  select(-SAL_CODE_2011,-SAL_NAME_2011)
 
-#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2021")
+#full_coverage <- full_coverage(missing_sal,sal,"id","SAL_NAME_2011")
 intersects <- intersections(missing_sal,sal, base_id="id",
-                            bigger_id="SAL_CODE_2021",
+                            bigger_id="SAL_CODE_2011",
                             base_empty_label="id",
-                            bigger_empty_label="SAL_NAME_2021",
+                            bigger_empty_label="SAL_NAME_2011",
                             threshold = 0
 )
 
 data_base <- data_base |>
-  filter(!is.na(SAL_CODE_2021)) |>
+  filter(!is.na(SAL_CODE_2011)) |>
   bind_rows(intersects) |>
   st_make_valid()
 
@@ -435,7 +487,7 @@ data_base$area <- st_area(data_base)
 
 data_base |> filter(area==units::set_units(0,"m^2"))
 
-data_base <-  data_base |> mutate(id=str_c(STATE_CODE_2021,"-",row_number()))
+data_base <-  data_base |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
 dedup_cols <- data_base[1,] |> st_drop_geometry() |> colnames()
 dedup_cols <- dedup_cols[str_detect(dedup_cols,"CODE")]
@@ -459,29 +511,29 @@ data_base <- data_base |>
   filter(!(id %in% dup_d2)) |>
   select(-id) |>
   bind_rows(d2 |> select(-id)) |>
-  mutate(id=str_c(STATE_CODE_2021,"-",row_number())) |>
+  mutate(id=str_c(STE_CODE_2011,"-",row_number())) |>
   st_make_valid()
 
 
-st_write(data_base,here("data-raw",str_c("2021_",state,".gpkg")))
+st_write(data_base,here("data-raw",str_c("2011_",state,".gpkg")))
 
 geo_structure <- bind_rows(geo_structure,
                            data_base |> st_drop_geometry() |> mutate(area=as.numeric(area)))
 
 ## add remainder states to geo structure, calculate proportions -----
-geo_structure |> distinct(STATE_NAME_2021) |>filter(!(STATE_NAME_2021 %in% states_to_remediate))
+geo_structure |> distinct(STE_NAME_2011) |>filter(!(STE_NAME_2011 %in% states_to_remediate))
 
-geo_structure <- bind_rows(st_read(here("data-raw",str_c("2021_New South Wales.gpkg")))|> st_drop_geometry(),
-                           st_read(here("data-raw",str_c("2021_Victoria.gpkg")))|> st_drop_geometry(),
-                           st_read(here("data-raw",str_c("2021_Queensland.gpkg")))|> st_drop_geometry(),
-                           st_read(here("data-raw",str_c("2021_Western Australia.gpkg"))) |> st_drop_geometry(),
-                           st_read(here("data-raw",str_c("2021_South Australia.gpkg"))) |> st_drop_geometry(),
-                           st_read(here("data-raw",str_c("2021_Northern Territory.gpkg"))) |> st_drop_geometry(),
-                           load_aussiemaps_gpkg("2021_Australian.Capital.Territory.gpkg") |> st_drop_geometry(),
-                           load_aussiemaps_gpkg("2021_Other.Territories.gpkg") |> st_drop_geometry(),
-                           load_aussiemaps_gpkg("2021_Tasmania.gpkg") |> st_drop_geometry())
+geo_structure <- bind_rows(st_read(here("data-raw",str_c("2011_New South Wales.gpkg")))|> st_drop_geometry(),
+                           st_read(here("data-raw",str_c("2011_Victoria.gpkg")))|> st_drop_geometry(),
+                           st_read(here("data-raw",str_c("2011_Queensland.gpkg")))|> st_drop_geometry(),
+                           st_read(here("data-raw",str_c("2011_Western Australia.gpkg"))) |> st_drop_geometry(),
+                           st_read(here("data-raw",str_c("2011_South Australia.gpkg"))) |> st_drop_geometry(),
+                           st_read(here("data-raw",str_c("2011_Northern Territory.gpkg"))) |> st_drop_geometry(),
+                           load_aussiemaps_gpkg("2011_Australian.Capital.Territory.gpkg") |> st_drop_geometry(),
+                           load_aussiemaps_gpkg("2011_Other.Territories.gpkg") |> st_drop_geometry(),
+                           load_aussiemaps_gpkg("2011_Tasmania.gpkg") |> st_drop_geometry())
 
-save_zip_parquet(geo_structure,"2021_structure",here("data-raw","processed"))
+save_zip_parquet(geo_structure,"2011_structure",here("data-raw","processed"))
 
 geo_cols <- colnames(geo_structure)
 geo_cols <- geo_cols[str_detect(geo_cols,"CODE")]
@@ -514,7 +566,7 @@ for(file in files){
 }
 
 # NSW
-nsw <- st_read(here("data-raw","2021_New South Wales.gpkg"))
+nsw <- st_read(here("data-raw","2011_New South Wales.gpkg"))
 
 half_way <- floor(nrow(nsw)/8)
 
@@ -526,26 +578,26 @@ nsw5 <- nsw[(7*half_way+1):nrow(nsw),]
 
 
 nrow(nsw) == (nrow(nsw1)+nrow(nsw2)+nrow(nsw3)+nrow(nsw4)+nrow(nsw5))
-st_write(nsw1,here("data-raw","2021_New South Wales 1.gpkg"))
-st_write(nsw2,here("data-raw","2021_New South Wales 2.gpkg"))
-st_write(nsw3,here("data-raw","2021_New South Wales 3.gpkg"))
-st_write(nsw4,here("data-raw","2021_New South Wales 4.gpkg"))
-st_write(nsw5,here("data-raw","2021_New South Wales 5.gpkg"))
+st_write(nsw1,here("data-raw","2011_New South Wales 1.gpkg"))
+st_write(nsw2,here("data-raw","2011_New South Wales 2.gpkg"))
+st_write(nsw3,here("data-raw","2011_New South Wales 3.gpkg"))
+st_write(nsw4,here("data-raw","2011_New South Wales 4.gpkg"))
+st_write(nsw5,here("data-raw","2011_New South Wales 5.gpkg"))
 
 
 
-save_zip_gpkg(here("data-raw","2021_New South Wales 1.gpkg"),
+save_zip_gpkg(here("data-raw","2011_New South Wales 1.gpkg"),
               here("data-raw"),
               here("data-raw","processed"))
-save_zip_gpkg(here("data-raw","2021_New South Wales 2.gpkg"),
+save_zip_gpkg(here("data-raw","2011_New South Wales 2.gpkg"),
               here("data-raw"),
               here("data-raw","processed"))
-save_zip_gpkg(here("data-raw","2021_New South Wales 3.gpkg"),
+save_zip_gpkg(here("data-raw","2011_New South Wales 3.gpkg"),
               here("data-raw"),
               here("data-raw","processed"))
-save_zip_gpkg(here("data-raw","2021_New South Wales 4.gpkg"),
+save_zip_gpkg(here("data-raw","2011_New South Wales 4.gpkg"),
               here("data-raw"),
               here("data-raw","processed"))
-save_zip_gpkg(here("data-raw","2021_New South Wales 5.gpkg"),
+save_zip_gpkg(here("data-raw","2011_New South Wales 5.gpkg"),
               here("data-raw"),
               here("data-raw","processed"))

@@ -541,7 +541,7 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected)
 ind <- load_geo(nonabs, layer="tourism_region_2011") %>%
   filter(STE_NAME_2011==state) %>%
   select(-STE_CODE_2011,-STE_NAME_2011)
-
+if(nrow(ind)>0){
 if(any(str_detect(colnames(ind),"shape"))) {ind <- ind |> rename("geom"="shape")}
 
 
@@ -599,7 +599,7 @@ sa1_nbr <- c(sa1_nbr,nrow(base))
 }
 st_write_parquet(base,base_file)
 rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected)
-
+}
 # CED ----
 
 if(exists("ceds_2011_out")){
@@ -869,6 +869,6 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected)
 
 # write ----
 #st_write(base,here("data-raw",str_c(state,".geojson")))
-st_write(base,here("data-raw",str_c("2011_",state,".gpkg")))
+st_write(base,here("data-raw",str_c("2011_",state,".gpkg")),delete_dsn = TRUE)
 sa1_nbr
 
