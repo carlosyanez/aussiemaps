@@ -220,6 +220,17 @@ get_map_internal <- function(filter_table=NULL,
         mutate(across(any_of(c("id")), as.character)) |>
         st_make_valid()
 
+      cols_i <- colnames(data_base)
+      cols_struct <- colnames(filter_table)
+
+
+      missing_cols <- cols_struct[!(cols_struct %in% cols_i)]
+
+      for(col in missing_cols){
+        data_base <- data_base |> mutate(!!col := "NA")
+      }
+
+
       #col_names <- colnames(data_base[1,])
 
       #distinct values
@@ -249,15 +260,6 @@ get_map_internal <- function(filter_table=NULL,
 
       st_write(data_i,interm_cache_file,append=FALSE,quiet=TRUE,delete_dsn=TRUE)
 
-    }
-
-    cols_i <- colnames(data_i)
-    cols_struct <- colnames(filter_table)
-
-    missing_cols <- cols_struct[!(cols_struct %in% cols_i)]
-
-    for(col in missing_cols){
-      data_i <- data_i |> mutate(!!col := "NA")
     }
 
     data_sf <- bind_rows(data_sf,data_i)
