@@ -25,15 +25,21 @@ geo_aggregate <- function(original_data,
     select(any_of(c("id",original_geo,new_geo)))
 
   proportions_table <-   list_proportions(original_geo) |>
-    collect()  |>
+                         collect()
+
+  if(!any(str_detect(colnames(proportions_table),"prop"))){
+    proportions_table$prop <- proportions_table$area/proportions_table$sum_area
+  }
+
+  proportions_table <- proportions_table |>
     select("id","geo_col","prop") |>
     rename(!!original_geo := "geo_col")
 
 
   correspondence_table <- correspondence_table |>
     left_join(proportions_table,by=c("id",original_geo)) |>
-    group_by(across(c(original_geo,new_geo))) |>
-    summarise(across(c("prop"), ~ sum(.x,na.rm=TRUE)),.groups = "drop")
+    group_by(across(any_of(c(original_geo,new_geo)))) |>
+    summarise(across(any_of(c("prop")), ~ sum(.x,na.rm=TRUE)),.groups = "drop")
 
 
   if(!is.null(proportions_manual)){
@@ -56,7 +62,7 @@ geo_aggregate <- function(original_data,
     rename(!!"Value":=any_of(c(values_col)))        |>
     left_join(correspondence_table,by=original_geo) |>
     select(-any_of(c(original_geo)))                |>
-    group_by(across(c(new_geo,grouping_col)))        |>
+    group_by(across(any_of(c(new_geo,grouping_col))))     |>
     summarise(Value=sum(.data$Value*.data$prop,na.rm = TRUE),.groups = "drop") |>
     rename(!!values_col:="Value")
 
