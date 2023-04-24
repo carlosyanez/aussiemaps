@@ -251,6 +251,15 @@ get_map_internal <- function(filter_table=NULL,
 
     }
 
+    cols_i <- colnames(data_i)
+    cols_struct <- colnames(filter_table)
+
+    missing_cols <- cols_struct[!(cols_struct %in% cols_i)]
+
+    for(col in missing_cols){
+      data_i <- data_i |> mutate(!!col := "NA")
+    }
+
     data_sf <- bind_rows(data_sf,data_i)
     rm(data_i)
 
@@ -302,17 +311,6 @@ get_map_internal <- function(filter_table=NULL,
 
 
     }
-    #sf_use_s2(FALSE)
-    #data_sf <- suppressMessages(suppressWarnings(data_sf |>
-    #                                            st_make_valid() |>
-    #                                            st_buffer(0) |>
-    #                                            group_by(across(any_of(unique(c(aggreg_orig,
-    #                                                                     aggregation,
-    #                                                                     cols_to_keep))))) |>
-    #                                            summarise(.groups="drop") |>
-    #                                            st_make_valid() |>
-    #                                            st_union(by_feature = TRUE) |>
-    #                                            st_make_valid()))
 
     data_sf$empty <- st_is_empty(data_sf)
 
@@ -390,3 +388,4 @@ merge_distinct <- function(x){
   x <- sort(x)
   str_flatten_comma(x)
 }
+
