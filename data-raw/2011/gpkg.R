@@ -1,6 +1,7 @@
 library(sf)
 library(here)
 library(fs)
+library(stringr)
 
 source(here("data-raw","aux_save.R"))
 
@@ -16,7 +17,7 @@ delimiters  <- c(1,delimiters)
 
 for(i in 1:splits){
   partial <- nsw_map[delimiters[i]:(delimiters[i+1]),]
-  st_write(partial,(here("data-raw",glue::glue("2021_New.South.Wales.{i}.gpkg"))))
+  st_write(partial,(here("data-raw",glue::glue("2011_New.South.Wales.{i}.gpkg"))))
 
 }
 files <- files[str_detect(files,"Wales.gpkg",TRUE)]
