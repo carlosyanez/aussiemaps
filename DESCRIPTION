@@ -1,6 +1,6 @@
 Package: aussiemaps
 Title: Maps of Australia
-Version: 0.2.1.0005
+Version: 0.2.1.0006
 Authors@R: c(
     person("Carlos", "Yáñez Santibáñez", , "carlos.yanez.s@gmail.com", role = c("aut", "cre")),
     person(given="Craig", family="Alexander", email= "Craig.Alexander.2@glasgow.ac.uk", role=c("ths")),
