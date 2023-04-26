@@ -11,10 +11,12 @@ get_map(
   aggregation = NULL,
   simplification_factor = NULL,
   new_crs = NULL,
+  fill_holes = FALSE,
   smoothing_threshold = 4,
   use_cache = FALSE,
   cache_file = NULL,
-  cache_intermediates = TRUE
+  cache_intermediates = TRUE,
+  message_string = ""
 )
 }
 \arguments{
@@ -30,6 +32,8 @@ get_map(
 
 \item{new_crs}{CRS value if transformation is needed.}
 
+\item{fill_holes}{whether to fill holes after merging parts}
+
 \item{smoothing_threshold}{A number indicating the smoothing threshold.}
 
 \item{use_cache}{A boolean indicating whether to use the cache.}
@@ -37,6 +41,8 @@ get_map(
 \item{cache_file}{Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).}
 
 \item{cache_intermediates}{whether to cache state intermediate aggregations}
+
+\item{message_string}{extra message string to add to any message (for tracking)}
 }
 \value{
 A map object.

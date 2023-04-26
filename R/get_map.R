@@ -17,10 +17,12 @@
 #' @param aggregation A vector containing the aggregation parameters,matching list_structure() column names .
 #' @param simplification_factor A number indicating the simplification factor.
 #' @param new_crs CRS value if transformation is needed.
+#' @param fill_holes whether to fill holes after merging parts
 #' @param smoothing_threshold A number indicating the smoothing threshold.
 #' @param use_cache A boolean indicating whether to use the cache.
 #' @param cache_file Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).
 #' @param cache_intermediates  whether to cache state intermediate aggregations
+#' @param message_string extra message string to add to any message (for tracking)
 #'
 #' @return A map object.
 #'
@@ -46,10 +48,13 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                     aggregation=NULL, #aggregation is a list
                     simplification_factor=NULL, #simplification factor is a number
                     new_crs = NULL,
+                    fill_holes=FALSE,
                     smoothing_threshold=4, #smoothing threshold is a number
                     use_cache=FALSE, #use cache is a boolean
                     cache_file=NULL,
-                    cache_intermediates=TRUE){ #cache file is a string
+                    cache_intermediates=TRUE,
+                    message_string = ""
+                    ){ #cache file is a string
 
 
   dummy <- lwgeom_extSoftVersion()
@@ -80,7 +85,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 
 
   if(file_exists(cache_file) & use_cache){
-    message(str_c("loading from cache: ", cache_file))
+    message(str_c(message_string,":: loading from cache: ", cache_file))
     data <- st_read(cache_file)
 
   }else{
@@ -90,8 +95,10 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                              aggregation,
                              simplification_factor,
                              new_crs,
+                             fill_holes,
                              smoothing_threshold,
-                             cache_intermediates)
+                             cache_intermediates,
+                             message_string)
     if(use_cache){
       st_write(data,cache_file)
     }
@@ -124,6 +131,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @param  aggregation name of column to aggregate (POA_CODE16, LOCALITY,LGA)
 #' @param  simplification_factor  0-1 simplication threshold to pass to rmapshaper::ms_simplify()
 #' @param  new_crs use to transform projection
+#' @param fill_holes whether to fill holes after merging parts
 #' @param  smoothing_threshold smoothing threshold (default to 1, as in km^2)
 #' @param  cache_intermediates whether to cache state intermediates
 #' @noRd
@@ -132,8 +140,10 @@ get_map_internal <- function(filter_table=NULL,
                     aggregation=NULL,
                     simplification_factor=NULL,
                     new_crs = NULL,
+                    fill_holes = FALSE,
                     smoothing_threshold=4,
-                    cache_intermediates=TRUE){
+                    cache_intermediates=TRUE,
+                    message_string=""){
 
   cache_dir  <- find_maps_cache()
 
@@ -151,7 +161,7 @@ get_map_internal <- function(filter_table=NULL,
 
   repo      <- repo_base |>
                 filter(if_any(c("file_name"), ~ str_detect(.x,file_regex)))   |>
-                mutate(across(any_of(c("file_name")), ~ str_remove_all(.x,"\\.[0-9]$")))       |>
+                mutate(across(any_of(c("file_name")), ~ str_remove_all(.x,"\\.[0-9]$")))     |>
                 distinct() |>
                 pull()
 
@@ -194,9 +204,9 @@ get_map_internal <- function(filter_table=NULL,
   cols_to_merge <- cols_to_merge[str_detect(cols_to_merge,"AREA_ALBERS_SQKM",TRUE)]
 
   data_sf <- NULL
-  message("collecting")
+  message(str_c(message_string,":: collecting"))
   for(repo_i in required_states){
-    message(repo_i)
+    message(str_c(message_string,":: ",repo_i))
     filter_table_hash <- digest(filter_table,"xxhash32",seed=1234)
     aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
 
@@ -206,13 +216,13 @@ get_map_internal <- function(filter_table=NULL,
                        ext="gpkg")
 
     if(file_exists(interm_cache_file) & cache_intermediates){
-      message("reading from intermediate cache")
+      message(str_c(message_string,":: reading from intermediate cache"))
       data_i <- st_read(interm_cache_file,quiet=TRUE)
 
     }else{
 
       data_base <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
-      message("normalising")
+      message(str_c(message_string,":: normalising"))
       data_base <- data_base |>
         mutate(Year=year) |>
         mutate(across(where(is.character), ~str_squish(.x))) |>
@@ -241,7 +251,7 @@ get_map_internal <- function(filter_table=NULL,
       data_i <- NULL
 
       for(j in 1:nrow(distinct_combos)){
-          message(str_c("merging ",j," out of ",nrow(distinct_combos)))
+          message(str_c(message_string,":: merging ",j," out of ",nrow(distinct_combos)))
           data_j <- suppressMessages(data_base |>
                     left_join(distinct_combos[j,],by=c(aggregation,cols_to_keep)) |>
                     filter(if_any(c("filter_flag"), ~ .x==TRUE)) |>
@@ -268,8 +278,8 @@ get_map_internal <- function(filter_table=NULL,
   }
 
   #remove holes
-  if(!is.null(smoothing_threshold)){
-   message("filling holes")
+  if(fill_holes & !is.null(smoothing_threshold)){
+   message(str_c(message_string,":: filling holes"))
    data_sf <- data_sf |> st_make_valid()
    tryCatch(
    data_sf <- fill_holes(data_sf,set_units(smoothing_threshold,"km^2")),
@@ -283,7 +293,7 @@ get_map_internal <- function(filter_table=NULL,
   #aggregate
 
   if(!is.null(aggregation)){
-    message(str_c("aggregating by ",aggregation))
+    message(str_c(message_string,":: aggregating by ",aggregation))
 
     aggregation <- as.vector(aggregation)
     aggreg_orig <- aggregation
@@ -339,14 +349,6 @@ get_map_internal <- function(filter_table=NULL,
               relocate(any_of(c("geom","geometry")),.after=last_col())))
 
     if(external_territories){
-   #
-   #   data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
-   #                                                  group_by(across(any_of(c(aggregation,cols_to_keep)))) |>
-   #                                                  summarise(.groups="drop") |>
-   #                                                  st_make_valid() |>
-   #                                                  st_union(by_feature = TRUE) |>
-   #                                                  fill_holes(set_units(smoothing_threshold,"km^2"))
-   #   ))
 
      merged_col  <- filter_table |>
        mutate(Year=year) |>
