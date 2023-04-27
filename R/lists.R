@@ -150,7 +150,7 @@ list_proportions <- function(attribute_name, ids=NULL){
                 mutate(across(where(is.character), ~str_squish(.x))) |>
                 mutate(across(where(is.character), ~ str_remove_all(.x, "[^A-z|0-9|[:punct:]|\\s]")))
 
-  areas_prop$prop <- areas_prop$area/areas_prop$sum_area
+  areas_prop$prop <- as.numeric(areas_prop$area/areas_prop$sum_area)
 
   return(areas_prop)
 }
