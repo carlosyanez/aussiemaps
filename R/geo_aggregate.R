@@ -22,9 +22,9 @@ geo_aggregate <- function(original_data,
                           proportions_manual=NULL){
 
   correspondence_table <- list_structure(year=year) |>
-    select(any_of(c("id",original_geo,new_geo)))
+    select(any_of(unname(c("id",original_geo,new_geo))))
 
-  proportions_table <-   list_proportions(original_geo) |>
+  proportions_table <-   list_proportions(unname(original_geo)) |>
                          collect()
 
   if(!any(str_detect(colnames(proportions_table),"prop"))){
@@ -32,25 +32,25 @@ geo_aggregate <- function(original_data,
   }
 
   proportions_table <- proportions_table |>
-    select("id","geo_col","prop") |>
-    rename(!!original_geo := "geo_col")
+    select(any_of(c("id","geo_col","prop"))) |>
+    rename(!!unname(original_geo) := "geo_col")
 
 
   correspondence_table <- correspondence_table |>
-    left_join(proportions_table,by=c("id",original_geo)) |>
-    group_by(across(any_of(c(original_geo,new_geo)))) |>
+    left_join(proportions_table,by=unname(c("id",original_geo))) |>
+    group_by(across(any_of(unname(c(original_geo,new_geo))))) |>
     summarise(across(any_of(c("prop")), ~ sum(.x,na.rm=TRUE)),.groups = "drop")
 
 
   if(!is.null(proportions_manual)){
 
-    proportions_prop <- colnames(proportions_manual)[!(colnames(proportions_manual) %in% c(original_geo,new_geo))]
+    proportions_prop <- colnames(proportions_manual)[!(colnames(proportions_manual) %in% unname(c(original_geo,new_geo)))]
 
     proportions_manual <- proportions_manual |>
       rename("prop"=proportions_prop)
 
     correspondence_table <- correspondence_table |>
-      anti_join(proportions_manual,by=c(original_geo,new_geo)) |>
+      anti_join(proportions_manual,by=unname(c(original_geo,new_geo))) |>
       bind_rows(proportions_manual)
 
   }
@@ -60,9 +60,9 @@ geo_aggregate <- function(original_data,
 
   results <-       original_data |>
     rename(!!"Value":=any_of(c(values_col)))        |>
-    left_join(correspondence_table,by=original_geo) |>
-    select(-any_of(c(original_geo)))                |>
-    group_by(across(any_of(c(new_geo,grouping_col))))     |>
+    left_join(correspondence_table,by=unname(original_geo),multiple="all") |>
+    select(-any_of(unname(c(original_geo))))            |>
+    group_by(across(any_of(unname(c(new_geo,grouping_col)))))     |>
     summarise(Value=sum(.data$Value*.data$prop,na.rm = TRUE),.groups = "drop") |>
     rename(!!values_col:="Value")
 

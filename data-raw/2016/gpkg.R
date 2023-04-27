@@ -1,12 +1,14 @@
 library(sf)
 library(here)
 library(fs)
+library(stringr)
 
 source(here("data-raw","aux_save.R"))
 
 source(here("data-raw","functions.R"))
 source(here("R","internal.R"))
 files <- dir_ls(here("data-raw"),regexp = "gpkg$")
+
 
 nsw <- files[str_detect(files,"New South Wales")]
 nsw_map <- st_read(nsw)
