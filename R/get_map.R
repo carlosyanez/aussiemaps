@@ -262,9 +262,6 @@ get_map_internal <- function(filter_table=NULL,
         data_i <- data_resolver(data_i,aggregation,cols_to_keep,state_message)
 
       }
-
-
-
       st_write(data_i,interm_cache_file,append=FALSE,quiet=TRUE,delete_dsn=TRUE)
 
     }
