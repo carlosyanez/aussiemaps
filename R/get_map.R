@@ -459,7 +459,7 @@ data_resolver <- function(df,aggregation,cols_to_keep,state_message){
 
     key_col <- diff |> st_drop_geometry()|> select(any_of(aggregation))  |> pull()
 
-    message(key_col)
+    #message(key_col)
 
     smaller_ids <-  diff_list[[j]][diff_list[[j]]!=j]
     small <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x %in% smaller_ids))
