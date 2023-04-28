@@ -451,6 +451,7 @@ data_resolver <- function(df,aggregation,cols_to_keep,state_message){
     for(i in l){
 
     diff <- df_i[i,]
+    message(df[i,i]$LGA_NAME_2021)
 
     small <- df[diff_list[[i]][diff_list[[i]]!=i],]
     for(j in 1:nrow(small)){
