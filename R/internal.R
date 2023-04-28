@@ -84,7 +84,7 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 #'
 #' @importFrom fs path file_copy
 #' @importFrom sf st_write st_read st_layers
-#' @importFrom stringr str_c str_remove_all str_squish
+#' @importFrom stringr str_c str_remove_all str_squish str_detect
 #' @importFrom dplyr mutate across bind_rows
 #' @importFrom tidyselect where
 #' @param aussiemaps_file name of the file to download.
@@ -94,6 +94,7 @@ load_aussiemaps_parquet <- function(aussiemaps_file){
 load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
 
   file_names <- load_aussiemaps(aussiemaps_file)
+  file_names <- file_names[str_detect(file_names,"intermediate",TRUE)]
   data <- NULL
   for(file_name in file_names){
     temp_gpkg <- path(find_maps_cache(),"temp.gpkg")
@@ -107,6 +108,7 @@ load_aussiemaps_gpkg <- function(aussiemaps_file,filter_ids=NULL){
     }else{
       query_text <- str_c("SELECT * FROM '",data_layer,"'")
     }
+
 
     data_i <- st_read(temp_gpkg,query=query_text,quiet=TRUE) |>
       mutate(across(where(is.character), ~ str_squish(.x))) |>

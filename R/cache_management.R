@@ -82,3 +82,43 @@ find_maps_cache<- function(){
   return(cache_dir)
 
 }
+
+#' Get name for a cached map
+#' @importFrom digest digest
+#' @importFrom stringr str_c
+#' @importFrom fs path
+#' @param year year
+#' @param simplification_factor simplification_factor
+#' @param smoothing_threshold smoothing_threshold
+#' @param new_crs new_crs
+#' @param filter_table filter_table
+#' @param aggregation aggregation
+#' @returns cache path
+#' @export
+#' @keywords helpers
+get_cache_name <-function(year,
+                          simplification_factor,
+                          smoothing_threshold,
+                          new_crs,
+                          filter_table,
+                          aggregation) {
+  hash <-
+    str_c(year,
+          simplification_factor,
+          smoothing_threshold,
+          new_crs,
+          sep = "-")
+
+  filter_table_hash <- digest(filter_table, "xxhash32", seed = 1234)
+  aggregation_hash <- digest(aggregation, "xxhash32", seed = 1234)
+
+  cache_file <- path(find_maps_cache(),
+                     str_c("cache_", year, "_", digest(
+                       str_c(hash, filter_table_hash, aggregation_hash, sep = "-"),
+                       "xxhash32",
+                       seed = 1234
+                     )),
+                     ext = "gpkg")
+
+  return(cache_file)
+}

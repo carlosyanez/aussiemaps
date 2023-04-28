@@ -68,15 +68,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
   #create hash
 
   if(is.null(cache_file)){
-    hash <- str_c(year,simplification_factor,smoothing_threshold,new_crs,sep="-")
-
-    filter_table_hash <- digest(filter_table,"xxhash32",seed=1234)
-    aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
-
-    cache_file <- path(find_maps_cache(),
-                       str_c("cache_",year,"_",digest(str_c(hash,filter_table_hash,aggregation_hash,sep="-"),
-                                             "xxhash32",seed=1234)),
-                       ext="gpkg")
+    cache_file <- get_cache_name(year,simplification_factor,smoothing_threshold,new_crs,filter_table, aggregation)
   }else{
 
     cache_file <- cache_file
@@ -113,7 +105,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' Get sf object containing selected map polygons - Internal function
 #' @return sf object with selected polygons
 #' @importFrom arrow read_parquet
-#' @importFrom dplyr mutate reframe across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col contains
+#' @importFrom dplyr mutate reframe across select any_of filter if_any pull group_by starts_with left_join  if_else n everything matches relocate last_col contains matches
 #' @importFrom stringr str_remove_all str_detect str_c str_extract str_replace str_replace_all
 #' @importFrom rmapshaper ms_simplify
 #' @importFrom sf st_as_sf st_union st_make_valid sf_use_s2 st_drop_geometry st_buffer st_is_empty st_crs st_transform
@@ -125,6 +117,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @importFrom tidyselect where
 #' @importFrom tibble tibble add_column
 #' @importFrom nngeo st_remove_holes
+#' @importFrom progressr  with_progress
 #' @param  filter_table table to filter (you can start with location_table)
 #' @param  filters list with filters
 #' @param  year year
@@ -140,12 +133,18 @@ get_map_internal <- function(filter_table=NULL,
                     aggregation=NULL,
                     simplification_factor=NULL,
                     new_crs = NULL,
-                    fill_holes = FALSE,
+                    fill_holes = TRUE,
                     smoothing_threshold=4,
                     cache_intermediates=TRUE,
                     message_string=""){
 
   cache_dir  <- find_maps_cache()
+
+  #aggregation - adding codes
+
+  aggr_names <- aggregation[str_detect(aggregation,"NAME")]
+  aggr_codes <- str_replace_all(aggr_names,"NAME","CODE")
+  aggregation <- unique(c(aggregation,aggr_codes))
 
   #just in case, delete any zip files from cache (from aborted reads)
   zip_files <- dir_ls(cache_dir,regexp = "zip$")
@@ -155,7 +154,7 @@ get_map_internal <- function(filter_table=NULL,
 
   file_regex <- str_c(year,"_[A-Z]{1}")
 
-  repo_base      <- get_repo_files() |>
+  repo_base <- get_repo_files() |>
                 mutate(across(any_of(c("file_name")), ~ str_remove_all(.x,"\\.zip"))) |>
                 select(any_of("file_name"))
 
@@ -206,23 +205,26 @@ get_map_internal <- function(filter_table=NULL,
   data_sf <- NULL
   message(str_c(message_string,":: collecting"))
   for(repo_i in required_states){
-    message(str_c(message_string,":: ",repo_i))
+
+    state_message <- str_c(message_string,":: ",repo_i," (",which(repo_i==required_states),"/",length(required_states),")")
+    message(state_message)
+
     filter_table_hash <- digest(filter_table,"xxhash32",seed=1234)
     aggregation_hash <- digest(aggregation,"xxhash32",seed=1234)
 
     interm_cache_file <- path(find_maps_cache(),
-                       str_c("intermediate_",year,"_",digest(str_c(repo_i,filter_table_hash,aggregation_hash,sep="-"),
+                       str_c("intermediate_",year,"_",repo_i,"_",digest(str_c(repo_i,filter_table_hash,aggregation_hash,sep="-"),
                                                    "xxhash32",seed=1234)),
                        ext="gpkg")
 
     if(file_exists(interm_cache_file) & cache_intermediates){
-      message(str_c(message_string,":: reading from intermediate cache"))
+      message(str_c(state_message,":: reading from intermediate cache"))
       data_i <- st_read(interm_cache_file,quiet=TRUE)
 
     }else{
+      message(str_c(state_message,":: normalising"))
 
       data_base <- suppressMessages(suppressWarnings(load_aussiemaps_gpkg(repo_i,filter_table)))
-      message(str_c(message_string,":: normalising"))
       data_base <- data_base |>
         mutate(Year=year) |>
         mutate(across(where(is.character), ~str_squish(.x))) |>
@@ -241,38 +243,14 @@ get_map_internal <- function(filter_table=NULL,
       }
 
 
-      #col_names <- colnames(data_base[1,])
-
-      #distinct values
-      distinct_combos <- data_base |> st_drop_geometry() |>
-                        select(any_of(unique(c(aggregation,cols_to_keep)))) |>
-                        distinct() |>
-                        mutate(filter_flag=TRUE)
-      data_i <- NULL
-
-      for(j in 1:nrow(distinct_combos)){
-          message(str_c(message_string,":: merging ",j," out of ",nrow(distinct_combos)))
-          data_j <- suppressMessages(data_base |>
-                    left_join(distinct_combos[j,],by=c(aggregation,cols_to_keep)) |>
-                    filter(if_any(c("filter_flag"), ~ .x==TRUE)) |>
-                    select(-any_of(c("filter_flag"))))
-
-          data_j <- distinct_combos[j,] |>
-                    add_column(geom=st_union(data_j)) |>
-                    st_as_sf()
-
-          if(is.null(data_i)){
-            data_i <- data_j
-          }else{
-            data_i <- bind_rows(data_i,data_j)
-          }
-      }
-
+      message(str_c(state_message,":: merging"))
+      with_progress(data_i <- map_merger(data_base,unique(c(aggregation,cols_to_keep))))
       st_write(data_i,interm_cache_file,append=FALSE,quiet=TRUE,delete_dsn=TRUE)
 
     }
 
     data_sf <- bind_rows(data_sf,data_i)
+
     rm(data_i)
 
   }
@@ -288,6 +266,10 @@ get_map_internal <- function(filter_table=NULL,
    tryCatch(
    data_sf <- st_remove_holes(data_sf),
    error = function(e) e)
+   data_sf <- data_sf |> st_make_valid()
+
+   data_sf <- data_resolver(data_sf,aggregation,cols_to_keep,message_string)
+
   }
 
   #aggregate
@@ -298,20 +280,6 @@ get_map_internal <- function(filter_table=NULL,
     aggregation <- as.vector(aggregation)
     aggreg_orig <- aggregation
 
-
-    for(i in 1:length(aggregation)){
-    aggregation_prefix <- str_extract(aggregation[i],"^[^_]*")
-    aggregation_suffix <- str_extract(aggregation[i],"[0-9]{4}")
-
-    aggregation[i]  <- repo_base |>
-      filter(if_any(c("file_name"), ~ str_detect(.x,aggregation_prefix))) |>
-      filter(if_any(c("file_name"), ~ str_detect(.x,as.character(aggregation_suffix)))) |>
-      filter(if_any(c("file_name"), ~ str_detect(.x,"CODE"))) |>
-      head(1) |>
-      pull()
-
-    }
-
     external_territories <- any(str_detect(required_states,"Other"))
 
     if(external_territories){
@@ -320,11 +288,17 @@ get_map_internal <- function(filter_table=NULL,
     }
     #new aggregated sum
     areas_prop <- list()
-    for(i in 1:length(aggregation)){
-      areas_prop[[i]] <- load_aussiemaps_parquet(aggregation[i]) |>
+    aggr_prop  <- aggregation[str_detect(aggregation,"CODE")]
+    for(i in 1:length(aggr_prop)){
+      areas_prop[[i]] <- load_aussiemaps_parquet(aggr_prop[i]) |>
                          filter(if_any(any_of(c("id")), ~ .x %in% filter_table$id)) |>
-                         collect() |>
-                         group_by(across(c("geo_col")))   |>
+                         collect()
+
+      if(!("prop" %in% colnames(areas_prop[[i]]))){
+        areas_prop[[i]]$prop <- as.numeric(areas_prop[[i]]$area /  areas_prop[[i]]$sum_area)
+      }
+      areas_prop[[i]] <- areas_prop[[i]] |>
+                        group_by(across(c("geo_col")))   |>
                          summarise(across(any_of("prop"), ~ sum(.x)),.groups="drop")
 
 
@@ -334,15 +308,16 @@ get_map_internal <- function(filter_table=NULL,
 
     data_sf <-  data_sf |>
                 filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
-                select(-any_of(c("empty"))) #|>
-                #fill_holes(set_units(smoothing_threshold,"km^2"))
+                select(-any_of(c("empty")))
 
     merged_col  <- filter_table |>
                    mutate(Year=year) |>
                    select(any_of(c(aggregation,cols_to_merge))) |>
                    distinct()                                       |>
                    group_by(across(any_of(c(aggregation))))          |>
-                   reframe(across(any_of(cols_to_merge), ~ merge_distinct(.x)))
+                   reframe(across(any_of(c(aggregation,cols_to_merge)), ~ merge_distinct(.x)))
+    colnames(data_sf)
+    colnames(merged_col)
 
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
               left_join(merged_col,by=aggregation) |>
@@ -382,6 +357,8 @@ get_map_internal <- function(filter_table=NULL,
 
   }
 
+  data_sf <- data_sf |> select(-matches("\\.[0-9]$"))
+
   data_sf <- data_sf |> st_make_valid()
 
   return(data_sf)
@@ -398,4 +375,110 @@ merge_distinct <- function(x){
   x <- sort(x)
   str_flatten_comma(x)
 }
+
+#' @param df df
+#' @param by_cols by_cols
+#' @importFrom stringr str_c
+#' @importFrom dplyr filter if_any left_join select bind_rows distinct mutate any_of row_number
+#' @importFrom sf st_union st_as_sf st_drop_geometry
+#' @importFrom tibble add_column
+#' @importFrom progressr progressor
+#' @description Internal function to create data_i, with progress
+#' @noRd
+map_merger <- function(df,by_cols){
+
+
+
+  distinct_combos <- df |> st_drop_geometry() |>
+    select(any_of(by_cols)) |>
+    distinct() |>
+    mutate(filter_flag=TRUE)
+
+  x <-  1:nrow(distinct_combos)
+  p <- progressr::progressor(along =x)
+  data_i <- NULL
+
+  for (j in seq_along(x)){
+    #message(str_c(state_message,":: merging ",j," out of ",nrow(distinct_combos)))
+    data_j <- suppressMessages(df |>
+                                 select(-any_of(c("filter_flag"))) |>
+                                 left_join(distinct_combos[j,],by=by_cols) |>
+                                 filter(if_any(c("filter_flag"), ~ .x==TRUE)) |>
+                                 select(-any_of(c("filter_flag"))))
+
+    suppressWarnings(suppressMessages(data_j <- distinct_combos[j,] |>
+      add_column(geom=st_union(data_j)) |>
+      st_as_sf()))
+
+    if(is.null(data_i)){
+      data_i <- data_j
+    }else{
+      data_i <- bind_rows(data_i,data_j)
+    }
+
+    p(message = sprintf("%g", x[j]))
+  }
+
+  data_i <- data_i |>select(-any_of(c("filter_flag")))
+
+  return(data_i)
+}
+
+#' @param df df
+#' @param aggregation aggregation
+#' @param cols_to_keep cols to keep
+#' @param state_message state_message
+#' @importFrom stringr str_c
+#' @importFrom dplyr select any_of mutate  filter bind_rows
+#' @importFrom sf st_cast st_make_valid st_difference st_covers st_area
+#' @importFrom progressr with_progress
+#' @description Internal function resolve overlaps
+data_resolver <- function(df,aggregation,cols_to_keep,state_message){
+  suppressWarnings(suppressMessages(df_i <- df |> st_cast("POLYGON")))
+  df_i <- df_i |> st_make_valid()
+  #df$split_id <- 1:nrow(df_i)
+
+  suppressWarnings(suppressMessages(diff_list <-  st_covers(df_i)))
+
+  l <- c()
+  for(i in 1:length(diff_list)){
+    if(length(diff_list[[i]])>1) l <-c(l,i)
+
+  }
+
+  if(!is.null(l)){
+    message("Overlapping surfaces found")
+    for(i in l){
+
+    diff <- df_i[i,]
+
+    small <- df[diff_list[[i]][diff_list[[i]]!=i],]
+    for(j in 1:nrow(small)){
+      suppressWarnings(suppressMessages(diff <- st_difference(diff,small[j,])))
+      diff <- st_make_valid(diff)
+      diff$area <- st_area(diff)
+      diff <- diff |>
+        filter(if_any(any_of(c("area")), ~.x==max(area)))
+
+    }
+
+    diff <- diff |> select(any_of(colnames(df)))
+
+    df_i <- df_i |>
+      mutate(rn=row_number()) |>
+      filter(if_any(any_of(c("rn")), ~ .x!=i))  |>
+      select(-any_of("rn"))     |>
+      bind_rows(diff)
+
+  }
+
+    message(str_c(state_message,":: merging after filling holes"))
+    with_progress(df <- map_merger(df_i,unique(c(aggregation,cols_to_keep))))
+
+  }
+
+  return(df)
+
+}
+
 
