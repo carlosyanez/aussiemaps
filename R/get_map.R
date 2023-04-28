@@ -452,7 +452,7 @@ data_resolver <- function(df,aggregation,cols_to_keep,state_message){
 
     diff <- df_i[i,]
 
-    key_col <- df_i[i,] |> select(any_of(aggregation))  |> pull()
+    key_col <- df_i[i,] |> select(any_of("LGA_NAME_2021"))  |> pull()
 
     message(key_col)
 
