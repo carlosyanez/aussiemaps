@@ -245,6 +245,26 @@ get_map_internal <- function(filter_table=NULL,
 
       message(str_c(state_message,":: merging"))
       with_progress(data_i <- map_merger(data_base,unique(c(aggregation,cols_to_keep))))
+
+      #remove holes
+      if(fill_holes & !is.null(smoothing_threshold)){
+        message(str_c(message_string,":: filling holes"))
+        data_i <- data_i |> st_make_valid()
+        tryCatch(
+          data_i <- fill_holes(data_i,set_units(smoothing_threshold,"km^2")),
+          error = function(e) e)
+
+        tryCatch(
+          data_i <- st_remove_holes(data_i),
+          error = function(e) e)
+        data_i <- data_i |> st_make_valid()
+
+        data_i <- data_resolver(data_i,aggregation,cols_to_keep,state_message)
+
+      }
+
+
+
       st_write(data_i,interm_cache_file,append=FALSE,quiet=TRUE,delete_dsn=TRUE)
 
     }
@@ -255,22 +275,6 @@ get_map_internal <- function(filter_table=NULL,
 
   }
 
-  #remove holes
-  if(fill_holes & !is.null(smoothing_threshold)){
-   message(str_c(message_string,":: filling holes"))
-   data_sf <- data_sf |> st_make_valid()
-   tryCatch(
-   data_sf <- fill_holes(data_sf,set_units(smoothing_threshold,"km^2")),
-   error = function(e) e)
-
-   tryCatch(
-   data_sf <- st_remove_holes(data_sf),
-   error = function(e) e)
-   data_sf <- data_sf |> st_make_valid()
-
-   data_sf <- data_resolver(data_sf,aggregation,cols_to_keep,message_string)
-
-  }
 
   #aggregate
 
