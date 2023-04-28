@@ -154,7 +154,7 @@ get_map_internal <- function(filter_table=NULL,
 
   file_regex <- str_c(year,"_[A-Z]{1}")
 
-  repo_base <- get_repo_files() |>
+  repo_base <-  get_repo_files() |>
                 mutate(across(any_of(c("file_name")), ~ str_remove_all(.x,"\\.zip"))) |>
                 select(any_of("file_name"))
 
@@ -179,7 +179,7 @@ get_map_internal <- function(filter_table=NULL,
 
   #decide what to keep
 
-  cols_to_keep <-filter_table |>
+  cols_to_keep <- filter_table |>
     mutate(across(everything(), as.character)) |>
     select(-any_of(c("id","area","Year"))) |>
     pivot_longer(-any_of(aggregation),values_to = "value",names_to = "geo_unit") |>
@@ -245,11 +245,11 @@ get_map_internal <- function(filter_table=NULL,
 
       message(str_c(state_message,":: merging"))
       with_progress(data_i <- map_merger(data_base,unique(c(aggregation,cols_to_keep))))
-
+      data_i <- data_i |> st_make_valid()
       #remove holes
       if(fill_holes & !is.null(smoothing_threshold)){
         message(str_c(message_string,":: filling holes"))
-        data_i <- data_i |> st_make_valid()
+
         tryCatch(
           data_i <- fill_holes(data_i,set_units(smoothing_threshold,"km^2")),
           error = function(e) e)
@@ -257,13 +257,15 @@ get_map_internal <- function(filter_table=NULL,
         tryCatch(
           data_i <- st_remove_holes(data_i),
           error = function(e) e)
+
         data_i <- data_i |> st_make_valid()
 
         data_i <- data_resolver(data_i,aggregation,cols_to_keep,state_message)
 
       }
-      st_write(data_i,interm_cache_file,append=FALSE,quiet=TRUE,delete_dsn=TRUE)
-
+      if(cache_intermediates){
+          st_write(data_i,interm_cache_file,append=FALSE,quiet=TRUE,delete_dsn=TRUE)
+      }
     }
 
     data_sf <- bind_rows(data_sf,data_i)
@@ -317,12 +319,15 @@ get_map_internal <- function(filter_table=NULL,
                    distinct()                                       |>
                    group_by(across(any_of(c(aggregation))))          |>
                    reframe(across(any_of(c(aggregation,cols_to_merge)), ~ merge_distinct(.x)))
-    colnames(data_sf)
-    colnames(merged_col)
+
 
     data_sf <- suppressMessages(suppressWarnings(data_sf |>
               left_join(merged_col,by=aggregation) |>
               relocate(any_of(c("geom","geometry")),.after=last_col())))
+
+    data_sf <- data_sf |>
+               select(-any_of(contains("CHANGE"))) |>
+               select(-any_of(contains("URI")))
 
     if(external_territories){
 
@@ -333,10 +338,13 @@ get_map_internal <- function(filter_table=NULL,
        group_by(across(any_of(c(aggregation))))            |>
        reframe(across(any_of(cols_to_merge), merge_distinct))
 
-     data_sf <- suppressMessages(suppressWarnings(data_sf |>
+     data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
                                                     left_join(merged_col,by=aggregation) |>
                                                     relocate(any_of(c("geom","geometry")),.after=last_col())))
 
+     data_sf_external <- data_sf_external |>
+                          select(-any_of(contains("CHANGE"))) |>
+                          select(-any_of(contains("URI")))
 
       data_sf <- bind_rows(data_sf,data_sf_external)
    }
