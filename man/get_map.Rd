@@ -11,7 +11,7 @@ get_map(
   aggregation = NULL,
   simplification_factor = NULL,
   new_crs = NULL,
-  fill_holes = FALSE,
+  fill_holes = TRUE,
   smoothing_threshold = 4,
   use_cache = FALSE,
   cache_file = NULL,

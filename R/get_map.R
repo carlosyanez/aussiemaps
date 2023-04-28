@@ -429,11 +429,12 @@ map_merger <- function(df,by_cols){
 #' @param cols_to_keep cols to keep
 #' @param state_message state_message
 #' @importFrom stringr str_c
-#' @importFrom dplyr select any_of mutate  filter bind_rows
-#' @importFrom sf st_cast st_make_valid st_difference st_covers st_area
+#' @importFrom dplyr select any_of mutate  filter bind_rows anti_join
+#' @importFrom sf st_cast st_make_valid st_difference st_covers st_area st_drop_geometry
 #' @importFrom progressr with_progress
 #' @description Internal function resolve overlaps
 data_resolver <- function(df,aggregation,cols_to_keep,state_message){
+  #df <- map
   suppressWarnings(suppressMessages(df_i <- df |> st_cast("POLYGON")))
   df_i <- df_i |> st_make_valid()
   #df$split_id <- 1:nrow(df_i)
@@ -445,43 +446,46 @@ data_resolver <- function(df,aggregation,cols_to_keep,state_message){
     if(length(diff_list[[i]])>1) l <-c(l,i)
 
   }
-  message(is.null(l))
+
+  df_i$split_id <- 1:nrow(df_i)
+  l <- df_i$split_id[l]
+
   if(!is.null(l)){
     message("Overlapping surfaces found")
-    for(i in l){
+    for(j in l){
 
-    diff <- df_i[i,]
+    diff_orig <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x==j))
+    diff      <- diff_orig
 
-    key_col <- df_i[i,] |> select(any_of("LGA_NAME_2021"))  |> pull()
+    key_col <- diff |> st_drop_geometry()|> select(any_of(aggregation))  |> pull()
 
     message(key_col)
 
-    small <- df[diff_list[[i]][diff_list[[i]]!=i],]
-    for(j in 1:nrow(small)){
-      suppressWarnings(suppressMessages(diff <- st_difference(diff,small[j,])))
+    smaller_ids <-  diff_list[[j]][diff_list[[j]]!=j]
+    small <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x %in% smaller_ids))
+
+    for(k in 1:nrow(small)){
+      suppressWarnings(suppressMessages(diff <- st_difference(diff,small[k,])))
       diff <- st_make_valid(diff)
       diff$area <- st_area(diff)
       diff <- diff |>
         filter(if_any(any_of(c("area")), ~.x==max(area)))
+      diff <- diff |> select(any_of(c(colnames(df),"split_id")))
 
     }
 
-    diff <- diff |> select(any_of(colnames(df)))
-
+    suppressMessages(suppressWarnings(
     df_i <- df_i |>
-      mutate(rn=row_number()) |>
-      filter(if_any(any_of(c("rn")), ~ .x!=i))  |>
-      select(-any_of("rn"))     |>
+      anti_join(diff_orig |> st_drop_geometry())  |>
       bind_rows(diff)
-
+    ))
+  }
+    df_i <- df_i |> select(-any_of(c("split_id")))
   }
 
-    message(str_c(state_message,":: merging after filling holes ()"))
-    with_progress(df <- map_merger(df_i,unique(c(aggregation,cols_to_keep))))
-
-  }
-
-  return(df)
+  message(str_c(state_message,":: merging after filling holes"))
+  #with_progress(df_i <- map_merger(df_i,unique(c(aggregation,cols_to_keep))))
+  return(df_i)
 
 }
 
