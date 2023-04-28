@@ -48,7 +48,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                     aggregation=NULL, #aggregation is a list
                     simplification_factor=NULL, #simplification factor is a number
                     new_crs = NULL,
-                    fill_holes=FALSE,
+                    fill_holes=TRUE,
                     smoothing_threshold=4, #smoothing threshold is a number
                     use_cache=FALSE, #use cache is a boolean
                     cache_file=NULL,
@@ -445,7 +445,7 @@ data_resolver <- function(df,aggregation,cols_to_keep,state_message){
     if(length(diff_list[[i]])>1) l <-c(l,i)
 
   }
-
+  message(is.null(l))
   if(!is.null(l)){
     message("Overlapping surfaces found")
     for(i in l){
@@ -472,7 +472,7 @@ data_resolver <- function(df,aggregation,cols_to_keep,state_message){
 
   }
 
-    message(str_c(state_message,":: merging after filling holes"))
+    message(str_c(state_message,":: merging after filling holes ()"))
     with_progress(df <- map_merger(df_i,unique(c(aggregation,cols_to_keep))))
 
   }
