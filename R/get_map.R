@@ -260,7 +260,7 @@ get_map_internal <- function(filter_table=NULL,
 
         data_i <- data_i |> st_make_valid()
 
-        data_i <- data_resolver(data_i,aggregation,cols_to_keep,state_message)
+        data_i <- data_resolver(data_i,unique(c(aggregation,cols_to_keep)),state_message)
 
       }
       if(cache_intermediates){
@@ -434,7 +434,7 @@ map_merger <- function(df,by_cols){
 }
 
 #' @param df df
-#' @param aggregation aggregation
+#' @param merge_by aggregation
 #' @param cols_to_keep cols to keep
 #' @param state_message state_message
 #' @importFrom stringr str_c
@@ -442,58 +442,57 @@ map_merger <- function(df,by_cols){
 #' @importFrom sf st_cast st_make_valid st_difference st_covers st_area st_drop_geometry
 #' @importFrom progressr with_progress
 #' @description Internal function resolve overlaps
-data_resolver <- function(df,aggregation,cols_to_keep,state_message){
+data_resolver <- function(df,merge_by,state_message){
   #df <- map
-  suppressWarnings(suppressMessages(df_i <- df |> st_cast("POLYGON")))
+  suppressWarnings(suppressMessages(df_i <- df |> st_cast("MULTIPOLYGON")))
+  suppressWarnings(suppressMessages(df_i <- df_i |> st_cast("POLYGON")))
   df_i <- df_i |> st_make_valid()
-  #df$split_id <- 1:nrow(df_i)
+  df_i <- df_i |> mutate(split_id=row_number())
 
   suppressWarnings(suppressMessages(diff_list <-  st_covers(df_i)))
 
-  l <- c()
+  l <- list()
   for(i in 1:length(diff_list)){
-    if(length(diff_list[[i]])>1) l <-c(l,i)
-
+    if(length(diff_list[[i]])>1){
+        l_i <- diff_list[[i]]
+        l_i <- l_i[l_i!=i]
+        l[[length(l)+1]] <- l_i
+        names(l)[length(l)] <- i
+    }
   }
 
-  df_i$split_id <- 1:nrow(df_i)
-  l <- df_i$split_id[l]
-
-  if(!is.null(l)){
+  if(length(l)>0){
     message("Overlapping surfaces found")
-    for(j in l){
+    for(j in 1:length(l)){
 
-    diff_orig <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x==j))
-    diff      <- diff_orig
+      small_id <- l[[j]]
+      big_id   <- as.numeric(names(l)[j])
 
-    key_col <- diff |> st_drop_geometry()|> select(any_of(aggregation))  |> pull()
+      small    <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x %in% small_id))
+      big      <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x %in% big_id))
 
-    #message(key_col)
+      df_i     <- df_i |> filter(if_any(any_of(c("split_id")), ~ !(.x %in% big_id)))
 
-    smaller_ids <-  diff_list[[j]][diff_list[[j]]!=j]
-    small <- df_i |> filter(if_any(any_of(c("split_id")), ~ .x %in% smaller_ids))
-
-    for(k in 1:nrow(small)){
-      suppressWarnings(suppressMessages(diff <- st_difference(diff,small[k,])))
-      diff <- st_make_valid(diff)
-      diff$area <- st_area(diff)
-      diff <- diff |>
-        filter(if_any(any_of(c("area")), ~.x==max(area)))
-      diff <- diff |> select(any_of(c(colnames(df),"split_id")))
-
+      for(k in 1:nrow(small)){
+        suppressWarnings(suppressMessages(big <- st_difference(big,small[k,] |> select(any_of(c("geom"))))))
+        big       <- st_make_valid(big)
+        if(nrow(big)>1){
+            big$area_diff  <- st_area(big)
+            big            <- big |>
+                              filter(if_any(any_of(c("area_diff")), ~.x==max(.x))) |>
+                              select(any_of(c("area_diff")))
+        }
     }
 
-    suppressMessages(suppressWarnings(
-    df_i <- df_i |>
-      anti_join(diff_orig |> st_drop_geometry())  |>
-      bind_rows(diff)
-    ))
-  }
-    df_i <- df_i |> select(-any_of(c("split_id")))
+      df_i     <- df_i |> bind_rows(big)
+
+    }
   }
 
+  df_i <- df_i |> select(-any_of(c("split_id")))
+
   message(str_c(state_message,":: merging after filling holes"))
-  #with_progress(df_i <- map_merger(df_i,unique(c(aggregation,cols_to_keep))))
+  with_progress(df_i <- map_merger(df_i,merge_by))
   return(df_i)
 
 }
