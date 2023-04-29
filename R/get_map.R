@@ -322,7 +322,7 @@ get_map_internal <- function(filter_table=NULL,
                  filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
                  select(-any_of(c("empty")))
 
-     data_sf <- map_merger(data_sf,unique(c(aggregation,cols_to_keep)))
+     with_progress(data_sf <- map_merger(data_sf,unique(c(aggregation,cols_to_keep))))
 
 
      merged_col  <- filter_table |>
