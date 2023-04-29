@@ -276,97 +276,97 @@ get_map_internal <- function(filter_table=NULL,
 
 
   #aggregate
-
-  if(!is.null(aggregation)){
-    message(str_c(message_string,":: aggregating by ",aggregation))
-
-    aggregation <- as.vector(aggregation)
-    aggreg_orig <- aggregation
-
-    external_territories <- any(str_detect(required_states,"Other"))
-
-    if(external_territories){
-      data_sf_external  <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other")))
-      data_sf           <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other",TRUE)))
-    }
-    #new aggregated sum
-    areas_prop <- list()
-    aggr_prop  <- aggregation[str_detect(aggregation,"CODE")]
-    for(i in 1:length(aggr_prop)){
-      areas_prop[[i]] <- load_aussiemaps_parquet(aggr_prop[i]) |>
-                         filter(if_any(any_of(c("id")), ~ .x %in% filter_table$id)) |>
-                         collect()
-
-      if(!("prop" %in% colnames(areas_prop[[i]]))){
-        areas_prop[[i]]$prop <- as.numeric(areas_prop[[i]]$area /  areas_prop[[i]]$sum_area)
-      }
-      areas_prop[[i]] <- areas_prop[[i]] |>
-                        group_by(across(c("geo_col")))   |>
-                         summarise(across(any_of("prop"), ~ sum(.x)),.groups="drop")
-
-
-    }
-
-    data_sf$empty <- st_is_empty(data_sf)
-
-    data_sf <-  data_sf |>
-                filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
-                select(-any_of(c("empty")))
-
-    merged_col  <- filter_table |>
-                   mutate(Year=year) |>
-                   select(any_of(c(aggregation,cols_to_merge))) |>
-                   distinct()                                       |>
-                   group_by(across(any_of(c(aggregation))))          |>
-                   reframe(across(any_of(c(aggregation,cols_to_merge)), ~ merge_distinct(.x)))
-
-
-    data_sf <- suppressMessages(suppressWarnings(data_sf |>
-              left_join(merged_col,by=aggregation) |>
-              relocate(any_of(c("geom","geometry")),.after=last_col())))
-
-    data_sf <- data_sf |>
-               select(-any_of(contains("CHANGE"))) |>
-               select(-any_of(contains("URI")))
-
-    if(external_territories){
-
-     merged_col  <- filter_table |>
-       mutate(Year=year) |>
-       select(any_of(c(aggregation,cols_to_merge))) |>
-       distinct()                                               |>
-       group_by(across(any_of(c(aggregation))))            |>
-       reframe(across(any_of(cols_to_merge), merge_distinct))
-
-     data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
-                                                    left_join(merged_col,by=aggregation) |>
-                                                    relocate(any_of(c("geom","geometry")),.after=last_col())))
-
-     data_sf_external <- data_sf_external |>
-                          select(-any_of(contains("CHANGE"))) |>
-                          select(-any_of(contains("URI")))
-
-      data_sf <- bind_rows(data_sf,data_sf_external)
-   }
-
-  #simplify
-  if(!is.null(simplification_factor)){
-    tryCatch(data_sf <- suppressMessages(suppressWarnings(
-               data_sf |>
-               ms_simplify(keep=simplification_factor))),
-                error = function(e) e)
-  }
-
-  #change crs
-    if(!is.null(new_crs)){
-      tryCatch(data_sf <- suppressMessages(suppressWarnings(
-        st_transform(data_sf,crs=st_crs(new_crs)))),
-        error = function(e) e)
-    }
-
-  }
-
-  data_sf <- data_sf |> select(-matches("\\.[0-9]$"))
+#
+#   if(!is.null(aggregation)){
+#     message(str_c(message_string,":: aggregating by ",aggregation))
+#
+#     aggregation <- as.vector(aggregation)
+#     aggreg_orig <- aggregation
+#
+#     #external_territories <- any(str_detect(required_states,"Other"))
+#
+#     #if(external_territories){
+#     #  data_sf_external  <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other")))
+#     #  data_sf           <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other",TRUE)))
+#     #}
+#     #new aggregated sum
+#     areas_prop <- list()
+#     aggr_prop  <- aggregation[str_detect(aggregation,"CODE")]
+#     for(i in 1:length(aggr_prop)){
+#       areas_prop[[i]] <- load_aussiemaps_parquet(aggr_prop[i]) |>
+#                          filter(if_any(any_of(c("id")), ~ .x %in% filter_table$id)) |>
+#                          collect()
+#
+#       if(!("prop" %in% colnames(areas_prop[[i]]))){
+#         areas_prop[[i]]$prop <- as.numeric(areas_prop[[i]]$area /  areas_prop[[i]]$sum_area)
+#       }
+#       areas_prop[[i]] <- areas_prop[[i]] |>
+#                         group_by(across(c("geo_col")))   |>
+#                          summarise(across(any_of("prop"), ~ sum(.x)),.groups="drop")
+#
+#
+#     }
+#
+#     data_sf$empty <- st_is_empty(data_sf)
+#
+#     data_sf <-  data_sf |>
+#                 filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
+#                 select(-any_of(c("empty")))
+#
+#     merged_col  <- filter_table |>
+#                    mutate(Year=year) |>
+#                    select(any_of(c(aggregation,cols_to_merge))) |>
+#                    distinct()                                       |>
+#                    group_by(across(any_of(c(aggregation))))          |>
+#                    reframe(across(any_of(c(aggregation,cols_to_merge)), ~ merge_distinct(.x)))
+#
+#
+#     data_sf <- suppressMessages(suppressWarnings(data_sf |>
+#               left_join(merged_col,by=aggregation) |>
+#               relocate(any_of(c("geom","geometry")),.after=last_col())))
+#
+#     data_sf <- data_sf |>
+#                select(-any_of(contains("CHANGE"))) |>
+#                select(-any_of(contains("URI")))
+#
+#    #  if(external_territories){
+#    #
+#    #   merged_col  <- filter_table |>
+#    #     mutate(Year=year) |>
+#    #     select(any_of(c(aggregation,cols_to_merge))) |>
+#    #     distinct()                                               |>
+#    #     group_by(across(any_of(c(aggregation))))            |>
+#    #     reframe(across(any_of(cols_to_merge), merge_distinct))
+#    #
+#    #   data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
+#    #                                                  left_join(merged_col,by=aggregation) |>
+#    #                                                  relocate(any_of(c("geom","geometry")),.after=last_col())))
+#    #
+#    #   data_sf_external <- data_sf_external |>
+#    #                        select(-any_of(contains("CHANGE"))) |>
+#    #                        select(-any_of(contains("URI")))
+#    #
+#    #    data_sf <- bind_rows(data_sf,data_sf_external)
+#    # }
+#
+#   #simplify
+#   if(!is.null(simplification_factor)){
+#     tryCatch(data_sf <- suppressMessages(suppressWarnings(
+#                data_sf |>
+#                ms_simplify(keep=simplification_factor))),
+#                 error = function(e) e)
+#   }
+#
+#   #change crs
+#     if(!is.null(new_crs)){
+#       tryCatch(data_sf <- suppressMessages(suppressWarnings(
+#         st_transform(data_sf,crs=st_crs(new_crs)))),
+#         error = function(e) e)
+#     }
+#
+#   }
+#
+#   data_sf <- data_sf |> select(-matches("\\.[0-9]$"))
 
   data_sf <- data_sf |> st_make_valid()
 
@@ -395,8 +395,6 @@ merge_distinct <- function(x){
 #' @description Internal function to create data_i, with progress
 #' @noRd
 map_merger <- function(df,by_cols){
-
-
 
   distinct_combos <- df |> st_drop_geometry() |>
     select(any_of(by_cols)) |>
@@ -438,7 +436,7 @@ map_merger <- function(df,by_cols){
 #' @param cols_to_keep cols to keep
 #' @param state_message state_message
 #' @importFrom stringr str_c
-#' @importFrom dplyr select any_of mutate  filter bind_rows anti_join
+#' @importFrom dplyr select any_of mutate  filter bind_rows anti_join row_number
 #' @importFrom sf st_cast st_make_valid st_difference st_covers st_area st_drop_geometry
 #' @importFrom progressr with_progress
 #' @description Internal function resolve overlaps
