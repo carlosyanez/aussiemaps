@@ -7,7 +7,7 @@
 #'
 #'
 #' @importFrom digest digest
-#' @importFrom stringr str_c
+#' @importFrom stringr str_c str_detect
 #' @importFrom dplyr select matches
 #' @importFrom sf st_read st_write
 #' @importFrom lwgeom lwgeom_extSoftVersion
@@ -45,7 +45,7 @@
 get_map <- function(filter_table=NULL, #filter table is a data frame
                     filters=NULL, #filters is a list
                     year, #year is a number
-                    aggregation=NULL, #aggregation is a list
+                    aggregation=NULL, #aggregation is a vector
                     simplification_factor=NULL, #simplification factor is a number
                     new_crs = NULL,
                     fill_holes=TRUE,
@@ -57,12 +57,19 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                     ){ #cache file is a string
 
 
+
   dummy <- lwgeom_extSoftVersion()
   if(is.null(filter_table)&is.null(filters)) stop("Either filter table or filters need to be provided")
 
   #get filter table if not provided
   if(is.null(filter_table)){
     filter_table <- list_structure(year,filters)
+  }
+
+
+  if(is.null(aggregation)){
+    aggregation <- colnames(filter_table)
+    aggregation <- aggregation[str_detect(aggregation,"area|id|CHANGE",TRUE)]
   }
 
   #create hash
@@ -277,8 +284,10 @@ get_map_internal <- function(filter_table=NULL,
 
   #aggregate
 #
-#   if(!is.null(aggregation)){
-#     message(str_c(message_string,":: aggregating by ",aggregation))
+      message(str_c(message_string,":: aggregating by ",str_c(aggregation,collapse=", ")))
+
+
+
 #
 #     aggregation <- as.vector(aggregation)
 #     aggreg_orig <- aggregation
@@ -307,64 +316,47 @@ get_map_internal <- function(filter_table=NULL,
 #
 #     }
 #
-#     data_sf$empty <- st_is_empty(data_sf)
-#
-#     data_sf <-  data_sf |>
-#                 filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
-#                 select(-any_of(c("empty")))
-#
-#     merged_col  <- filter_table |>
-#                    mutate(Year=year) |>
-#                    select(any_of(c(aggregation,cols_to_merge))) |>
-#                    distinct()                                       |>
-#                    group_by(across(any_of(c(aggregation))))          |>
-#                    reframe(across(any_of(c(aggregation,cols_to_merge)), ~ merge_distinct(.x)))
-#
-#
-#     data_sf <- suppressMessages(suppressWarnings(data_sf |>
-#               left_join(merged_col,by=aggregation) |>
-#               relocate(any_of(c("geom","geometry")),.after=last_col())))
-#
-#     data_sf <- data_sf |>
-#                select(-any_of(contains("CHANGE"))) |>
-#                select(-any_of(contains("URI")))
-#
-#    #  if(external_territories){
-#    #
-#    #   merged_col  <- filter_table |>
-#    #     mutate(Year=year) |>
-#    #     select(any_of(c(aggregation,cols_to_merge))) |>
-#    #     distinct()                                               |>
-#    #     group_by(across(any_of(c(aggregation))))            |>
-#    #     reframe(across(any_of(cols_to_merge), merge_distinct))
-#    #
-#    #   data_sf_external <- suppressMessages(suppressWarnings(data_sf_external |>
-#    #                                                  left_join(merged_col,by=aggregation) |>
-#    #                                                  relocate(any_of(c("geom","geometry")),.after=last_col())))
-#    #
-#    #   data_sf_external <- data_sf_external |>
-#    #                        select(-any_of(contains("CHANGE"))) |>
-#    #                        select(-any_of(contains("URI")))
-#    #
-#    #    data_sf <- bind_rows(data_sf,data_sf_external)
-#    # }
-#
-#   #simplify
-#   if(!is.null(simplification_factor)){
-#     tryCatch(data_sf <- suppressMessages(suppressWarnings(
-#                data_sf |>
-#                ms_simplify(keep=simplification_factor))),
-#                 error = function(e) e)
-#   }
-#
-#   #change crs
-#     if(!is.null(new_crs)){
-#       tryCatch(data_sf <- suppressMessages(suppressWarnings(
-#         st_transform(data_sf,crs=st_crs(new_crs)))),
-#         error = function(e) e)
-#     }
-#
-#   }
+     data_sf$empty <- st_is_empty(data_sf)
+
+     data_sf <-  data_sf |>
+                 filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
+                 select(-any_of(c("empty")))
+
+     data_sf <- map_merger(data_sf,unique(c(aggregation,cols_to_keep)))
+
+
+     merged_col  <- filter_table |>
+                    mutate(Year=year) |>
+                    select(any_of(c(aggregation,cols_to_merge))) |>
+                    distinct()                                       |>
+                    group_by(across(any_of(c(aggregation))))          |>
+                    reframe(across(any_of(c(aggregation,cols_to_merge)), ~ merge_distinct(.x)))
+
+
+     data_sf <- suppressMessages(suppressWarnings(data_sf |>
+               left_join(merged_col,by=aggregation) |>
+               relocate(any_of(c("geom","geometry")),.after=last_col())))
+
+     data_sf <- data_sf |>
+                select(-any_of(contains("CHANGE"))) |>
+                select(-any_of(contains("URI")))
+
+   #simplify
+   if(!is.null(simplification_factor)){
+     tryCatch(data_sf <- suppressMessages(suppressWarnings(
+                data_sf |>
+                ms_simplify(keep=simplification_factor))),
+                 error = function(e) e)
+   }
+
+   #change crs
+     if(!is.null(new_crs)){
+       tryCatch(data_sf <- suppressMessages(suppressWarnings(
+         st_transform(data_sf,crs=st_crs(new_crs)))),
+         error = function(e) e)
+     }
+
+
 #
 #   data_sf <- data_sf |> select(-matches("\\.[0-9]$"))
 
@@ -440,6 +432,7 @@ map_merger <- function(df,by_cols){
 #' @importFrom sf st_cast st_make_valid st_difference st_covers st_area st_drop_geometry
 #' @importFrom progressr with_progress
 #' @description Internal function resolve overlaps
+#' @noRd
 data_resolver <- function(df,merge_by,state_message){
   #df <- map
   suppressWarnings(suppressMessages(df_i <- df |> st_cast("MULTIPOLYGON")))
