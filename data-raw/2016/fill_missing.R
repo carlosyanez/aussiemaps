@@ -45,11 +45,24 @@ data_base <- load_aussiemaps_gpkg("2016_South.Australia")
 b         <-  load_geo(main, layer = "statistical_area_level_1_2016") |>
               filter(STE_NAME_2016==state)
 
+ # sa1_focus <-c("40602114111",
+ #               "40602114110",
+ #               "40602114008")
+ #
+ # data_base <- data_base |> filter(SA1_MAINCODE_2016 %in% sa1_focus)
+ # b <- b |> filter(SA1_MAINCODE_2016 %in% sa1_focus)
+
+
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
-base <- bind_rows(data_base |> select(-id),
-                  base |> select(-id))
+base <- bind_rows(data_base |> select(-any_of(c("id","area"))),
+                  base |>  select(-any_of(c("id","area"))))
+
+base <- base |>
+        mutate(id=str_c(STE_CODE_2016,"-",row_number()))
+
+base$area <- st_area(base)
 
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),delete_dsn = TRUE)
 rm(base)
@@ -80,14 +93,16 @@ ceds_2018 <- list_divisions(filters=list(StateAb="QLD",`2016`=TRUE)) %>% pull(Di
 poas_state <- c(4000:4999,2406)
 
 data_base <- load_aussiemaps_gpkg("2016_Queensland")
-b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
-  filter(STE_NAME_2016==state)
+b         <- load_geo(main, layer = "statistical_area_level_1_2016")  |>
+              filter(STE_NAME_2016==state)
+
+#b <- b |> filter(SA1_MAINCODE_2016 %in% unique(data_base$SA1_MAINCODE_2016))
 
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
-base <- bind_rows(data_base |> select(-id),
-                  base |> select(-id))
+base <- bind_rows(data_base |> select(-any_of(c("id"))) |> filter(CED_NAME_2016!="Wide Bay"),
+                  base |> select(-any_of(c("id"))))
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 
 base |>
@@ -108,17 +123,36 @@ ceds_2018 <- list_divisions(filters=list(StateAb="NSW",`2016`=TRUE)) %>% pull(Di
 poas_state <- c(2000:2599,2619:2899,2921:2999,2406,2540,2611,3585,3586,3644,3691,3707,4380,4377,4383,4385)
 
 data_base <- load_aussiemaps_gpkg("2016_New.South.Wales")
+data_base <- st_read(here("data-raw","2016_New South Wales.gpkg"))
 b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
-  filter(STE_NAME_2016==state)
+              filter(STE_NAME_2016==state)
+
+b <- b |> st_make_valid()
+union <- st_union(data_base)
+union <- union |> st_make_valid()
+base <- st_difference(b,union)
+base <- base |>
+        rename("geom"="shape") |>
+        st_make_valid()
+base$empty <- st_is_empty(base)
+
+base <- base |>
+        filter(!empty) |>
+        select(-empty)
+
+base <- base |>
+  st_collection_extract()
+
+
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- base |> st_make_valid()
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
 
-base <- bind_rows(data_base |> select(-id),
-                  base |> select(-id))
-base <- base |> st_cast("POLYGON")
+base <- bind_rows(data_base |> select(-any_of(c("id"))),
+                  base |> select(-any_of(c("id"))))
+
 
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 
@@ -135,11 +169,14 @@ data_base <- load_aussiemaps_gpkg("2016_Victoria")
 b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
   filter(STE_NAME_2016==state)
 
+# data_base <- data_base |> filter(CED_NAME_2016 %in% c("Murray","Mallee","Gippsland"))
+# b <- b |> filter(SA1_MAINCODE_2016 %in% unique(data_base$SA1_MAINCODE_2016))
+
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
-base <- bind_rows(data_base |> select(-id),
-                  base |> select(-id))
+base <- bind_rows(data_base |> select(-any_of(c("id"))),
+                  base |> select(-any_of(c("id"))))
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 
 
@@ -161,7 +198,7 @@ source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- st_cast(base,"POLYGON")
+base <- st_cast(base,"MULTIPOLYGON")
 
 base <- bind_rows(data_base |> select(-any_of(c("id"))),
                   base |>  select(-any_of(c("id"))))

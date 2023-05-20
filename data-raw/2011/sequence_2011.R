@@ -750,7 +750,7 @@ ind <- load_geo(nonabs, layer="post_code_area_2011") %>%
   filter(POA_CODE_2011 %in% as.character(poas_state))
 
 if(any(str_detect(colnames(ind),"shape"))) {ind <- ind |> rename("geom"="shape")}
-
+base <- base |> mutate(id=row_number())
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
@@ -795,12 +795,19 @@ base <- base %>%
   filter(!is.na(POA_CODE_2011))
 
 if(nrow(base_renmant)>0){
-  base <- bind_rows(base,intersects) %>%
+  base <- bind_rows(base,intersects,non_matched) %>%
     mutate(id=row_number())
 }else{
   base <- base |>  mutate(id=row_number())
 }
 sa1_nbr <- c(sa1_nbr,nrow(base))
+
+## there are areas without postcode in TAS
+
+base <-
+base |>
+  replace_na(list(POA_CODE_2011="No POA",POA_NAME_2011="No POA"))
+
 
 st_write_parquet(base,base_file)
 rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected)
@@ -856,10 +863,10 @@ base <- base %>%
   filter(!is.na(SSC_CODE_2011))
 
 if(nrow(base_renmant)>0){
-  base <- bind_rows(base,intersects) %>%
+  base <- bind_rows(base,intersects,base_renmant) %>%
     mutate(id=row_number())
 }else{
-  base <- base |>  mutate(id=row_number())
+  base <-  bind_rows(base,intersects) |>  mutate(id=row_number())
 }
 sa1_nbr <- c(sa1_nbr,nrow(base))
 

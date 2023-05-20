@@ -61,11 +61,16 @@ full_coverage <-function(base,bigger,base_id,bigger_id,divisions=10){
   return(results)
 }
 
-intersections  <- function(base_renmant,bigger,base_id,bigger_id,base_empty_label,bigger_empty_label,threshold=0.03){
+intersections  <- function(base_renmant,bigger,base_id,bigger_id,base_empty_label,bigger_empty_label,threshold=0){
 
   base_cols   <- colnames(base_renmant)
   bigger_cols <- colnames(bigger)
   remnant     <- bigger_cols[!(bigger_cols %in% base_cols)]
+
+  if("shape" %in% remnant){
+    bigger <- bigger |> rename("geo"="shape")
+  }
+
 
   a <- st_intersects(base_renmant,bigger, sparse = FALSE) %>% as.data.frame(.)
 
@@ -149,7 +154,7 @@ intersections  <- function(base_renmant,bigger,base_id,bigger_id,base_empty_labe
         inter_i <- base_renmant[i,] %>%
                    left_join(inter_i %>%
                             st_drop_geometry() %>%
-                            select(any_of(base_id),any_of(remnant)),
+                            select(any_of(base_id),any_of(remnant),contains("geo")),
                             by=base_id)
 
 

@@ -67,6 +67,8 @@ sa <- load_geo(main, layer = "statistical_area_level_3_2016",state=state) %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
 
+base <- base |> mutate(id=row_number())
+
 full_overlap <- full_coverage(base,
                               bigger=sa,
                               base_id="id",
@@ -112,6 +114,8 @@ sa1_nbr <- c(sa1_nbr,nrow(base))
 sa <- load_geo(main, layer = "statistical_area_level_4_2016",state=state) %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
+
 
 full_overlap <- full_coverage(base,
                               bigger=sa,
@@ -160,6 +164,9 @@ rm(sa, intersected,intersects,full_overlap,overlapped,non_matched,base_renmant)
 ind <- load_geo(indigenous, layer="indigenous_location_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+
+base <- base |> mutate(id=row_number())
+
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
@@ -216,11 +223,15 @@ ind <- load_geo(indigenous, layer="indigenous_area_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
 
+base <- base |> mutate(id=row_number())
+
+
 full_overlap <- full_coverage(base,
                               bigger=ind,
                               base_id="id",
                               bigger_id="IARE_CODE_2016")
 
+if(!is.null(full_overlap)){
 overlapped <- full_overlap %>%
   distinct(id) %>%
   mutate(dummy=TRUE)
@@ -229,6 +240,9 @@ base_renmant <- base  %>%
   left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
+}else{
+  base_renmant <- base
+}
 
 if(nrow(base_renmant)>0){
   intersects <- intersections(base_renmant,
@@ -271,11 +285,15 @@ ind <- load_geo(indigenous, layer="indigenous_region_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
 
+base <- base |> mutate(id=row_number())
+
+
 full_overlap <- full_coverage(base,
                               bigger=ind,
                               base_id="id",
                               bigger_id="IREG_CODE_2016")
 
+if(!is.null(full_overlap)){
 overlapped <- full_overlap %>%
   distinct(id) %>%
   mutate(dummy=TRUE)
@@ -284,6 +302,9 @@ base_renmant <- base  %>%
   left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
+}else{
+  base_renmant <- base
+}
 
 if(nrow(base_renmant)>0){
   intersects <- intersections(base_renmant,
@@ -326,6 +347,8 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 ind <- load_geo(other, layer="urban_centre_and_locality_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
+
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
@@ -382,6 +405,7 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 ind <- load_geo(other, layer="section_of_state_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
@@ -437,6 +461,8 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 ind <- load_geo(other, layer="section_of_state_range_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
+
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
@@ -492,6 +518,7 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 ind <- load_geo(nonabs, layer="tourism_region_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
 
 if(nrow(ind)>0){
 full_overlap <- full_coverage(base,
@@ -563,6 +590,8 @@ if(exists("ceds_2016_out")){
     filter(!is.na(DivisionNm)) |>
     mutate(CED_NAME_2016=DivisionNm,.keep="unused")
 
+  base <- base |> mutate(id=row_number())
+
   full_overlap <- full_coverage(base,
                                 bigger=ind,
                                 base_id="id",
@@ -625,12 +654,13 @@ rm(base_renmant,ced2021,intersects,full_overlap,non_matched)
 ind <- load_geo(nonabs, layer="local_government_area_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
                               base_id="id",
                               bigger_id="LGA_CODE_2016")
-
+if(!is.null(full_overlap)){
 overlapped <- full_overlap %>%
   distinct(id) %>%
   mutate(dummy=TRUE)
@@ -639,6 +669,9 @@ base_renmant <- base  %>%
   left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
+}else{
+  base_renmant <- base
+}
 
 if(nrow(base_renmant)>0){
   intersects <- intersections(base_renmant,
@@ -679,6 +712,7 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 library(auscensus)
 ind <- load_geo(nonabs, layer="post_code_area_2016") %>%
   filter(POA_CODE_2016 %in% as.character(poas_state))
+base <- base |> mutate(id=row_number())
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
@@ -733,12 +767,13 @@ rm(base_renmant,ind,intersects,full_overlap,overlapped,intersected,non_matched)
 ind <- load_geo(nonabs, layer="state_suburb_2016") %>%
   filter(STE_NAME_2016==state) %>%
   select(-STE_CODE_2016,-STE_NAME_2016)
+base <- base |> mutate(id=row_number())
 
 full_overlap <- full_coverage(base,
                               bigger=ind,
                               base_id="id",
                               bigger_id="SSC_CODE_2016")
-
+if(!is.null(full_overlap)){
 overlapped <- full_overlap %>%
   distinct(id) %>%
   mutate(dummy=TRUE)
@@ -747,6 +782,11 @@ base_renmant <- base  %>%
   left_join(overlapped,by="id") %>%
   filter(is.na(dummy)) %>%
   select(-dummy)
+}else{
+  base_renmant <- base
+}
+
+base_renmant <- base_renmant |> mutate(id=row_number())
 
 if(nrow(base_renmant)>0){
   intersects <- intersections(base_renmant,
@@ -754,7 +794,8 @@ if(nrow(base_renmant)>0){
                               base_id="id",
                               bigger_id="SSC_CODE_2016",
                               base_empty_label="SA2_NAME_2016",
-                              bigger_empty_label="SSC_NAME_2016"
+                              bigger_empty_label="SSC_NAME_2016",
+                              threshold = 0
   )
 
   intersected <- intersects %>%
@@ -772,9 +813,13 @@ if(nrow(base_renmant)>0){
   non_matched <- base %>% filter(is.null(id))
 }
 
-base <- base %>%
-  left_join(full_overlap |> distinct(),by="id") %>%
-  filter(!is.na(SSC_CODE_2016))
+if(!is.null(full_overlap)){
+  base <- base %>%
+          left_join(full_overlap |> distinct(),by="id") %>%
+          filter(!is.na(SSC_CODE_2016))
+}else{
+  base <- base %>% filter(is.null(id))
+}
 
 base <- bind_rows(base,intersects,non_matched) %>%
   mutate(id=row_number())
@@ -787,5 +832,5 @@ base <- base |> st_make_valid()
 
 # write ----
 #st_write(base,here("data-raw",str_c(state,".geojson")))
-st_write(base,here("data-raw",str_c("2016_",state,".gpkg")))
+st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),delete_dsn = TRUE)
 sa1_nbr

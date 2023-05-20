@@ -135,21 +135,23 @@ dir_create(here("data-raw","processed"))
 
 rm(list=ls())
 source(here("data-raw","aux_save.R"))
-files <- dir_ls(here("data-raw"),regexp = "2016.*gpkg$")
+files <- dir_ls(here("data-raw"),regexp = "*gpkg$")
 
 geo_structure <- tibble()
 
 for(file in files){
   shapes <- st_read(file)
   shapes$area <- st_area(shapes)
+  shapes      <- shapes |>
+                mutate(id=str_c(STE_CODE_2016,"-",id)) |>
+                relocate(id,.before=1)
+
+  st_write(shapes,file,delete_dsn = TRUE)
 
   shapes <- shapes %>% st_drop_geometry()
   geo_structure <- bind_rows(geo_structure,shapes)
 }
 
-geo_structure <- geo_structure %>%
-                 mutate(id=str_c(STE_CODE_2016,"-",id)) %>%
-                 relocate(id,.before=1)
 
 save_zip_parquet(geo_structure,"2016_structure",here("data-raw","processed"))
 
@@ -158,7 +160,7 @@ geo_cols <- geo_cols[str_detect(geo_cols,"CODE")]
 
 
 attributes <- geo_structure[1,] %>%
-  select(-area) %>%
+  select(-area,-Year) %>%
   pivot_longer(-id,names_to="attributes",values_to = "value") %>%
   select(attributes) %>%
   mutate(Year=2016)

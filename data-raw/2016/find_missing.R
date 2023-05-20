@@ -7,11 +7,13 @@ for(i in 1:nrow(b)){
   sa1 <- b[i,]
   sa_code <- sa1 |> st_drop_geometry() |> pull(SA1_MAINCODE_2016 )
 
-  existing <- data_base |> filter(SA1_MAINCODE_2016==sa_code)
+  existing <- data_base |>
+              filter(SA1_MAINCODE_2016==sa_code) |>
+              st_make_valid()
 
   if(nrow(existing)>0){
 
-  existing <- tibble(a="sa_code",geom=st_union(existing)) |>
+  existing <- tibble(a=sa_code,geom=st_union(existing)) |>
     st_as_sf() |>
     smoothr::fill_holes(units::set_units(1,"km^2"))
   existing <- existing |> st_make_valid()
@@ -66,6 +68,6 @@ for(i in 1:nrow(b)){
 
 if(!is.null(base)){
 base <- base[st_is(base |> st_make_valid(),c("POLYGON","MULTIPOLYGON")),]
-base <- base |> select(-a,-area)
+base <- base |> select(-any_of(c("a","area")))
 keep_vars <- unique(c(ls(),"keep_vars"))
 }

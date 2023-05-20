@@ -12,18 +12,13 @@ source(here("data-raw","aux_save.R"))
 source(here("data-raw","functions.R"))
 source(here("R","internal.R"))
 
-
-main        <- here("data-raw","source","asgs2016absstructuresmainstructureandgccsa.gpkg")
-nonabs      <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
-nonabs2018  <- here("data-raw","source","asgs2016nonabsstructures.gpkg")
-indigenous  <- here("data-raw","source","asgs2016absstructuresindigenousstructure.gpkg")
-other       <- here("data-raw","source","asgs2016absstructuressignificanturbanareasurbancentresandlocalitiessectionofstate.gpkg")
+main        <- here("data-raw","source","asgs2011absstructures.gpkg")
+nonabs      <- here("data-raw","source","asgs2011nonabsstructures.gpkg")
 
 
 main_layers       <- rgdal::ogrListLayers(main)
 nonabs_layers     <- rgdal::ogrListLayers(nonabs)
-indigenous_layers <- rgdal::ogrListLayers(indigenous)
-other_layers      <- rgdal::ogrListLayers(other)
+
 
 
 
@@ -33,7 +28,7 @@ structure <- NULL
 for(file in files){
 
   data <- st_read(file) |>
-          mutate(id=str_c(STE_CODE_2016,"-",row_number()))
+          mutate(id=str_c(STE_CODE_2011,"-",row_number()))
 
   st_write(data,file,append = FALSE,delete_dsn = TRUE)
 
@@ -60,14 +55,14 @@ file <- files[1]
 #structure <- data_base2 |> st_drop_geometry()
 cols <- colnames(structure)
 cols <- cols[str_detect(cols,"area|id",TRUE)]
-cols <- cols[str_detect(cols,"STATE",TRUE)]
+cols <- cols[str_detect(cols,"STE",TRUE)]
 missing <- tibble()
 
 for(col_name in cols){
  missing_i <- structure |>
-    select(any_of(col_name),STE_NAME_2016) |>
+    select(any_of(col_name),STE_NAME_2011) |>
     rename("col"=col_name) |>
-    count(col,STE_NAME_2016) |>
+    count(col,STE_NAME_2011) |>
     filter(is.na(col))
 
   if(nrow(missing_i)>0){
@@ -78,7 +73,7 @@ for(col_name in cols){
 
 }
 
-states_to_remediate <- missing |> distinct(STE_NAME_2016) |> pull()
+states_to_remediate <- missing |> distinct(STE_NAME_2011) |> pull()
 states_to_remediate <- states_to_remediate[str_detect(states_to_remediate,"Other Territories",TRUE)]
 
 geo_structure <- tibble()

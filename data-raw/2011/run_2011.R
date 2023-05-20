@@ -143,8 +143,17 @@ for(file in files){
   shapes <- st_read(file)
   shapes$area <- st_area(shapes)
 
+  if(str_detect(file,"Tasmania")){
+    shapes <- shapes |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
+    st_write(shapes,file,delete_dsn=TRUE)
+  }
+
+
   shapes <- shapes %>% st_drop_geometry()
   geo_structure <- bind_rows(geo_structure,shapes)
+
+
+
 }
 
 geo_structure <- geo_structure %>%
@@ -158,7 +167,7 @@ geo_cols <- geo_cols[str_detect(geo_cols,"CODE")]
 
 
 attributes <- geo_structure[1,] %>%
-  select(-area) %>%
+  select(-any_of(c("area","Year"))) %>%
   pivot_longer(-id,names_to="attributes",values_to = "value") %>%
   select(attributes) %>%
   mutate(Year=2011)
