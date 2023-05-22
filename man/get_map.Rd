@@ -16,6 +16,7 @@ get_map(
   use_cache = FALSE,
   cache_file = NULL,
   cache_intermediates = TRUE,
+  interstate_merge = TRUE,
   message_string = ""
 )
 }
@@ -40,7 +41,9 @@ get_map(
 
 \item{cache_file}{Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).}
 
-\item{cache_intermediates}{whether to cache state intermediate aggregations}
+\item{cache_intermediates}{whether to cache state intermediate}
+
+\item{interstate_merge}{whether to consolidate object across state/territory lines (e.g. CED for external territories)}
 
 \item{message_string}{extra message string to add to any message (for tracking)}
 }

@@ -21,7 +21,8 @@
 #' @param smoothing_threshold A number indicating the smoothing threshold.
 #' @param use_cache A boolean indicating whether to use the cache.
 #' @param cache_file Optional a string indicating the friendly name of the cache file (f not provided, an arbitrary name will be created).
-#' @param cache_intermediates  whether to cache state intermediate aggregations
+#' @param cache_intermediates  whether to cache state intermediate
+#' @param interstate_merge whether to consolidate object across state/territory lines (e.g. CED for external territories)
 #' @param message_string extra message string to add to any message (for tracking)
 #'
 #' @return A map object.
@@ -53,6 +54,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                     use_cache=FALSE, #use cache is a boolean
                     cache_file=NULL,
                     cache_intermediates=TRUE,
+                    interstate_merge = TRUE,
                     message_string = ""
                     ){ #cache file is a string
 
@@ -97,6 +99,7 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
                              fill_holes,
                              smoothing_threshold,
                              cache_intermediates,
+                             interstate_merge,
                              message_string)
     if(use_cache){
       st_write(data,cache_file)
@@ -134,6 +137,8 @@ get_map <- function(filter_table=NULL, #filter table is a data frame
 #' @param fill_holes whether to fill holes after merging parts
 #' @param  smoothing_threshold smoothing threshold (default to 1, as in km^2)
 #' @param  cache_intermediates whether to cache state intermediates
+#' @param interstate_merge whether to consolidate object across state/territory lines (e.g. CED for external territories)
+#' @param message_string extra message string to add to any message (for tracking)
 #' @noRd
 get_map_internal <- function(filter_table=NULL,
                     year,
@@ -143,6 +148,7 @@ get_map_internal <- function(filter_table=NULL,
                     fill_holes = TRUE,
                     smoothing_threshold=4,
                     cache_intermediates=TRUE,
+                    interstate_merge = TRUE,
                     message_string=""){
 
   cache_dir  <- find_maps_cache()
@@ -286,44 +292,15 @@ get_map_internal <- function(filter_table=NULL,
 #
       message(str_c(message_string,":: aggregating by ",str_c(aggregation,collapse=", ")))
 
-
-
-#
-#     aggregation <- as.vector(aggregation)
-#     aggreg_orig <- aggregation
-#
-#     #external_territories <- any(str_detect(required_states,"Other"))
-#
-#     #if(external_territories){
-#     #  data_sf_external  <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other")))
-#     #  data_sf           <- data_sf |> filter(if_any(any_of(as.vector(state_col)), ~ str_detect(.x,"Other",TRUE)))
-#     #}
-#     #new aggregated sum
-#     areas_prop <- list()
-#     aggr_prop  <- aggregation[str_detect(aggregation,"CODE")]
-#     for(i in 1:length(aggr_prop)){
-#       areas_prop[[i]] <- load_aussiemaps_parquet(aggr_prop[i]) |>
-#                          filter(if_any(any_of(c("id")), ~ .x %in% filter_table$id)) |>
-#                          collect()
-#
-#       if(!("prop" %in% colnames(areas_prop[[i]]))){
-#         areas_prop[[i]]$prop <- as.numeric(areas_prop[[i]]$area /  areas_prop[[i]]$sum_area)
-#       }
-#       areas_prop[[i]] <- areas_prop[[i]] |>
-#                         group_by(across(c("geo_col")))   |>
-#                          summarise(across(any_of("prop"), ~ sum(.x)),.groups="drop")
-#
-#
-#     }
-#
      data_sf$empty <- st_is_empty(data_sf)
 
      data_sf <-  data_sf |>
                  filter(if_any(any_of(c("empty")), ~ .x==FALSE))|>
                  select(-any_of(c("empty")))
 
-     with_progress(data_sf <- map_merger(data_sf,unique(c(aggregation,cols_to_keep))))
-
+     if(interstate_merge){
+        with_progress(data_sf <- map_merger(data_sf,unique(c(aggregation,cols_to_keep))))
+     }
 
      merged_col  <- filter_table |>
                     mutate(Year=year) |>

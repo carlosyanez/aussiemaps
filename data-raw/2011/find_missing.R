@@ -23,7 +23,7 @@ for(i in 1:nrow(b)){
 
     diff        <- abs((exist_area-sa1_area)/sa1_area)
 
-    if(diff<10^-5){
+    if(diff<10^-12){
       message(glue::glue("{i} out of {nrow(b)}: Equal Area"))
       base_i<-tibble()
     }else{
@@ -37,7 +37,7 @@ for(i in 1:nrow(b)){
     base_i <- st_cast(base_i, "POLYGON")
 
     base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
+    base_i <- base_i |> filter(area > units::set_units(5,"m^2"))
 
     message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
     }

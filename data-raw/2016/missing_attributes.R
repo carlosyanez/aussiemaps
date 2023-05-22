@@ -26,6 +26,7 @@ other_layers      <- rgdal::ogrListLayers(other)
 
 
 files <- dir_ls(here("data-raw"),regexp = "gpkg")
+#files <- dir_ls(aussiemaps::find_maps_cache(),regexp="\\/2016")
 structure <- NULL
 
 for(file in files){

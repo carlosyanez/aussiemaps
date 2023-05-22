@@ -137,16 +137,27 @@ rm(list=ls())
 source(here("data-raw","aux_save.R"))
 files <- dir_ls(here("data-raw"),regexp = "2011.*gpkg$")
 
+# files <- dir_ls(aussiemaps::find_maps_cache(),regexp = "gpkg")
+#  files <- files[str_detect(files,"\\/2011")]
+#  files <- files[str_detect(files,"[0-9]\\.gpkg",TRUE)]
+
 geo_structure <- tibble()
 
 for(file in files){
   shapes <- st_read(file)
+  shapes$empty <- st_is_empty(shapes)
+  shapes <- shapes |> filter(!empty) |> select(-empty)
+
+  shapes <- shapes |>
+    st_make_valid() |>
+    st_cast("MULTIPOLYGON")
+
   shapes$area <- st_area(shapes)
 
-  if(str_detect(file,"Tasmania")){
-    shapes <- shapes |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
-    st_write(shapes,file,delete_dsn=TRUE)
-  }
+  #if(str_detect(file,"Tasmania")){
+  #  shapes <- shapes |> mutate(id=str_c(STE_CODE_2011,"-",row_number()))
+  #  st_write(shapes,file,delete_dsn=TRUE)
+  #}
 
 
   shapes <- shapes %>% st_drop_geometry()
@@ -155,10 +166,6 @@ for(file in files){
 
 
 }
-
-geo_structure <- geo_structure %>%
-                 mutate(id=str_c(STE_CODE_2011,"-",id)) %>%
-                 relocate(id,.before=1)
 
 save_zip_parquet(geo_structure,"2011_structure",here("data-raw","processed"))
 

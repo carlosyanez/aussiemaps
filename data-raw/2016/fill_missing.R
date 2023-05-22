@@ -56,8 +56,21 @@ b         <-  load_geo(main, layer = "statistical_area_level_1_2016") |>
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
+base$empty <- st_is_empty(base)
+base <- base |> filter(!empty) |> select(-empty)
+
+base <- base |>
+        st_make_valid() |>
+        st_cast("MULTIPOLYGON")
+
+
 base <- bind_rows(data_base |> select(-any_of(c("id","area"))),
                   base |>  select(-any_of(c("id","area"))))
+
+base <- db_a |>
+  filter(!(SA1_MAINCODE_2016 %in% c("40703116412","40602114111","40602114107"))) |>
+  bind_rows(base)
+
 
 base <- base |>
         mutate(id=str_c(STE_CODE_2016,"-",row_number()))
@@ -96,13 +109,27 @@ data_base <- load_aussiemaps_gpkg("2016_Queensland")
 b         <- load_geo(main, layer = "statistical_area_level_1_2016")  |>
               filter(STE_NAME_2016==state)
 
+exsa1 <- data_base |> st_drop_geometry() |> distinct(SA1_MAINCODE_2016) |> pull()
+
+base <-b |> filter(!(SA1_MAINCODE_2016 %in% exsa1)) |> rename("geom"="shape")
+
 #b <- b |> filter(SA1_MAINCODE_2016 %in% unique(data_base$SA1_MAINCODE_2016))
 
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
-base <- bind_rows(data_base |> select(-any_of(c("id"))) |> filter(CED_NAME_2016!="Wide Bay"),
+
+
+base <- bind_rows(data_base |> select(-any_of(c("id"))),
                   base |> select(-any_of(c("id"))))
+
+base$empty <- st_is_empty(base)
+base <- base |> filter(!empty) |> select(-empty)
+
+base <- base |> mutate(id=str_c(STE_CODE_2016,"-",row_number()),.before=1)
+base$area <- st_area(base)
+
+base2 <- base |> select(-shape)
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 
 base |>
@@ -194,6 +221,11 @@ data_base <- load_aussiemaps_gpkg("2016_Tasmania")
 b         <-  load_geo(main, layer = "statistical_area_level_1_2016")  |>
   filter(STE_NAME_2016==state)
 
+
+data_base <- data_base |> filter(CED_NAME_2016=="Lyons")
+existingsa1 <- data_base |> st_drop_geometry() |> distinct(SA1_MAINCODE_2016) |> pull()
+b <- b |> filter(SA1_MAINCODE_2016 %in% existingsa1)
+
 source(here("data-raw","2016","find_missing.R"))
 source(here("data-raw","2016","sequence_2016.R"))
 
@@ -202,6 +234,8 @@ base <- st_cast(base,"MULTIPOLYGON")
 
 base <- bind_rows(data_base |> select(-any_of(c("id"))),
                   base |>  select(-any_of(c("id"))))
+
+
 
 st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),append = FALSE,delete_dsn = TRUE)
 
@@ -272,7 +306,9 @@ if(!is.null(base)){
   base <- data_base
 }
 
-st_write(base,here("data-raw",str_c("2016_",state,".gpkg")))
+base <- base |>st_make_valid()
+
+st_write(base,here("data-raw",str_c("2016_",state,".gpkg")),delete_dsn = TRUE)
 
 
 rm(base)

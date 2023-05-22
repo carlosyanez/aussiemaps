@@ -23,6 +23,8 @@ nonabs_layers     <- rgdal::ogrListLayers(nonabs)
 
 
 files <- dir_ls(here("data-raw"),regexp = "gpkg")
+files <- dir_ls(aussiemaps::find_maps_cache(),regexp = "gpkg")
+files <- files[str_detect(files,"\\/2011")]
 structure <- NULL
 
 for(file in files){

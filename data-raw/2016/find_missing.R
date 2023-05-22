@@ -1,4 +1,5 @@
-
+#min_threshold <- 10^-5
+min_threshold <- 10^-15
 b$empty <- b |> st_is_empty()
 b <- b |> filter(!empty) |> select(-empty)
 base <- NULL
@@ -14,8 +15,8 @@ for(i in 1:nrow(b)){
   if(nrow(existing)>0){
 
   existing <- tibble(a=sa_code,geom=st_union(existing)) |>
-    st_as_sf() |>
-    smoothr::fill_holes(units::set_units(1,"km^2"))
+    st_as_sf()# |>
+    #smoothr::fill_holes(units::set_units(1,"km^2"))
   existing <- existing |> st_make_valid()
   sa1 <- sa1 |> st_make_valid()
 
@@ -25,7 +26,7 @@ for(i in 1:nrow(b)){
 
     diff        <- abs((exist_area-sa1_area)/sa1_area)
 
-    if(diff<10^-5){
+    if(diff<min_threshold){
       message(glue::glue("{i} out of {nrow(b)}: Equal Area"))
       base_i<-tibble()
     }else{
@@ -39,7 +40,7 @@ for(i in 1:nrow(b)){
     base_i <- st_cast(base_i, "POLYGON")
 
     base_i$area <- st_area(base_i)
-    base_i <- base_i |> filter(area > units::set_units(100,"m^2"))
+    #base_i <- base_i |> filter(area > units::set_units(5,"m^2"))
 
     message(glue::glue("{i} out of {nrow(b)}: {sa_code}. {nrow(base_i)} features"))
     }
